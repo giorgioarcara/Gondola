@@ -1,7 +1,6 @@
 # GONDOLA
 
-![alt text](https://github.com/giorgioarcara/Gondola/tree/master/Logo/Gondola_logo.png)
-![alt text](Logo/Gondola_logo.png)
+![alt text](https://raw.githubusercontent.com/giorgioarcara/Gondola/tree/master/Logo/Gondola_logo.png)
 
 
 Gondola is a toolbox to facilitate Brain network analysis (and exploration) in Matlab/Octave.
