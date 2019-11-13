@@ -38,6 +38,9 @@ Coord_lab = table2cell(Coord(:,end));
 % retrieve index to sort
 [~, ind, ~] = intersect(Labels, Coord_lab);
 
+% check if there are problems
+% missing = setdiff(Labels, Coord_lab)
+
 % add to table to sort
 Coord(:, end+1) = array2table(ind) ;
 

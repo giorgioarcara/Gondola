@@ -101,7 +101,7 @@ y=pos(2);
 % in this way  I retrive the displayeed value
 % from the ordinal position pos(1) and pos(2)
 if x > 1 % case matrix
-value = round( event_obj.Target.CData(x, y), 2);
+value = round( event_obj.Target.CData(y, x), 2);
 elseif x ==1 % case vector
     value = round( event_obj.Target.CData(y), 2);
 end;

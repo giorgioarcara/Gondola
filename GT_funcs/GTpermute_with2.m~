@@ -88,9 +88,9 @@ for iIter = 1:iterations
     end;
     
     % debug
-    %imagesc(GTrand1.mat_or)
-    %figure
-    %imagesc(GTrand2.mat_or)  
+    
+    
+    
     
     % draw progress
     GTprogressbar(iIter, iterations);

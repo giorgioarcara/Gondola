@@ -12,7 +12,7 @@ fprintf('-\n');
 fprintf('--\n');
 fprintf('--- Gondola functions added ---\n');
 fprintf('--- Requires: BCT toolbox\n');
-fprintf('--- by: Giorgio Arcara, Annalisa Pascarella, Marco Marino, Giovanni Pellegrino\n');
+fprintf('--- by: Giorgio Arcara,  Marco Marino, Annalisa Pascarella, Giovanni Pellegrino\n');
 fprintf('--- version: 0.1');
 fprintf('\n\n\n\n');
 

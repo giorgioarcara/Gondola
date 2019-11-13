@@ -111,6 +111,10 @@ for k = 1:length(GTres1)
     
     title( panel_title );
     
+     % unlss clim is 'ind' (i.e., individual) clim is modified on global.
+    if (~strcmpi('ind', clim)); 
+        caxis(clim);
+    end;
     
     set(gca, 'YTickLabel',[],'XTickLabel', []);
     
