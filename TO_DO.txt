@@ -1,2 +1,2 @@
-- use subtightplot or subaxis in GTimagesc
-- GTfilecheck line 50 change reference to Conn (maybe conn_mat)?
+- use subtightplot or subaxis in GTimagesc.
+- add cylinder between two points and spheres for better graph plots.

@@ -36,7 +36,7 @@ Coord = readtable(RefCoord, 'Delimiter', ' ', 'ReadVariableNames', 0, 'HeaderLin
 Coord_lab = table2cell(Coord(:,end));
 
 % retrieve index to sort
-[~, ind, ~] = intersect(Labels, Coord_lab);
+[~, ind, ~] = intersect(Labels, Coord_lab, 'stable');
 
 % check if there are problems
 % missing = setdiff(Labels, Coord_lab)

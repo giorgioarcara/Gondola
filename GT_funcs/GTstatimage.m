@@ -31,7 +31,7 @@ end;
 % setup axis limits
 minv = min(min(resmat));
 maxv = max(max(resmat));
-minv = minv-((maxv-minv)/5)
+minv = minv-((maxv-minv)/5);
 ddd=[0.8 0.8 0.8; jet(10)];
 
 % adjust axis in case only one value is supplied
@@ -52,9 +52,12 @@ if (size(resmat,1)==1  & size(resmat,2)>1)
     resmat = resmat';
 end;
 
+
+figure
 colormap(ddd);
 imagesc(resmat);
 caxis([minv, maxv]);
+%set(gca, 'clim', [minv, maxv]);
 colorbar
 
 %% CREATE LABELS (according to data type).

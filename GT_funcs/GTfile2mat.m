@@ -1,11 +1,11 @@
 %% GTfile2mat(GTmat_filename, indir, outdir, Freq)
 % this function takes as input a .mat file containing a
-% GT struct (i.e., struct as exported from process_export_conn_mat in brainstorm)
+% GTstruct (i.e., struct as exported from process_export_conn_mat in brainstorm)
 % it returns files with the same name but only with matrices (getting rid
 % of all others info. 
 % NOTE: we load the file (and not the struct)
 % cause the output filename will be the original filename (this info is not 
-% contained in the GT struc).
+% contained in the GTstructs).
 %
 % INPUT:
 % - GTmat_filename: one single GTmat

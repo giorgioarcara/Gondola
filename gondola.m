@@ -9,15 +9,7 @@ addpath(genpath([curr_script_folder]));
 
 fprintf('\n\n\n\n');
 fprintf('-\n');
-fprintf('--\n');
-fprintf('--- Gondola functions added ---\n');
-fprintf('--- Requires: BCT toolbox\n');
-fprintf('--- by: Giorgio Arcara,  Marco Marino, Annalisa Pascarella, Giovanni Pellegrino\n');
-fprintf('--- version: 0.1');
-fprintf('\n\n\n\n');
-
-
-
+fprintf('--\n\n\n');
 
 ascii_art=['                                              &                              \n', ...
 '                                             *&&&&                             \n', ...
@@ -39,3 +31,9 @@ ascii_art=['                                              &                     
 
 
 fprintf(ascii_art);
+fprintf('\n\n');
+fprintf('--- Gondola toolbox now in search path ---\n');
+% fprintf('--- Requires: BCT toolbox\n');
+fprintf('--- by: Giorgio Arcara, Marco Marino, Annalisa Pascarella, Giovanni Pellegrino\n');
+fprintf('--- version: 0.1');
+fprintf('\n\n\n\n');
