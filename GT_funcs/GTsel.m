@@ -1,4 +1,4 @@
-%% GTsel(GTres, field, value, num);
+%% GTsel(GTstruct, 'Field', value, 'Content', value);
 %
 % This function select all field based on a value found in a field.
 % Call the functions multiple times to perform selection on more than one
@@ -6,35 +6,50 @@
 %
 % INPUT: 
 %
-% - GTres: a struct, resullting from BCT script analysis
+% - GTstruct: a struct, resullting from BCT script analysis
 % - field: the field for the selection
-% - values: an expression (also with logical) to select the fields.
+% - content: an expression (also with logical) to select the fields.
 
-function GTres_sel = GTsel(GTres, field, values)
+function GTstruct = GTsel(GTstruct, varargin)
+
+
+% part to check if, in a given group
+p = inputParser;
+addParameter(p, 'Field', [], @ischar);
+
+checkContent = @(x) isnumeric(x) | ischar(x) ;
+
+addParameter(p, 'Content', [], checkContent);
+
+parse(p, varargin{:});
+
+Field = p.Results.Field;
+Content =  p.Results.Content;
+
   
-fieldnames = fields(GTres);
+fieldnames = fields(GTstruct);
 
-iField = strcmp(field, fieldnames);
+iField = strcmp(Field, fieldnames);
 
-GTcell = struct2cell(GTres);
+GTcell = struct2cell(GTstruct);
 
-GTvalues = squeeze({GTcell{iField, :,:}});
+GTContent = squeeze({GTcell{iField, :,:}});
 
-% note I use the sel_files_bst to select, in the case values are a cell
-if ischar(values)
-[~ , ind_sel] =  sel_string(GTvalues, values);
+% note I use the sel_files_bst to select, in the case Content are a cell
+if ischar(Content)
+[~ , ind_sel] =  sel_string(GTContent, Content);
 
 % a different way is what happen in the case of numeric
-elseif isnumeric(values)
-   GTvalues2 = round(cell2mat(GTvalues), 10);
+elseif isnumeric(Content)
+   GTContent2 = round(cell2mat(GTContent), 10);
    % !!! Important. I use round here cause for some reasons (approximation)
-   % the values are not 
-   [~, ind] = ismember(GTvalues2, round(values, 10));
+   % the Content are not 
+   [~, ind] = ismember(GTContent2, round(Content, 10));
    ind_sel = find(ind);
 
 end;
 
-GTres_sel = GTres(ind_sel);
+GTstruct = GTstruct(ind_sel);
 
 
 
