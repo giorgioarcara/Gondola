@@ -1,15 +1,15 @@
-%% GTimagesc(GTres, resfield, labelfields, n_cols)
+%% GTimagesc(GTstruct, 'ResField', value, 'LabelField', value, 'NCols', value, 'xlimits', value, 'ylimits', value)
 %
-% This function takes as input a GTres object (object with results from a
+% This function takes as input a GTstruct object (object with results from a
 % analysis with BCT_analysis.m script) and
 % create a square image with all results. Useful for
 % inspection.
 %
 % INPUT
-% - GTres: the GTres struct with the results.
-% - resfield: the name of the field tha will be plotted.
-% - labelfield: the name of the field to title the subplot.
-% - n_cols: the number of cols of resulting image. The rows will be
+% - GTstruct: the GTstruct struct with the results.
+% - ResField: the name of the field tha will be plotted.
+% - LabelField: the name of the field to title the subplot.
+% - NCols: the number of cols of resulting image. The rows will be
 % determined as consequence
 % - xlimits: if not speciied, the maximum across all subjets is used.
 %           If "ind" is specified individual xlim are made (based on
@@ -24,14 +24,30 @@
 % version: 12/01/2018
 %
 %
-function fig = GThistogram(GTres, resfield, labelfields , n_cols, xlimits, ylimits);
+function fig = GThistogram(GTstruct, varargin);
+
+p = inputParser;
+addParameter(p, 'ResField', [], @ischar);
+addParameter(p, 'LabelField', [], @ischar);
+addParameter(p, 'NCols', [], @isnumeric);
+addParameter(p, 'xlimits', [], @isnumeric);
+addParameter(p, 'ylimits', [], @isnumeric);
+
+
+parse(p, varargin{:});
+
+ResField = p.Results.ResField;
+LabelField =  p.Results.LabelField;
+NCols =  p.Results.NCols;
+xlimits =  p.Results.xlimits;
+ylimits =  p.Results.ylimits;
 
 
 
 % create global clim if auto is specified
 if ( (~exist('xlimits')) | (isempty(xlimits)) );
-    iField = find(strcmpi(resfield, fieldnames(GTres)));
-    temp = struct2cell(GTres);
+    iField = find(strcmpi(ResField, fieldnames(GTstruct)));
+    temp = struct2cell(GTstruct);
     data = [temp{iField, :, :}];
     xlimits = [min(data(:)), max(data(:))];
 end
@@ -41,32 +57,32 @@ if (~exist('ylimits'))
 end;
 
 
-tot_n = length(GTres);
+tot_n = length(GTstruct);
 
 % define number of cols
-n_rows = round(length(GTres) / n_cols);
+n_rows = round(length(GTstruct) / NCols);
 
 
 
 figure
-for k = 1:length(GTres)
+for k = 1:length(GTstruct)
     
-    subplot(n_rows, n_cols, k)
+    subplot(n_rows, NCols, k)
     
     numOfBins = 20;
-    [histFreq, histXout] = hist(GTres(k).(resfield)(:), numOfBins);
+    [histFreq, histXout] = hist(GTstruct(k).(ResField)(:), numOfBins);
     bar(histXout, histFreq/sum(histFreq)*100);
     
-    if ~isempty(labelfields);
+    if ~isempty(LabelFields);
         
         % define title in a loop (if several fields are supplied).
-        if (iscell(labelfields) & length(labelfields)>1)
+        if (iscell(LabelFields) & length(LabelFields)>1)
             panel_title =[];
-            for iF=1:length(labelfields)
-                panel_title = [panel_title,  ' ', eval(['GTres(', num2str(k), ').', labelfields{iF}])];
+            for iF=1:length(LabelFields)
+                panel_title = [panel_title,  ' ', eval(['GTstruct(', num2str(k), ').', LabelFields{iF}])];
             end;
         else
-            panel_title =  eval(['GTres(', num2str(k), ').', labelfields]);
+            panel_title =  eval(['GTstruct(', num2str(k), ').', LabelFields]);
         end
         
         title( panel_title );

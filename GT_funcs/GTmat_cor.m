@@ -1,21 +1,29 @@
-%% GTmat_cor(2GTres_diff)
+%% GTmat_cor(GTstruct1, GTstruct2,'ResField', value )
 %
-% This functions perform a correlation.
-%
+% This functions perform a correlation between two GTstruct by selecting a field.
+% - GTstruct1 and GTstruct2: data struct to correlate
+% - ResField: Selected field of the data struct to correlate between the
+% two GTstructs
 % Author: Giorgio Arcara
 %
 % Data : 4/02/2018;
 %
 %
-function [cormat, pmat] = GTmat_cor(GTstruct1, GTstruct2, resfield);
+function [cormat, pmat] = GTmat_cor(GTstruct1, GTstruct2, varargin);
 
-data1 = [GTstruct1.(resfield)];
-data2 = [GTstruct2.(resfield)];
+p = inputParser;
+addParameter(p, 'ResField', [], @ischar);
+parse(p, varargin{:});
+
+ResField = p.Results.ResField;
+
+data1 = [GTstruct1.(ResField)];
+data2 = [GTstruct2.(ResField)];
 
 
 % resstore the 3d dimension with subjects
-data1 = reshape(data1, size(GTstruct1(1).(resfield), 1), size(GTstruct1(1).(resfield), 2), length(GTstruct1));
-data2 = reshape(data2, size(GTstruct2(1).(resfield), 1), size(GTstruct2(1).(resfield), 2), length(GTstruct2));
+data1 = reshape(data1, size(GTstruct1(1).(ResField), 1), size(GTstruct1(1).(ResField), 2), length(GTstruct1));
+data2 = reshape(data2, size(GTstruct2(1).(ResField), 1), size(GTstruct2(1).(ResField), 2), length(GTstruct2));
 
 % suboptimal (made to work on all cells of a symmetric matrix) could be
 % optmized

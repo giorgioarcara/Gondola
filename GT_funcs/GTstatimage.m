@@ -1,19 +1,19 @@
-%% GTstatimage(resmat, Coord_names, thresholds, threshmat)
+%% GTstatimage(Statmat, 'CoordNames','value', 'Thresholds',[value], 'ThreshMat', value)
 %
 % This functions perform a independent sample t-test.
 %
 % INPUT:
 %
-% - resmat: a matrix (or vector) with results as obtained by GTmat_ttest
+% - Statmat: a matrix (or vector) with results as obtained by GTmat_ttest
 %         functions
-% - Coord_names: the Coord labels to be plotted in X axis (and Y axis for .
+% - CoordNames: the Coord labels to be plotted in X axis (and Y axis for .
 %
-% - thresholds: a vector with two numbers. The first is the lower threshold
+% - Thresholds: a vector with two numbers. The first is the lower threshold
 %               (i.e. lwoer number will be excluded). The second is the upper threshold
 %               (higher number will be excluded. 
-%               In the common case to exclude value > 0.05, the thresholds
+%               In the common case to exclude value > 0.05, the Thresholds
 %               should be specified like this [-Inf, 0.05]
-% - threshmat: another matrix to exclude values in anothermatrix  (e.g. a pmat to filter a tmat.)
+% - ThreshMat: another matrix to exclude values in anothermatrix  (e.g. a pmat to filter a tmat.)
 %
 %
 % Author: Giorgio Arcara
@@ -21,56 +21,70 @@
 % Data : 4/02/2018;
 %
 %
-function [tmat, pmat] = GTstatimage(resmat, Coord_names, thresholds, threshmat)
+function [tmat, pmat] = GTstatimage(Statmat, CoordNames, Thresholds, ThreshMat)
+p = inputParser;
+addParameter(p, 'CoordNames', [], @ischar);
+addParameter(p, ' Thresholds', [], @isvector);
+addParameter(p, 'ThreshMat', [], @ismatrix);
 
-% if no thresholds matrix is specified the resmatt is used for thresholds.
-if ~exist('threshmat');
-    threshmat = resmat;
+
+parse(p, varargin{:});
+
+CoordNames = p.Results.CoordNames;
+Thresholds =  p.Results. Thresholds;
+ThreshMat =  p.Results.ThreshMat;
+
+
+
+
+% if no Thresholds matrix is specified the Statmatt is used for Thresholds.
+if ~exist('ThreshMat');
+    ThreshMat = Statmat;
 end;    
 
 % setup axis limits
-minv = min(min(resmat));
-maxv = max(max(resmat));
+minv = min(min(Statmat));
+maxv = max(max(Statmat));
 minv = minv-((maxv-minv)/5);
 ddd=[0.8 0.8 0.8; jet(10)];
 
 % adjust axis in case only one value is supplied
 % caxis will not work with only one value.
 if (minv == maxv)
-    maxv = (abs(resmat));
-    minv = -(abs(resmat));
+    maxv = (abs(Statmat));
+    minv = -(abs(Statmat));
 end;
 
 % apply threshold if supplied.
-if exist('thresholds') & ~isempty(thresholds)
-    resmat(threshmat<thresholds(1))=NaN;
-    resmat(threshmat>thresholds(2))=NaN;
+if exist('Thresholds') & ~isempty(Thresholds)
+    Statmat(ThreshMat<Thresholds(1))=NaN;
+    Statmat(ThreshMat>Thresholds(2))=NaN;
 end;
 
 % rotate data if a vector is supplied (so labels of ROIs are on the y axis and can be read)
-if (size(resmat,1)==1  & size(resmat,2)>1)
-    resmat = resmat';
+if (size(Statmat,1)==1  & size(Statmat,2)>1)
+    Statmat = Statmat';
 end;
 
 
 figure
 colormap(ddd);
-imagesc(resmat);
+imagesc(Statmat);
 caxis([minv, maxv]);
 %set(gca, 'clim', [minv, maxv]);
 colorbar
 
 %% CREATE LABELS (according to data type).
 % case matrix
-if (size(resmat,1)>1 & size(resmat,2)>1);
-    set(gca, 'YTick', 1:length(Coord_names), 'YTickLabel', Coord_names);
-    set(gca, 'XTick', 1:length(Coord_names), 'XTickLabel', Coord_names, 'XTickLabelRotation', 90);
+if (size(Statmat,1)>1 & size(Statmat,2)>1);
+    set(gca, 'YTick', 1:length(CoordNames), 'YTickLabel', CoordNames);
+    set(gca, 'XTick', 1:length(CoordNames), 'XTickLabel', CoordNames, 'XTickLabelRotation', 90);
 % case vector
-elseif (size(resmat,1)>1  & size(resmat,2)==1) % NOTE that I rotate the resmat before
-    set(gca, 'YTick', 1:length(Coord_names), 'YTickLabel', Coord_names);
+elseif (size(Statmat,1)>1  & size(Statmat,2)==1) % NOTE that I rotate the Statmat before
+    set(gca, 'YTick', 1:length(CoordNames), 'YTickLabel', CoordNames);
      set(gca, 'XTick', [], 'XTickLabel', []);
 % else (case single value
-elseif (size(resmat,1)==1  & size(resmat,2)==1)
+elseif (size(Statmat,1)==1  & size(Statmat,2)==1)
  set(gca, 'XTick', [])
 end;
 
@@ -78,7 +92,7 @@ end;
 %% Data tip
 dcm=datacursormode;
 datacursormode off
-Coord = Coord_names;
+Coord = CoordNames;
 set(dcm, 'updatefcn', {@myFunction, Coord}); % note here that I specify the argument Coord to be used in the personalized Datatip.
 
 

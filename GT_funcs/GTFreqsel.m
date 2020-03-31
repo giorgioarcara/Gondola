@@ -1,4 +1,4 @@
-%% GTsel(GTres, FreqField, value, DataField, value);
+%% GTsel(GTres, 'FreqField', value, 'DataField', value);
 %
 % This function start from a GT struct. It selects the data fields based on
 % the selection of a Freq.
@@ -8,8 +8,8 @@
 % INPUT: 
 %
 % - GTres: a struct, resullting from BCT script analysis
-% - field: the field for the selection
-% - values: an expression (also with logical) to select the fields.
+% - FreqField: the field for the selection
+% - DataField: an expression (also with logical) to select the fields.
 
 function GTres = GTFreqsel(GTres, varargin)
 

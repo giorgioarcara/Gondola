@@ -1,38 +1,61 @@
-%% GTres_rand = GTrandomize(GTres, resfield, iterations, measure_func)
+%% GTstruct_rand = GTrandomize(GTstruct, 'ResField', {value}, 'MeasureFunc', 'value, 'Iterations', value)
 % 
 % This function start from a GTstruct object and create a null distribution
 % by randomizing the matrices (with the randomizer_bin_und function from
 % BCT) and then computing a measure on these newled shuffled matrices.
 % it allows to estimate null results at single subject level.
+
+% - GTstruct:    data structure to randomize
+% - ResField:    a cell with the fields of the GTstruct that should be used
+% - Iterations:  number indicating the number of permutation (default is
+%                1000).
+% - MeasureFunc: the function (typically from the BCT toolbox) to
+%                compute randomization
 % 
 
-function GTres_rand = GTrandomize(GTres, resfield, iterations, measure_func)
-myfunc = str2func(measure_func);
+function GTstruct_rand = GTrandomize(GTstruct, varargin)
+p = inputParser;
+addParameter(p, 'ResField', [], @iscell);
+addParameter(p, 'MeasureFunc', [], @isstring);
+addParameter(p, 'Iterations', [], @isnumeric)
+parse(p, varargin{:});
+
+ResField = p.Results.ResField;
+MeasureFunc =  p.Results.MeasureFunc;
+Iterations =  p.Results.Iterations;
+
+if nargin < 4
+    Iterations = 1000;
+else
+    Iterations = varargin{2};
+end
+
+myfunc = str2func(MeasureFunc);
 
 
 % Initialize matrix from the results of the first object
-sizes_GT_res = size( myfunc(GTres(1).(resfield)) );
+sizes_GT_res = size( myfunc(GTstruct(1).(ResField)) );
 
-res_size = [sizes_GT_res, iterations];
+res_size = [sizes_GT_res, Iterations];
 
-GTres_rand = zeros(res_size);
+GTstruct_rand = zeros(res_size);
 
-for iIter = 1:iterations
+for iIter = 1:Iterations
     
-    GTres_rand_curr = struct();
-    for iRes = 1:length(GTres);
+    GTstruct_rand_curr = struct();
+    for iRes = 1:length(GTstruct);
         try
-        curr_rand = randomizer_bin_und(GTres(iRes).(resfield), 1);
+        curr_rand = randomizer_bin_und(GTstruct(iRes).(ResField), 1);
         catch
-            curr_rand = zeros(size(GTres(iRes).(resfield)));
+            curr_rand = zeros(size(GTstruct(iRes).(ResField)));
         end;
-        GTres_rand_curr(iRes).measure = myfunc(curr_rand); % note the generic name "measure" as field
+        GTstruct_rand_curr(iRes).measure = myfunc(curr_rand); % note the generic name "measure" as field
             %fprintf([num2str(iIter), num2str(iRes), '\n']);
 
     end;
-    curr_Ave = GTaverage(GTres_rand_curr, {'measure'});
+    curr_Ave = GTaverage(GTstruct_rand_curr, {'measure'});
     
-    GTres_rand(:,:,iIter) = curr_Ave.measure;
+    GTstruct_rand(:,:,iIter) = curr_Ave.measure;
     
     
         

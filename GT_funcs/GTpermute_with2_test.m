@@ -1,4 +1,4 @@
-%% GTpermute_with2(GTstruct1, GTstruct2, resfield, varargin)
+%% GTpermute_with2(GTstruct1, GTstruct2, ResField, value, 'Iterations', value, 'ResMat', value)
 %
 % This function perform a permutation test from two GT struct
 % using a procedure as in Brookes at al 2016 (Neuroimage). http://dx.doi.org/10.1016/j.neuroimage.2016.02.045
@@ -20,11 +20,11 @@
 %
 % - GTstruct1: the first GTstruct
 % - GTstruct2: the second GTstruct
-% - resfield: a cell with the fields of the GTstruct that should be used
+% - ResField: a cell with the fields of the GTstruct that should be used
 %              to calculated permuted average.
-% - iterations: number indicating the number of permutation (default is
+% - Iterations: number indicating the number of permutation (default is
 % 1000).
-%
+% - ResMat: string indicating ... 
 % currently it works only with one field.
 %
 % OUTPUT:
@@ -38,19 +38,29 @@
 
 
 
-function [obs_diff_mat, p_mat_fdr, p_mat_unc, Rand_res] = GTpermute_with2(GTstruct1, GTstruct2, resfield,  iterations, res_mat)
+function [obs_diff_mat, p_mat_fdr, p_mat_unc, Rand_res] = GTpermute_with2(GTstruct1, GTstruct2, varargin)
+p = inputParser;
+addParameter(p, 'ResField', [], @iscell);
+addParameter(p, 'Iterations', [], @isnumeric)
+addParameter(p, 'ResMat', [], @ischar)
+parse(p, varargin{:});
+
+ResField = p.Results.ResField;
+Iterations =  p.Results.Iterations;
+ResMat =  p.Results.ResMat;
+
 % preliminary checks
 
 if nargin < 3
-    error('3 inputs are mandatory: GTstruct1, GTstruct2 and the resfield')    
+    error('3 inputs are mandatory: GTstruct1, GTstruct2 and the ResField')    
 end;
 
 if nargin < 4
-    iterations = 1000;
+    Iterations = 1000;
 end;
 
 if nargin < 5
-    res_mat = 'upper';
+    ResMat = 'upper';
 end;
 
 
@@ -60,20 +70,20 @@ n_subj = length(GTstruct1);
 n_groups = 2;
 
 % first isolate only half matrix according to resmat
-GTstruct1 = GTdiag_mat(GTstruct1, resfield, res_mat);
-GTstruct2 = GTdiag_mat(GTstruct2, resfield, res_mat);
+GTstruct1 = GTdiag_mat(GTstruct1, ResField, ResMat);
+GTstruct2 = GTdiag_mat(GTstruct2, ResField, ResMat);
 
 % create observed average
-obs_ave1 = GTaverage(GTstruct1, {resfield});
-obs_ave2 = GTaverage(GTstruct2, {resfield});
+obs_ave1 = GTaverage(GTstruct1, {ResField});
+obs_ave2 = GTaverage(GTstruct2, {ResField});
 
 % create observed difference of average
-obs_diff = GTdifference(obs_ave1, obs_ave2, {resfield});
+obs_diff = GTdifference(obs_ave1, obs_ave2, {ResField});
 
 
 
-% for loop over iterations
-for iIter = 1:iterations
+% for loop over Iterations
+for iIter = 1:Iterations
     
     % permute labels
     perm_signs = datasample([1, -1], n_subj);
@@ -85,16 +95,16 @@ for iIter = 1:iterations
     for iSubj = 1:n_subj
         
             if perm_signs(iSubj) == 1 % case one: don't swap
-                GTrand_subj1(iSubj).(resfield) = GTstruct1(iSubj).(resfield);
-                GTrand_subj2(iSubj).(resfield) = GTstruct2(iSubj).(resfield);
+                GTrand_subj1(iSubj).(ResField) = GTstruct1(iSubj).(ResField);
+                GTrand_subj2(iSubj).(ResField) = GTstruct2(iSubj).(ResField);
             elseif perm_signs(iSubj) == -1 % case two: swap.
-                GTrand_subj1(iSubj).(resfield) = GTstruct2(iSubj).(resfield);
-                GTrand_subj2(iSubj).(resfield) = GTstruct1(iSubj).(resfield);
+                GTrand_subj1(iSubj).(ResField) = GTstruct2(iSubj).(ResField);
+                GTrand_subj2(iSubj).(ResField) = GTstruct1(iSubj).(ResField);
             end;        
     end;
     
-    GTrand1 = GTaverage(GTrand_subj1, {resfield});
-    GTrand2 = GTaverage(GTrand_subj2, {resfield});
+    GTrand1 = GTaverage(GTrand_subj1, {ResField});
+    GTrand2 = GTaverage(GTrand_subj2, {ResField});
 
     % store results
     % initialize the object at first iteration
@@ -103,7 +113,7 @@ for iIter = 1:iterations
         GTperm2= GTrand2;
 
     else
-        %update existing objects in later iterations
+        %update existing objects in later Iterations
         GTperm1(end+1) = GTrand1;
         GTperm2(end+1) = GTrand2;
 
@@ -115,7 +125,7 @@ for iIter = 1:iterations
     %imagesc(GTrand2.mat_or)  
     
     % draw progress
-    GTprogressbar(iIter, iterations);
+    GTprogressbar(iIter, Iterations);
     
 end;
 
@@ -124,9 +134,9 @@ end;
     Rand_values = Rand_values(:);
     Rand_res = Rand_values(~isnan(Rand_values)); % important. exclude NaN
     
-    % p_res = arrayfun(@(x)(invprctile(Rand_res, x)), obs_diff.(resfield)); 
+    % p_res = arrayfun(@(x)(invprctile(Rand_res, x)), obs_diff.(ResField)); 
     
-    values_mat = obs_diff.(resfield);
+    values_mat = obs_diff.(ResField);
     values = values_mat(:); % to unlist in a vector
     
     % to take into account that I want extreme values Itransform everything in negative absolute values 

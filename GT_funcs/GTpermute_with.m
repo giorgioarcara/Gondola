@@ -1,10 +1,10 @@
-%% GTpermute_with(GTstruct1, GTstruct2, resfields, varargin)
+%% GTpermute_with(GTstruct1, GTstruct2, 'ResFields', value, 'Iterations', value)
 %
 % (WITHIN SUBJECT PERMUTATION)
-% This function takes as input a cell with EXACTLY two GTres structs with single
+% This function takes as input a cell with EXACTLY two GTstructs with single
 % subjects data. It considers each GTstruct as a repeated measures from the same group (betwithinween).
 % Each iteration (default = 1000) it shuffles the labels and computes a by
-% group average. It then return an object with the n=iterations Average computed with permutated labels.
+% group average. It then return an object with the n=Iterations Average computed with permutated labels.
 % The results may be used to compute a null distriubtion to be compared
 % with observed data.
 %
@@ -12,9 +12,9 @@
 %
 % - GTstruct1: the first GTstruct
 % - GTstruct2: the second GTstruct
-% - resfields: a cell with the fields of the GTstruct that should be used
+% - ResFields: a cell with the fields of the GTstruct that should be used
 %              to calculated permuted average.
-% - iterations: number indicating the number of permutation (default is
+% - Iterations: number indicating the number of permutation (default is
 % 1000).
 %
 % currently it works only with one field.
@@ -26,21 +26,31 @@
 
 
 
-function GTperm = GTpermute_with(GTstruct1, GTstruct2, resfields, varargin)
+function GTperm = GTpermute_with(GTstruct1, GTstruct2, varargin);
+
+p = inputParser;
+addParameter(p, 'ResField', [], @iscell);
+addParameter(p, 'Iterations', [], @isnumeric)
+parse(p, varargin{:});
+
+ResField = p.Results.ResField;
+Iterations =  p.Results.Iterations;
+
 % preliminary checks
 
 if nargin < 3
-    error('3 inputs are mandatory: GTstruct1, GTstruct2 and the resfields')
+    error('3 inputs are mandatory: GTstruct1, GTstruct2 and the ResFields')
 elseif nargin ==3
-    iterations = 1000;
+    Iterations = 1000;
 else
-    iterations = varargin{1};
+    Iterations = varargin{2};
 end
+
 
 % NOTE: current version is probablty suboptimal in terms of computation.
 % alternative strategy would be: to create a difference results just onnce
 %
-% GTresdiff = GTdifference(GTstruct1, GTstruct2, resfields);
+% GTresdiff = GTdifference(GTstruct1, GTstruct2, ResFields);
 %
 % then convert in a matrix with one subject per row and one vector per all conn
 % values and then mutliplicate with a random vector (just repated scalar
@@ -57,7 +67,7 @@ end
 % I'm keeping this version to avoid complicated code (it shoudl works with
 % multiple fields).
 
-GTresdiff = GTdifference(GTstruct1, GTstruct2, resfields);
+GTresdiff = GTdifference(GTstruct1, GTstruct2, ResFields);
 
 n_subj = length(GTstruct1);
 
@@ -67,8 +77,8 @@ n_groups = 2;
 % initialize result object
 GTperm = struct();
 
-% for loop over iterations
-for iIter = 1:iterations
+% for loop over Iterations
+for iIter = 1:Iterations
     
     % permute labels
     perm_signs = datasample([1, -1], n_subj);
@@ -79,24 +89,24 @@ for iIter = 1:iterations
         
         % multiply the random sign for every subject
         % (loop over every field)
-        for iField = 1:length(resfields);
-            GTrand_subj(iSubj).(resfields{iField}) = GTresdiff(iSubj).(resfields{iField}) * perm_signs(iSubj);
+        for iField = 1:length(ResFields);
+            GTrand_subj(iSubj).(ResFields{iField}) = GTresdiff(iSubj).(ResFields{iField}) * perm_signs(iSubj);
         end;
         
     end;
     
-    GTrand = GTaverage(GTrand_subj, resfields);
+    GTrand = GTaverage(GTrand_subj, ResFields);
     % store results
     % initialize the object at first iteration
     if iIter == 1
         GTperm= GTrand;
     else
-        %update existing objects in later iterations
+        %update existing objects in later Iterations
         GTperm(end+1) = GTrand;
     end;
     
     % draw progress
-    GTprogressbar(iIter, iterations);
+    GTprogressbar(iIter, Iterations);
     
 end;
 

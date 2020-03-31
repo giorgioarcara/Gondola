@@ -1,4 +1,4 @@
-%% GTFreqExtract(GTstruct, conn_mat_field, Freq_dim);
+%% GTFreqExtract(GTstruct,'ConnMatField', value,'FreqDim', value);
 %
 % This function select can be used to extract a single frequency from a
 % multidimensional matrix with more than one frequency.
@@ -6,19 +6,28 @@
 %
 % INPUT: 
 %
-% - GTres: a struct, resulting from BCT script analysis
-% - conn_mat: the name of the field with the data
-% - Freq_dim: the dimension specifying the matrix (from Brainstorm export)
+% - GTstruct: a struct, resulting from BCT script analysis
+% - ConnMatField: the name of the field with the data
+% - FreqDim: the dimension specifying the matrix (from Brainstorm export)
 
-function GTres = GTFreqExtract(GTstruct, conn_mat_field, Freq_dim)
+function GTstruct = GTFreqExtract(GTstruct, varargin)
+% part to check if, in a given group
+p = inputParser;
+addParameter(p, 'ConnMatField', [], @ischar);
+addParameter(p, 'FreqDim', [], @isnumeric);
+
+parse(p, varargin{:});
+
+ConnMatField = p.Results.ConnMatField;
+FreqDim =  p.Results.FreqDim;
  
 % initialize results
-GTres = GTstruct;
+%GTres = GTstruct;
 
 % loop over all objects in GTstruct and compute the measure.
 for iK = 1:length(GTstruct)
-    temp = GTstruct(iK).(conn_mat_field);
-    GTres(iK).(conn_mat_field) = squeeze(temp(:,:,Freq_dim));
+    temp = GTstruct(iK).(ConnMatField);
+    GTstruct(iK).(ConnMatField) = squeeze(temp(:,:,FreqDim));
     
     
 end;

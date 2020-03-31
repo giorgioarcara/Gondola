@@ -16,9 +16,7 @@ function GTstruct = GTsel(GTstruct, varargin)
 % part to check if, in a given group
 p = inputParser;
 addParameter(p, 'Field', [], @ischar);
-
-checkContent = @(x) isnumeric(x) | ischar(x) ;
-
+checkContent = @(x) isnumeric(x) | ischar(x);
 addParameter(p, 'Content', [], checkContent);
 
 parse(p, varargin{:});

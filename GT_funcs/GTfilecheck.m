@@ -47,7 +47,9 @@ GTcheck = struct();
 % load all data
 for iFile = 1:length(GTfiles)
     curr_mat = load(GTfiles{iFile});
-    curr_mat = curr_mat.Conn; % enter in the struct loaded
+    %curr_mat = curr_mat.Conn;
+    % mi da errore in questo punto Reference to non-existent field 'Conn'
+    % enter in the struct loaded
     
     % GET FIELD NAMES
     curr_GTfields = fields(curr_mat);

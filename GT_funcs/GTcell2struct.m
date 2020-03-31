@@ -1,10 +1,10 @@
 % GTcell2struct(GTcellres)
 %
-% This function takes as input a GTrescell object (cell containing GTres
+% This function takes as input a GTstructcell object (cell containing GTstruct
 % object) and return a single struct with all objects.
 %
 % INPUT
-% - GTrescell: the GTres cell with the results (usually for varying
+% - GTcellres: the GTstruct cell with the results (usually for varying
 % thresholds).
 %
 %
@@ -15,12 +15,12 @@
 %
 %
 
-function GTres = GTcell2struct(GTcellres);
+function GTstruct = GTcell2struct(GTcellres);
 
-GTres = GTcellres{1};
+GTstruct = GTcellres{1};
 
     for iCell = 2:length(GTcellres)
-        GTres = [GTres, GTcellres{iCell}];
+        GTstruct = [GTstruct, GTcellres{iCell}];
     end;
 end
 

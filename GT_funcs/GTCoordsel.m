@@ -1,24 +1,21 @@
-%% GTCoordel(GTCoord, 'NodeField', value, 'CoordField', value, 'Nodesel', value);
+%% GTCoordel(Coord, 'NodeField', value, 'Nodesel', value, 'CoordField', value);
 %
-% This function start from a GT struct. It selects the rows and columns of the GTCoordinate matrix data
+% This function start from a GT struct. It selects the rows and columns of the Coordinate matrix data
 % given some names, supplied as a cell and associated to nodes (i.e., rows
 % and columns).
 %
 %
 % INPUT:
 %
-% - GTGTCoord: a GTGTCoord struct for analysis in Gondola (contain GTCoordinate
+% - GTCoord: a GTCoord struct for analysis in Gondola (contain Coordinate
 % labels, and xyz in mri)
-%
-%
-% - NodeField: the name of the field (in GTCoord) with the labels of the
-%               GTCoordinates. DEFAULT = 'labels'
-% - CoordField: the name of the field containing the adjacency matrices.
-% 'DEFAULT = 'xyz';
+% - Nodecell: the cell containing the names of the Node. The length should be
+%            the same of Coordinates xyz.
 % - Nodesel: a cell with the names of the Nodes to be selected.
+% - CoordField: the name of the field containing the adjacency matrices.
 %
 %
-% EXAMPLE: GTCoord_sel = GTGTCoordsel(GTCoords, 'NodeField', 'labels', 'Nodesel', my_nodes, 'CoordField', 'xyz');
+% EXAMPLE: Coord_sel = GTCoordsel(Coords, 'NodeField', 'labels', 'Nodesel', my_nodes, 'CoordField', 'xyz');
 %
 %
 %  
@@ -26,7 +23,7 @@
 % Author: Giorgio Arcara
 % Data: 13/01/2020
 
-function GTCoord_res = GTCoordsel(GTCoord, varargin)
+function Coord_res = GTCoordsel(Coord, varargin)
 
 % part to check if, in a given group
 p = inputParser;
@@ -41,27 +38,15 @@ NodeField = p.Results.NodeField;
 Nodesel =  p.Results.Nodesel;
 CoordField =  p.Results.CoordField;
 
-% default values
-
-if isempty(CoordField)
-    CoordField = 'xyz';
-end;
-
-if isempty(NodeField)
-    NodeField = 'labels';
-end;
-
-%%
-
 % find indices of Node
-All_Nodes = GTCoord.(NodeField);
-All_GTCoords=GTCoord.(CoordField);
+All_Nodes = Coord.(NodeField);
+All_Coords=Coord.(CoordField);
 
 [~, Node_ind, ~] = intersect(All_Nodes, Nodesel, 'stable');
 
 
-GTCoord_res.(NodeField) = All_Nodes(Node_ind);
-GTCoord_res.(CoordField) = All_GTCoords(Node_ind,:);
+Coord_res.(NodeField) = All_Nodes(Node_ind);
+Coord_res.(CoordField) = All_Coords(Node_ind,:);
 
 
 
