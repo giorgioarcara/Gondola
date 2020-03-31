@@ -1,4 +1,4 @@
-% GTgetfields_FileName(FileNames, FileNamefields, FileNameIgnore, structfields)
+%% GTgetfields_FileName(FileNames, 'FileNamefields',value, 'FileNameIgnore', value)
 %
 % This function takes as input a cell with FileNames and retrieve some
 % useful information from the name (splitting according to specified criteria)
@@ -17,11 +17,11 @@
 % FileNamefields could be subject_condition_Freq, that will lead to the
 % struct with fields:
 % 
-% GTres.subject
-% GTres.condition
-% GTres.Freq
+% GTstruct.subject
+% GTstruct.condition
+% GTstruct.Freq
 %
-% GTres = GTgetfields_FileName(all_files, 'FileNamefields', 'measure_nscouts_XX_type_XX_XX_time_Subject_cond', 'FileNameIgnore', '.mat')
+% GTstruct = GTgetfields_FileName(all_files, 'FileNamefields', 'measure_nscouts_XX_type_XX_XX_time_Subject_cond', 'FileNameIgnore', '.mat')
 %                  
 %
 % Author: Giorgio Arcara
@@ -30,19 +30,17 @@
 %
 %
 
-function GTres = GTgetfields_FileName(FileNames, varargin);
+function GTstruct = GTgetfields_FileName(FileNames, varargin);
 
 
 % part to check if, in a given group
 p = inputParser;
 addParameter(p, 'FileNamefields', [], @isstr);
 addParameter(p, 'FileNameIgnore', [], @isstr);
-addParameter(p, 'structfields', [], @iscell);
 
 parse(p, varargin{:});
 
 FileNameFields = p.Results.FileNamefields;
-structfields = p.Results.structfields;
 FileNameIgnore =  p.Results.FileNameIgnore;
 
 
@@ -72,7 +70,7 @@ for iFile = 1:length(FileNames)
     % loop over fields (only the one to include).
     for iField = incl_indices
         
-        GTres(iFile).( split_pattern{iField} ) = curr_filename_split{iField};
+        GTstruct(iFile).( split_pattern{iField} ) = curr_filename_split{iField};
         
     end;
     

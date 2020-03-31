@@ -32,10 +32,11 @@ addParameter(p, 'otherfields', [], @iscell);
 
 parse(p, varargin{:});
 
-Nodecell = p.Results.Nodecell;
-Nodesel =  p.Results.Nodesel;
-DataField =  p.Results.DataField;
-otherfields =  p.Results.otherfields;
+ Nodecell = p.Results.Nodecell;
+ Nodesel =  p.Results.Nodesel;
+ DataField =  p.Results.DataField;
+ otherfields =  p.Results.otherfields;
+
 
 
 % initialize empty object

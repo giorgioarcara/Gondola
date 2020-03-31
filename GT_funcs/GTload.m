@@ -1,14 +1,14 @@
-% GTres = GTload(FileNames, FileNameFields, FileNameIgnore, StructNameFields)
+%% GTstruct = GTload('FileNames',value, 'FileNameFields', value, 'FileNameIgnore', value, 'StructNameFields', value)
 %
 % This function takes as input a list of FileName and import them.
 % additional input can be specified to create fields from FileName or from
 % info in the struct.
 %
 % INPUT
-% - GTres: the GTres struct with the results
-% - resfields: the name of the fields that will be averaged
-% - otherfields: otherfields to be stored (inherits from the first subject)
-%
+% - Filenames: List of the files to import
+% - FileNameFields: the name of the fields to load
+% - FileNameIgnore: 
+% - StructNameFields:
 % NOTE: the function some all the values and then divide by the numebrs
 %       so missing values can lead to wrong resuls
 %
@@ -19,7 +19,7 @@
 %
 %
 
-function GTres = GTload(FileNames, varargin);
+function GTstruct = GTload(FileNames, varargin);
 
 
 p = inputParser;

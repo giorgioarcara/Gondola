@@ -1,4 +1,4 @@
-%% GTvec_ttest(GTres_diff)
+%% GTvec_ttest2(GTres_diff)
 %
 % This functions perform a indepdent sample t-test.
 % Currently you can also use the function supplying a struct with difference scores

@@ -1,4 +1,4 @@
-% GTprogressbarcurr_Iter, iterations, vargin)
+% GTprogressbar(curr_Iter, iterations, vargin)
 % this function show an update (on the prompt) on processes
 %
 % INPUT

@@ -1,4 +1,4 @@
-%% GTdiag_mat(GTstruct, resfield, type);
+%% GTdiag_mat(GTstruct, 'ResField', value, 'Type', value);
 %
 % This function extract (from a GTstruct) the upper or lower
 % triangular matrix (diagonal excluded), substituting with NaN, all other
@@ -6,24 +6,34 @@
 %
 % INPUT:
 %
-% - GTres: a struct, resullting from BCT script analysis
-% - field: the field for the selection
-% - type: 'upper' or 'lower'.
+% - GTstruct: a struct, resullting from BCT script analysis
+% - ResField: the field for the selection
+% - Type: 'upper' or 'lower'.
 
-function GTres_diag = GTdiag_mat(GTstruct, resfield, type)
+function GTstruct_diag = GTdiag_mat(GTstruct, varargin)
+
+p = inputParser;
+addParameter(p, 'ResField', [], @ischar);
+addParameter(p, 'Type', [], @ischar);
+
+parse(p, varargin{:});
+
+ResField = p.Results.ResField;
+Type =  p.Results.Type;
+
 
 if nargin < 3
-    type == 'upper'
+    Type == 'upper'
 end;
 
-GTres_diag = GTstruct;
+GTstruct_diag = GTstruct;
 
-if strcmp(type, 'upper')
+if strcmp(Type, 'upper')
     
     % loop over all objects in GTstruct and compute the measure.
     for iK = 1:length(GTstruct)
         
-        curr_res_field = triu(GTstruct(iK).(resfield));
+        curr_res_field = triu(GTstruct(iK).(ResField));
         
         % generate mask only at first loop
         if iK==1
@@ -32,17 +42,17 @@ if strcmp(type, 'upper')
         
         curr_res_field(x==1) = NaN ;
         
-        GTres_diag(iK).(resfield) = curr_res_field;
+        GTstruct_diag(iK).(ResField) = curr_res_field;
 
     end;  
 end
 
-if  strcmp(type, 'lower')
+if  strcmp(Type, 'lower')
     
     % loop over all objects in GTstruct and compute the measure.
     for iK = 1:length(GTstruct)
         
-        curr_res_field = tril(GTstruct(iK).(resfield))
+        curr_res_field = tril(GTstruct(iK).(ResField))
         
         % generate mask only at first loop
         if ik==1
@@ -51,7 +61,7 @@ if  strcmp(type, 'lower')
         
         curr_res_field(x==1) = NaN ;
         
-        GTres_diag(iK).(resfield) = curr_res_field;
+        GTstruct_diag(iK).(ResField) = curr_res_field;
 
     end;  
 end

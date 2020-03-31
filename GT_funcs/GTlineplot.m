@@ -1,16 +1,16 @@
-%% GTlineplot(GTres, resfield, labelfields, n_cols, Coord_names)
+%% GTlineplot(GTstruct, 'ResField', 'value', 'LabelFields', {value}, 'Ncols', value, 'Ylimits', 'value')
 %
-% This function takes as input a GTres object (object with results from a
+% This function takes as input a GTstruct object (object with results from a
 % analysis with BCT_analysis.m script) and
 % create a lineplot with all results. Useful for
 % inspection. The function also uses a customize datatip to help identify
 % the Node.
 %
 % INPUT
-% - GTres: the GTres struct with the results.
-% - resfield: the name of the field tha will be plotted.
+% - GTstruct: the GTstruct struct with the results.
+% - ResField: the name of the field tha will be plotted.
 % - labelfield: the name of the field to title the subplot.
-% - Coord_names: the names of the Nodes (to be displayed in the x axis).
+% - CoordNames: the names of the Nodes (to be displayed in the x axis).
 % - Ylimits: the colors (default is automatic and is taken from min and max of
 % all data). If "ind" is specified individual clim are made (based on
 % minimum and maximum of each subject.
@@ -20,33 +20,47 @@
 % version: 12/01/2018
 %
 %
-function fig = GTlineplot(GTres, resfield, labelfields ,Coord_names, ylimits);
+function fig = GTlineplot(GTstruct,varargin);
+
+p = inputParser;
+addParameter(p, 'ResField', [], @ischar);
+addParameter(p, 'LabelFields', [], @iscell);
+addParameter(p, 'Ncols', [], @isnumeric);
+checkContent = @(x) isnumeric(x) | ischar(x);
+addParameter(p, 'Ylimits', [], checkContent);
+
+parse(p, varargin{:});
+
+ResField = p.Results.ResField;
+LabelFields =  p.Results.LabelFields;
+Ncols =  p.Results.Ncols;
+Ylimits =  p.Results.Ylimits;
 
 
-if (~exist('Coord_names'));
-    Coord_names=''
+if (~exist('CoordNames'));
+    CoordNames=''
 end;
 
 
 
 % initialize object to be used for the Xticks (the node labels)
-curr_names = cell(1, length(GTres));
+curr_names = cell(1, length(GTstruct));
 
 figure
-for iSubj = 1:length(GTres)    
+for iSubj = 1:length(GTstruct)    
    hold on
-   plot(GTres(iSubj).(resfield));
+   plot(GTstruct(iSubj).(ResField));
     
     % define curr name
-    if ~isempty(labelfields)
+    if ~isempty(LabelFields)
         % define title in a loop (if several fields are supplied).
-        if (iscell(labelfields) & length(labelfields)>1)
+        if (iscell(LabelFields) & length(LabelFields)>1)
             curr_name =[];
-            for iF=1:length(labelfields)
-                curr_name = [curr_name, ' ', GTres(iSubj).(labelfields{iF})];
+            for iF=1:length(LabelFields)
+                curr_name = [curr_name, ' ', GTstruct(iSubj).(LabelFields{iF})];
             end;
         else
-            curr_name =  GTres(iSubj).(labelfields);
+            curr_name =  GTstruct(iSubj).(LabelFields);
         end
         
         curr_names{iSubj} = curr_name;
@@ -59,14 +73,14 @@ hold off
 % set cursor stuff
 dcm=datacursormode;
 datacursormode on
-Coord = Coord_names;
+Coord = CoordNames;
 set(dcm, 'updatefcn', {@myFunction, Coord}); % note here that I specify the argument Coord to be used in the personalized Datatip.
 
 
-set(gca, 'XTick', 1:length(Coord_names), 'XTickLabel', Coord_names, 'XTickLabelRotation', 90);
+set(gca, 'XTick', 1:length(CoordNames), 'XTickLabel', CoordNames, 'XTickLabelRotation', 90);
 
-if exist('ylimits')
-    set(gca, 'Ylim', ylimits);
+if exist('Ylimits')
+    set(gca, 'Ylim', Ylimits);
 end;
 
 % change legend line width (taken from

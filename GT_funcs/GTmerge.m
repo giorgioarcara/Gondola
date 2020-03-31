@@ -1,4 +1,4 @@
-% StructMerge(struct1, struct2)
+% StructMerge(GTstruct1, GTstruct2)
 %
 % This function merge two structs. It assumes that the structs have
 % the same number of elements that refers to the same observations.

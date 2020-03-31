@@ -1,4 +1,4 @@
-% GTimport_bst(FileNames, StructFields, ResFields, DataPath)
+%% GTimport_bst(FileNames, 'StructFields',value, 'ResFields', value, 'DataPath', value)
 %
 % This function takes as input a cell with FileNames. This files are
 % expected to be Brainstorm Files as imported with process_export_conn_mat
@@ -9,7 +9,9 @@
 % - FileNames:A cell with the Filenames
 % - StructFields: a cell of strings indicating the FileNameFields that
 %                   will be imported
-% - ResFields:  the name that will be used in the newly created struct.
+% - ResFields: the name that will be used in the newly created struct.
+% - DataPath: the full path where the data are stored or a
+% variable containing the data path
 %
 %
 %

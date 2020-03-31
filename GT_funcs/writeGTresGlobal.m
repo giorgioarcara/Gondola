@@ -1,4 +1,4 @@
-%% writeGTresGlobal(GTres, resfields, labfields, outdir)
+%% writeGTresGlobal(GTres, 'ResFields',{value}, 'LabFields', {value}, OutDir, 'value')
 %
 % This function take as input several a GTres struct (as obtained by a
 % BCT_analysis.m script) and export the results of a Global variable 
@@ -7,36 +7,47 @@
 %
 % INPUT:
 % - GTres: a GTres object (a struct with results of GT analysis).
-% - resfields: a cell with the names of the fields that should be exported
-% - NodeLabels: a cell with the NodeLabels, in the same order of resfields
-% data
-% - labfields: other fields to be added (typically subject name labels).
+% - ResFields: a cell with the names of the fields that should be exported
+% - LabFields: a cell with other fields to be added (typically subject name labels)
+% - OutDir= a string with the directory of the file to be saved
 %
 % Author: Giorgio Arcara
 %
 % version: 12/1/2018
 
 
-function writeGTresGlobal(GTres, resfields, labfields, outdir)
+function writeGTresGlobal(GTres, varargin)
+p = inputParser;
+addParameter(p, 'ResFields', [], @iscell);
+addParameter(p, 'LabFields', [], @iscell);
+addParameter(p, 'OutDir', [], @isstring);
 
-%% resfields (numeric results to be exported, one per Subejct).
+
+parse(p, varargin{:});
+
+ResFields = p.Results.ResFields;
+LabFields =  p.Results.LabFields;
+OutDir =  p.Results.OutDir;
+
+
+%% ResFields (numeric results to be exported, one per Subejct).
 
 res_names = fields(GTres);
 
 res_cell=squeeze(struct2cell(GTres));
 
 % find indices corresponding to name
-[~, ind, ~] = intersect(res_names, resfields);
+[~, ind, ~] = intersect(res_names, ResFields);
 
 restemp = res_cell(ind, :);
 
 res = cell2mat(restemp);
 res = res';
 
-%% labfields (numeric results to be exported, one per Subject).
+%% LabFields (numeric results to be exported, one per Subject).
 
 % find indices corresponding to name
-[~, ind, ~] = intersect(res_names, labfields);
+[~, ind, ~] = intersect(res_names, LabFields);
 
 lab = res_cell(ind, :);
 
@@ -45,12 +56,12 @@ lab = lab';
 export_lab = lab;
 
 %% EXPORT FILE FOR NBS
-export_file=[outdir 'GT_Globalresults.txt'];
+export_file=[OutDir 'GT_Globalresults.txt'];
 
 fid = fopen(export_file, 'w');
 
-fprintf(fid, '%s ', resfields{:});
-fprintf(fid, '%s ', labfields{:});
+fprintf(fid, '%s ', ResFields{:});
+fprintf(fid, '%s ', LabFields{:});
 fprintf(fid, '\n', '');
 
 for i=1:size(res,1);%
@@ -59,7 +70,4 @@ for i=1:size(res,1);%
     fprintf(fid, '\n', '');
 end;
 fclose(fid);
-
-
-
         

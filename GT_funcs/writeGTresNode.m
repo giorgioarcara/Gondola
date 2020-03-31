@@ -1,4 +1,4 @@
-%% writeGTresNode(GTres, resfields, labfields, NodeLabels)
+%% writeGTresNode(GTres, ResField, LabField, NodeLabels)
 %
 % This function take as input several a GTres struct (as obtained by a
 % BCT_analysis.m script)
@@ -7,36 +7,51 @@
 %
 % INPUT:
 % - GTres: a GTres object (a struct with results of GT analysis).
-% - resfields: a cell with the names of the fields that should be exported
-% - NodeLabels: a cell with the NodeLabels, in the same order of resfields
+% - ResField: a cell with the names of the fields that should be exported
+% - NodeLabels: a cell with the NodeLabels, in the same order of ResField
 % data
-% - labfields: other fields to be added (typically subject name labels).
-%
+% - LabField: a cell with other fields to be added (typically subject name labels).
+% - OutDir = a string with the directory of the file to be saved
 % Author: Giorgio Arcara
 %
 % version: 12/1/2018
 
 
-function writeGTresNode(GTres, resfields, labfields, NodeLabels, outdir)
+function writeGTresNode(GTres, varargin)
 
-%% resfields (numeric results to be exported, one per node).
+p = inputParser;
+addParameter(p, 'ResField', [], @iscell);
+addParameter(p, 'LabField', [], @iscell);
+addParameter(p, 'NodeLabel', [], @iscell);
+addParameter(p, 'OutDir', [], @isstring);
+
+
+parse(p, varargin{:});
+
+ResField = p.Results.ResField;
+LabField =  p.Results.LabField;
+NodeLabel =  p.Results.NodeLabel;
+OutDir =  p.Results.OutDir;
+
+
+%% ResField (numeric results to be exported, one per node).
 
 res_names = fields(GTres);
 
 res_cell=squeeze(struct2cell(GTres));
 
 % find indices corresponding to name
-[~, ind, ~] = intersect(res_names, resfields);
+[~, ind, ~] = intersect(res_names, ResField);
 
 restemp = res_cell(ind, :);
 
 res = cell2mat(restemp);
 res = res';
 
-%% labfields (numeric results to be exported, one per Subject).
+%% LabField (numeric results to be exported, one per Subject).
 
 % find indices corresponding to name
-[~, ind, ~] = intersect(res_names, labfields);
+[~, ind, ~] = intersect(res_names, LabField);
 
 lab = res_cell(ind, :);
 
@@ -52,8 +67,8 @@ export_file=[outdir 'GT_Noderesults.txt'];
 
 fid = fopen(export_file, 'w');
 
-fprintf(fid, '%s ', resfields{:});
-fprintf(fid, '%s ', labfields{:});
+fprintf(fid, '%s ', ResField{:});
+fprintf(fid, '%s ', LabField{:});
 fprintf(fid, '%s ', 'NodeLabels');
 
 fprintf(fid, '\n', '');

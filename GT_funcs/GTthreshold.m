@@ -1,31 +1,43 @@
-%% GTthreshold(GTstruct, resfield, perc, thresh_fieldname)
+%% GTthreshold(GTstruct, 'ResField', {value}, 'Perc', 'value', 'ThreshFieldName', "value")
 %
 % this function apply a threshold to a 
-% GTstruct. Currently only percentile thresholds are allowed.
+% GTstruct. Currently only Percentile thresholds are allowed.
 %
 % INPUTS:
 %
 % - GTstruct: a GTstruct
-% - resfield: a name with the field containing the matrix on which
+% - ResField: a cell with the name of the field containing the matrix on which
 %             apply the GTthreshold.
-% - thresh: the PERCENTILE (e.g., 80) to define the threshold.
+% - Perc: the PercENTILE (e.g., 80) to define the threshold.
 %
-% - thresh_fieldname: a string with the output name for the thresholded matrix.
+% - ThreshFieldName: a string with the output name for the thresholded matrix.
 %
 %
 % OUTPUTS:
 %
 % GTres_thresh: the original GTstruct with the addition two fields:
-%               - perc, a field with the threshold applied 
+%               - Perc: a field with the percentile value
+%               - Thresh: a field threshold applied
 %               - thresh_name (a as argument) the tresholded matrix
-%               (specified in the resfield).
+%               (specified in the ResField).
 %
 % Author: Giorgio Arcara
 %
 % versione: 4/03/2018
 
 
-function GTres_thresh = GThreshold(GTstruct, resfield, perc, thresh_fieldname)
+function GTres_thresh = GTthreshold(GTstruct, varargin);
+
+p = inputParser;
+addParameter(p, 'ResField', [], @iscell);
+addParameter(p, 'Perc', [], @isnumeric);
+addParameter(p, 'ThreshFieldName', [], @isstring);
+parse(p, varargin{:});
+
+ResField = p.Results.ResField;
+Perc =  p.Results.Perc;
+ThreshFieldName =  p.Results.ThreshFieldName;
+
 
 
 % initialize results
@@ -33,12 +45,12 @@ GTres_thresh = GTstruct;
 
 % loop over all objects in GTstruct and compute the measure.
 for iK = 1:length(GTstruct)
-    temp = squeeze(GTstruct(iK).(resfield)); % get original matrix
+    temp = squeeze(GTstruct(iK).(ResField)); % get original matrix
     temp = nonzeros(triu(temp, 1)); % get only upper matrix, getting rid of diagonal
-    thresh =  prctile(temp, perc); % calculate percentile
-    GTres_thresh(iK).(thresh_fieldname) = threshold_absolute(GTstruct(iK).(resfield), thresh);
-    GTres_thresh(iK).thresh = thresh;
-    GTres_thresh(iK).perc = perc;
+    Thresh =  prctile(temp, Perc); % calculate Percentile
+    GTres_thresh(iK).(ThreshFieldName) = threshold_absolute(GTstruct(iK).(ResField), Thresh);
+    GTres_thresh(iK).thresh = Thresh;
+    GTres_thresh(iK).Perc = Perc;
 
 end;
 

@@ -4,7 +4,7 @@
 % Currently you can also use the function supplying a struct with difference scores
 % as those from GTdifference function.
 % 
-%  res_nat: type of results, default is upper matrix. Options are 'upper',
+%  res_mat: type of results, default is upper matrix. Options are 'upper',
 %  'lower', 'whole',
 %
 % 
