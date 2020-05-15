@@ -1,4 +1,4 @@
-%% GTNodesel(GTstruct, 'Nodecell', value, 'Nodesel', value, 'DataField', value, 'otherfields', value);
+%% GTSelNodes(GTstruct, 'Nodes', {value}, 'SelNodes', value, 'DataField', value, 'OtherFields', value);
 %
 % This function start from a GT struct. It selects the rows and columns of the adjacency matrix data
 % given some names, supplied as a cell and associated to nodes (i.e., rows
@@ -8,10 +8,10 @@
 % INPUT:
 %
 % - GTstruct: a struct for analysis Gondola
-% - Nodecell: the cell containing the names of the Node. The length should be
+% - Nodes: the cell containing the names of the Node. The length should be
 %            the same of the Rows and columns of the adjacency matrix,
 %            supplied as DataField.
-% - Nodesel: a cell with the names of the Nodes to be selected.
+% - SelNodes: a cell with the names of the Nodes to be selected.
 % - DataField: the name of the field containing the adjacency matrices.
 % - othersfields: a cell with name of fields that should be inherited from
 % GTstruct.
@@ -20,49 +20,49 @@
 % Author: Giorgio Arcara
 % Data: 19/11/2019
 
-function GTres = GTNodesel(GTstruct, varargin)
+function GTres = GTSelNodes(GTstruct, varargin)
 
 % part to check if, in a given group
 p = inputParser;
-addParameter(p, 'Nodecell', [], @iscell);
-addParameter(p, 'Nodesel', [], @iscell);
+addParameter(p, 'Nodes', [], @iscell);
+addParameter(p, 'SelNodes', [], @iscell);
 addParameter(p, 'DataField', [], @ischar);
-addParameter(p, 'otherfields', [], @iscell);
+addParameter(p, 'OtherFields', [], @iscell);
 
 
 parse(p, varargin{:});
 
- Nodecell = p.Results.Nodecell;
- Nodesel =  p.Results.Nodesel;
+ Nodes = p.Results.Nodes;
+ SelNodes =  p.Results.SelNodes;
  DataField =  p.Results.DataField;
- otherfields =  p.Results.otherfields;
+ OtherFields =  p.Results.OtherFields;
 
 
 
 % initialize empty object
-if (~isempty(otherfields));
+if (~isempty(OtherFields));
     
     GTres_temp=struct();
     
     % get other fields if specified
-    if (exist('otherfields')&~isempty('otherfields'))
+    if (exist('OtherFields')&~isempty('OtherFields'))
         % first copy all the other fields
-        for fn = otherfields
+        for fn = OtherFields
             for isubj = 1:length(GTstruct);
-                GTres(isubj).(fn{1}) = GTstruct(isubj).(fn{1});
+                GTres_temp(isubj).(fn{1}) = GTstruct(isubj).(fn{1});
             end
         end
     end
     
-elseif (isempty(otherfields))
+elseif (isempty(OtherFields))
     
-    % inherit all fields if otherfields is not specified
+    % inherit all fields if OtherFields is not specified
     GTres_temp = GTstruct;
     
 end;
 
 % find indices of Node
-[~, Node_ind, ~] = intersect(Nodecell, Nodesel, 'stable');
+[~, Node_ind, ~] = intersect(Nodes, SelNodes, 'stable');
 
 % loop over all elements in the struct and select
 for k=1:length(GTstruct);

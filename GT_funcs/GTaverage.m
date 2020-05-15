@@ -1,4 +1,4 @@
-%% GTAvgrage(GTstruct, 'ResField', 'value', 'OtherFields', 'value')
+%% GTAvgrage(GTstruct, 'ResField', {value}, 'OtherFields', 'value')
 %
 % This function takes as input a GTstruct object (object with results from an analysis
 % with a script like BCT_analysis.m) and compute the average of the
@@ -19,23 +19,22 @@
 %
 %
 
-function Avg = GTAvgrage(GTstruct, varargin);
+function Avg = GTAverage(GTstruct, varargin);
 
 p = inputParser;
-addParameter(p, 'ResField', [], @ischar);
-addParameter(p, 'OtherFields', [], @ischar);
+addParameter(p, 'ResField', [], @iscell);
+addParameter(p, 'OtherFields', [], @iscell);
 
 parse(p, varargin{:});
 ResField = p.Results.ResField;
-OtherFields =  p.Results.OtherFields
+OtherFields =  p.Results.OtherFields;
 
-if nargin < 2
-    error('2 inputs are mandatory')
-elseif nargin == 3
+if ~isempty(OtherFields)
     % first copy all the other fields (from the first subject)
-    for fn = varargin{1}
+    for fn = OtherFields
         Avg.(fn{1}) = GTstruct(1).(fn{1});
     end
+    warning('OtherFields have been copied from the first element of the GTstruct')
     
 end
 

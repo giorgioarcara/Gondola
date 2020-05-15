@@ -22,8 +22,8 @@ ResField = p.Results.ResField;
 Type =  p.Results.Type;
 
 
-if nargin < 3
-    Type == 'upper'
+if isempty(Type)
+    Type = 'upper';
 end;
 
 GTstruct_diag = GTstruct;

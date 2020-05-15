@@ -24,6 +24,10 @@ parse(p, varargin{:});
 Field = p.Results.Field;
 Content =  p.Results.Content;
 
+if (isempty(Field) |  isempty(Content))
+    error('Field or Content are empty: check your code')
+end;
+
   
 fieldnames = fields(GTstruct);
 

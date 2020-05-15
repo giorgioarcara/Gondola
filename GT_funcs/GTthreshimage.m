@@ -1,4 +1,4 @@
-%% GTthreshimage(GTmat, 'CoordNames', value, 'Thresholds',[value], 'ThreshMat', value)
+%% GTstatimage(GTmat, 'CoordNames', value, 'Thresholds',[value], 'ThreshMat', value)
 %
 % This functions perform a independent sample t-test.
 %
@@ -10,7 +10,7 @@
 %
 % - Thresholds: a vector with two numbers. The first is the lower threshold
 %               (i.e. lwoer number will be excluded). The second is the upper threshold
-%               (higher number will be excluded. 
+%               (higher number will be excluded.
 %               In the common case to exclude value > 0.05, the Thresholds
 %               should be specified like this [-Inf, 0.05]
 % - ThreshMat: another matrix to exclude values in anothermatrix  (e.g. a pmat to filter a tmat.)
@@ -25,8 +25,9 @@ function [tmat, pmat] = GTthreshimage(GTmat, varargin)
 
 p = inputParser;
 addParameter(p, 'CoordNames', [], @iscell);
-addParameter(p, 'Thresholds', [], @isvector);
-addParameter(p, 'ThreshMat', [], @ismatrix);
+addParameter(p, 'Thresholds', [], @isnumeric);
+addParameter(p, 'ThreshMat', [], @isnumeric);
+addParameter(p, 'DrawLabels', 1, @isnumeric);
 
 
 parse(p, varargin{:});
@@ -34,17 +35,17 @@ parse(p, varargin{:});
 CoordNames = p.Results.CoordNames;
 Thresholds =  p.Results. Thresholds;
 ThreshMat =  p.Results.ThreshMat;
+DrawLabels = p.Results.DrawLabels;
 
-if ~ismatrix(GTmat)
-    error('GTmat must be a matrix')
+if ~isnumeric(GTmat)
+    error('Gondola Error: GTmat must be a matrix');
 end
-
 
 
 % if no Thresholds matrix is specified the GTmatt is used for Thresholds.
 if ~exist('ThreshMat');
     ThreshMat = GTmat;
-end;    
+end;
 
 % setup axis limits
 minv = min(min(GTmat));
@@ -80,17 +81,27 @@ colorbar
 
 %% CREATE LABELS (according to data type).
 % case matrix
-if (size(GTmat,1)>1 & size(GTmat,2)>1);
-    set(gca, 'YTick', 1:length(CoordNames), 'YTickLabel', CoordNames);
-    set(gca, 'XTick', 1:length(CoordNames), 'XTickLabel', CoordNames, 'XTickLabelRotation', 90);
-% case vector
-elseif (size(GTmat,1)>1  & size(GTmat,2)==1) % NOTE that I rotate the GTmat before
-    set(gca, 'YTick', 1:length(CoordNames), 'YTickLabel', CoordNames);
+if DrawLabels
+    
+    set(gca,'TickLabelInterpreter', 'none');
+    
+    if (size(GTmat,1)>1 & size(GTmat,2)>1);
+        set(gca, 'YTick', 1:length(CoordNames), 'YTickLabel', CoordNames);
+        set(gca, 'XTick', 1:length(CoordNames), 'XTickLabel', CoordNames, 'XTickLabelRotation', 90);
+        % case vector
+    elseif (size(GTmat,1)>1  & size(GTmat,2)==1) % NOTE that I rotate the GTmat before
+        set(gca, 'YTick', 1:length(CoordNames), 'YTickLabel', CoordNames);
+        set(gca, 'XTick', [], 'XTickLabel', []);
+        % else (case single value
+    elseif (size(GTmat,1)==1  & size(GTmat,2)==1)
+        set(gca, 'XTick', [])
+    end;
+    
+else
      set(gca, 'XTick', [], 'XTickLabel', []);
-% else (case single value
-elseif (size(GTmat,1)==1  & size(GTmat,2)==1)
- set(gca, 'XTick', [])
+     set(gca, 'YTick', [], 'YTickLabel', []);
 end;
+
 
 
 %% Data tip
@@ -122,7 +133,7 @@ y=pos(2);
 % in this way  I retrive the displayeed value
 % from the ordinal position pos(1) and pos(2)
 if x > 1 % case matrix
-value = round( event_obj.Target.CData(y, x), 2);
+    value = round( event_obj.Target.CData(y, x), 2);
 elseif x ==1 % case vector
     value = round( event_obj.Target.CData(y), 2);
 end;
@@ -131,6 +142,6 @@ end;
 
 % Set output text
 output_txt = {['x: ', Coord{x}], ...
-              ['y: ', Coord{y}], ...
-              ['val:', num2str(value)]};
+    ['y: ', Coord{y}], ...
+    ['val:', num2str(value)]};
 end

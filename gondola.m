@@ -35,5 +35,5 @@ fprintf('\n\n');
 fprintf('--- Gondola toolbox now in search path ---\n');
 % fprintf('--- Requires: BCT toolbox\n');
 fprintf('--- by: Giorgio Arcara, Gian Marco Duma, Marco Marino, Annalisa Pascarella, Giovanni Pellegrino\n');
-fprintf('--- version: 0.1');
+fprintf('--- version: 0.2');
 fprintf('\n\n\n\n');
