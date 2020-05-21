@@ -61,7 +61,7 @@ if n2 == 0;
     end
     
 else
-    size1 = n1 + n2
+    size1 = n1 + n2;
     
     % initialize empty matrix
     Design = zeros(size1, 2);
@@ -81,7 +81,7 @@ else
     end;
     
     % unpaired t-test
-    contr = [-1; 1];
+    contr = [-1 1];
     
     if export_res
         fid = fopen(ContrastFileName);

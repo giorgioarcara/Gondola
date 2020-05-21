@@ -1,4 +1,4 @@
-%% writeGTresNode(GTstruct, 'ResFields', {value}, 'LabFields', {value}, 'NodeLabels', {value})
+%% writeGTresNode(GTstruct, 'ResFields', {value}, 'LabFields', {value}, 'NodeLabels', {value}, 'OutFileName', 'value')
 %
 % This function take as input several a GTres struct (as obtained by a
 % BCT_analysis.m script)
@@ -18,13 +18,13 @@
 % version: 12/1/2018
 
 
-function writeGTresNode(GTres, varargin)
+function ResTable = writeGTresNode(GTres, varargin)
 
 p = inputParser;
 addParameter(p, 'ResFields', [], @iscell);
 addParameter(p, 'LabFields', [], @iscell);
 addParameter(p, 'NodeLabels', [], @iscell);
-addParameter(p, 'OutFileName', 'GT_Noderesults.txt', @ischar);
+addParameter(p, 'OutFileName', [], @ischar);
 
 
 parse(p, varargin{:});
@@ -62,29 +62,43 @@ lab = lab';
 export_lab = repmat(lab, length(NodeLabels), 1);
 export_nodes = repmat(NodeLabels, length(lab), 1);
 
-
-%% EXPORT FILE FOR NBS
-export_file=OutFileName;
-
-fid = fopen(export_file, 'w');
-
-sep=',';
-
-fprintf(fid, ['%s', sep], ResFields{:});
-fprintf(fid, ['%s', sep], LabFields{:});
-fprintf(fid, ['%s', sep], 'NodeLabels');
-
-fprintf(fid, '\n', '');
-
-for i=1:size(res,1);%
-    fprintf(fid, ['%d', sep], res(i,:));
-    LabFields_exp = cellfun(@num2str, export_lab(i,:), 'UniformOutput', 0); % convert to str numeric fields in LabFields
-    fprintf(fid, ['%s', sep], LabFields_exp{:});
-    fprintf(fid, ['%s', sep], export_nodes{i});
-    fprintf(fid, '\n', '');
+% create table
+ResTable = table( );
+ResTable.NodeLabels = export_nodes(:);
+for iF = 1:length(LabFields)
+    ResTable.(LabFields{iF}) = export_lab(:,iF);
 end;
-fclose(fid);
+for iRF = 1:length(ResFields)
+    ResTable.(ResFields{iRF}) = res(:, iRF);
+end;
 
 
 
-        
+
+if ~isempty(OutFileName)
+    %% EXPORT FILE FOR NBS
+    fid = fopen(OutFileName, 'w');
+    
+    sep=',';
+    
+    fprintf(fid, ['%s', sep], ResFields{:});
+    fprintf(fid, ['%s', sep], LabFields{:});
+    fprintf(fid, ['%s', sep], 'NodeLabels');
+    
+    fprintf(fid, '\n', '');
+    
+    for i=1:size(res,1);%
+        fprintf(fid, ['%d', sep], res(i,:));
+        LabFields_exp = cellfun(@num2str, export_lab(i,:), 'UniformOutput', 0); % convert to str numeric fields in LabFields
+        fprintf(fid, ['%s', sep], LabFields_exp{:});
+        fprintf(fid, ['%s', sep], export_nodes{i});
+        fprintf(fid, '\n', '');
+    end;
+    fclose(fid);
+end
+
+end
+
+
+
+

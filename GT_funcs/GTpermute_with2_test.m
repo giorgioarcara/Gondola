@@ -50,6 +50,9 @@ Iterations =  p.Results.Iterations;
 ResMat =  p.Results.ResMat;
 
 % preliminary checks
+if length(GTstruct1)~=length(GTstruct2)
+    error('GT: The length of GTstruct1 should be the same of the length of GTstruct2 (this function is for within subject design).')    
+end;
 
 if nargin < 3
     error('3 inputs are mandatory: GTstruct1, GTstruct2 and the ResField')    

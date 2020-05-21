@@ -31,7 +31,6 @@ addParameter(p, 'NodeField', [], @ischar);
 addParameter(p, 'Nodesel', [], @iscell);
 addParameter(p, 'CoordField', [], @ischar);
 
-
 parse(p, varargin{:});
 
 NodeField = p.Results.NodeField;
@@ -41,6 +40,14 @@ CoordField =  p.Results.CoordField;
 % find indices of Node
 All_Nodes = Coord.(NodeField);
 All_Coords=Coord.(CoordField);
+
+
+
+if (length(unique(All_Nodes))<length(All_Nodes) | length(unique(Nodesel) < length(Nodesel)))
+    error('foo:bar', ['GT: There are some duplicate names in your node names,\n',...
+        'either in the original Nodes or in the selection.\n',...
+        'Please check your input data']);
+end
 
 [~, Node_ind, ~] = intersect(All_Nodes, Nodesel, 'stable');
 

@@ -74,8 +74,8 @@ if (strcmp(option, 'start') |  strcmp(option, 'restart'))
 elseif 'gondola_already_here'
     
     fprintf('\n\n');
-    fprintf('--- Gondola appears to be already in search path ---\n');
-    fprintf('\n\n\');
+    fprintf('--- Gondola appears to be already in the search path ---\n');
+    fprintf('\n\n');
     
 end
 
