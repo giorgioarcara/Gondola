@@ -1,4 +1,4 @@
-%% GTthreshold(GTstruct, 'ResField', {value}, 'Perc', 'value', 'ThreshFieldName', "value")
+%% GTthreshold(GTstruct, 'ResField', 'value', 'Perc', 'value', 'ThreshFieldName', "value")
 %
 % this function apply a threshold to a 
 % GTstruct. Currently only Percentile thresholds are allowed.
@@ -29,9 +29,9 @@
 function GTres_thresh = GTthreshold(GTstruct, varargin);
 
 p = inputParser;
-addParameter(p, 'ResField', [], @iscell);
+addParameter(p, 'ResField', [], @ischar);
 addParameter(p, 'Perc', [], @isnumeric);
-addParameter(p, 'ThreshFieldName', [], @isstring);
+addParameter(p, 'ThreshFieldName', [], @ischar);
 parse(p, varargin{:});
 
 ResField = p.Results.ResField;
@@ -45,7 +45,7 @@ GTres_thresh = GTstruct;
 
 % loop over all objects in GTstruct and compute the measure.
 for iK = 1:length(GTstruct)
-    temp = squeeze(GTstruct(iK).(ResField)); % get original matrix
+    temp = squeeze(GTstruct(iK).(ResField)); % get original matrix % 
     temp = nonzeros(triu(temp, 1)); % get only upper matrix, getting rid of diagonal
     Thresh =  prctile(temp, Perc); % calculate Percentile
     GTres_thresh(iK).(ThreshFieldName) = threshold_absolute(GTstruct(iK).(ResField), Thresh);

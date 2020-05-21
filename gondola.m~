@@ -5,12 +5,12 @@
 
 function gondola(varargin);
 
+option = varargin{1};
+
+
 if nargin==0
     option='start';
-else
-  option = varargin{1};
 end;
-
 
 %
 if exist('gondola', 'file') & nargin==0
@@ -71,12 +71,10 @@ if (strcmp(option, 'start') |  strcmp(option, 'restart'))
     fprintf('--- version: 0.2');
     fprintf('\n\n\n\n');
     
-elseif 'gondola_already_here'
-    
-    fprintf('\n\n');
-    fprintf('--- Gondola appears to be already in search path ---\n');
-    fprintf('\n\n\');
-    
-end
-
-end
+else if 'gondola_already_here'
+        
+        fprintf('\n\n');
+        fprintf('--- Gondola appears to be already in search path ---\n');
+        fprintf('\n\n\n\n');
+        
+    end

@@ -26,7 +26,7 @@ function GTres = GTmeasure(GTstruct, varargin)
 
 p = inputParser;
 addParameter(p, 'ResField', [], @ischar);
-addParameter(p, 'MeasureFunc', [], @isstring);
+addParameter(p, 'MeasureFunc', [], @ischar);
 addParameter(p, 'MeasureName', [], @ischar);
 
 

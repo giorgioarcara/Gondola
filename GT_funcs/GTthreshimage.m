@@ -1,4 +1,4 @@
-%% GTstatimage(GTmat, 'CoordNames', value, 'Thresholds',[value], 'ThreshMat', value)
+%% GTthreshimage(GTmat, 'CoordNames', value, 'Thresholds',[value], 'ThreshMat', value, 'DrawLabels', value)
 %
 % This functions perform a independent sample t-test.
 %
@@ -14,6 +14,8 @@
 %               In the common case to exclude value > 0.05, the Thresholds
 %               should be specified like this [-Inf, 0.05]
 % - ThreshMat: another matrix to exclude values in anothermatrix  (e.g. a pmat to filter a tmat.)
+% - DrawLabels: should labels be plotted? default is 1.
+% - Clim  : set clim
 %
 %
 % Author: Giorgio Arcara
@@ -28,6 +30,7 @@ addParameter(p, 'CoordNames', [], @iscell);
 addParameter(p, 'Thresholds', [], @isnumeric);
 addParameter(p, 'ThreshMat', [], @isnumeric);
 addParameter(p, 'DrawLabels', 1, @isnumeric);
+addParameter(p, 'Clim', [], @isnumeric);
 
 
 parse(p, varargin{:});
@@ -36,6 +39,8 @@ CoordNames = p.Results.CoordNames;
 Thresholds =  p.Results. Thresholds;
 ThreshMat =  p.Results.ThreshMat;
 DrawLabels = p.Results.DrawLabels;
+Clim = p.Results.Clim;
+
 
 if ~isnumeric(GTmat)
     error('Gondola Error: GTmat must be a matrix');
@@ -43,7 +48,7 @@ end
 
 
 % if no Thresholds matrix is specified the GTmatt is used for Thresholds.
-if ~exist('ThreshMat');
+if isempty(ThreshMat);
     ThreshMat = GTmat;
 end;
 
@@ -75,7 +80,13 @@ end;
 figure
 colormap(ddd);
 imagesc(GTmat);
-caxis([minv, maxv]);
+
+if isempty(Clim)
+    caxis([minv, maxv]);
+else
+   caxis(Clim);
+   
+end;
 %set(gca, 'clim', [minv, maxv]);
 colorbar
 

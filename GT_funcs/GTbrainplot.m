@@ -1,4 +1,4 @@
-%% GTbrainplot(GTstruct, 'NodeField', 'value, 'EdgeField','value', 'LabelFields',{value}, 'Coords', value, 'Ncols', value, 'BrainPath','value', 'Labels', {value},'Cmap', value, 'CamView', value, 'CortexAlpha', value)
+%% GTbrainplot(GTstruct, 'NodeField', 'value, 'EdgeField','value', 'LabelFields',{value}, 'Coords', value, 'Ncols', value, 'BrainPath','value', 'Labels', {value},'Cmap', value, 'CamView', value, 'CortexAlpha', value, 'ConnNodes', 1, 'NodeSize', 1)
 %
 % This function plot graph informations (nodes and edges) as specified.
 %
@@ -19,6 +19,9 @@
 %       - Quality:     char: 'lq', for fast low quality figures. 'HQ', for
 %                       high quality figures for publications
 %       - CortexAlpha: alpha (transparency) for the Cortex.
+%       - ConnNodes: 0 or 1. if 1 plot only connected nodes form EdgeField.
+%       - Nodesize: default is 1, dimension of Nodes. Used only if
+%       Nodefield is not supplied.
 %
 % by default the brain data is taken from a folder 'Default/BrainMesh_ICBM152.nv'
 % Coords are xyz of node coordinates.
@@ -43,6 +46,8 @@ addParameter(p, 'Cmap',[], @isnumeric);
 addParameter(p, 'CamView',[], @isnumeric);
 addParameter(p, 'Quality',[], @ischar);
 addParameter(p, 'CortexAlpha',[], @isnumeric);
+addParameter(p, 'ConnNodes',1, @isnumeric);
+addParameter(p, 'NodeSize',1, @isnumeric);
 
 
 parse(p,  varargin{:});
@@ -58,6 +63,10 @@ Cmap = p.Results.Cmap;
 CamView = p.Results.CamView;
 Quality = p.Results.Quality;
 CortexAlpha = p.Results.CortexAlpha;
+CortexAlpha = p.Results.CortexAlpha;
+ConnNodes = p.Results.ConnNodes;
+NodeSize = p.Results.NodeSize;
+
 
 % load brain structure info
 
@@ -68,6 +77,11 @@ end;
 % if ~exist('node_multi')  || isempty(node_multi);
 %     node_multi = 10/length(GTstruct);
 % end;
+
+if isempty(Coords)
+    error('GT: you must specify a Coord struct with xyz field indicating node coordinate');
+end;
+
 if isempty(Ncols);
     Ncols = length(GTstruct);
 end;
@@ -92,6 +106,11 @@ if isempty(CortexAlpha)
     CortexAlpha=0.3;
 end;
 
+if ConnNodes
+    fprintf('\nGT: ConnNodes set to 1: only connected nodes have been plotted\n');
+end;
+
+
 
 
 [vertex_number Braincoord ntri tri]=MF_load(BrainPath);
@@ -109,6 +128,22 @@ for iSubj=1:length(GTstruct)
     subplot(n_rows, Ncols, iSubj)
     %subplot_tight(n_rows, Ncols, iSubj, .05)
     
+    if (~isempty(NodeField)&ischar(NodeField))
+        
+        node_values = (GTstruct(iSubj).(NodeField));
+        %node_values(node_values~=0)=node_values(node_values~=0)*node_multi;
+    elseif (isempty(NodeField))
+            % create vector of dim 1 if node size is not supplied
+        node_values = repmat(NodeSize, [1, size(GTstruct(iSubj).(EdgeField),1)]); 
+    end;
+    
+    % exclude here Co
+    if ConnNodes
+        edge_matrix = GTstruct(iSubj).(EdgeField);
+        node_values(~any(edge_matrix)&~any(edge_matrix'))=0;
+    end;
+    
+    
     
     %Brainplot = plot3(coord(1,:),coord(2,:), coord(3,:), '.', 'MarkerSize', 1e-28, 'color', [0.99 0.99 0.99]);
     
@@ -120,20 +155,17 @@ for iSubj=1:length(GTstruct)
     
     %% LOW QUALITY
     if strcmp(Quality, 'lq')
-       alpha(CortexAlpha)
+        
+        node_values = node_values*20+1; % because cannot use scatter3 with 0 values
+        
+        alpha(CortexAlpha)
         
         % PLOT EDGES
         if (~isempty(EdgeField))
-            [edgeX, edgeY, edgeZ]= adjacency_plot_und( GTstruct(iSubj).(EdgeField), Coords.xyz);
+            [edgeX, edgeY, edgeZ]= adjacency_plot_und( GTstruct(iSubj).(EdgeField), Coords.xyz);   
             plot3(edgeX, edgeY, edgeZ, 'LineWidth', 2);
         end
         %
-        if (~isempty(NodeField))
-            
-            node_values = (GTstruct(iSubj).(NodeField));
-            %node_values(node_values~=0)=node_values(node_values~=0)*node_multi;
-            node_values = node_values+1; % add 1 cause I cannot plot nodes with values higher then zero.
-        end
         %note that I use abs to specify the node size (so values like t
         %values can be used
         scatter3(Coords.xyz(:,1), Coords.xyz(:,2), Coords.xyz(:,3), (abs(node_values)), node_values, 'filled');
@@ -144,11 +176,12 @@ for iSubj=1:length(GTstruct)
     end;
     
     if strcmp(Quality, 'HQ')
-       alpha(CortexAlpha)
+        alpha(CortexAlpha)
         camlight left;
         lighting phong
         
-        [row,col] = find(GTstruct.(EdgeField));
+        edge_matrix = GTstruct(iSubj).(EdgeField);
+        [row,col] = find(edge_matrix);
         % Add coordinates and it draws the edge cilinders
         for i=1:length(col);
             
@@ -159,7 +192,7 @@ for iSubj=1:length(GTstruct)
             X1=Coords.xyz(x,:);
             X2=Coords.xyz(y,:);
             
-            r=1;
+            r=edge_matrix(y,x);
             n=2000;
             cyl_color=[0.8588    0.2667    0.2157];
             Cylinder(X1,X2,r,n,cyl_color,0,0);
@@ -170,7 +203,7 @@ for iSubj=1:length(GTstruct)
         hold on
         
         % draw the spherical nodes
-        scatter3sph(Coords.xyz(:,1), Coords.xyz(:,2), Coords.xyz(:,3), 'size', 3, 'trans', 1);
+        scatter3sph(Coords.xyz(:,1), Coords.xyz(:,2), Coords.xyz(:,3), 'size', node_values, 'trans', 1);
     end;
     
     if Labels
@@ -182,6 +215,11 @@ for iSubj=1:length(GTstruct)
     
     % set view
     view(CamView);
+    %get rid of axis
+    set(gca, 'visible', 'off');
+    % rotation won't change the size
+    axis vis3d
+    
 end;
 
 %% PLOT title
@@ -201,10 +239,6 @@ end;
 
 hold off
 
-% rotation won't change the size
-axis vis3d
-%get rid of axis
-set(gca, 'visible', 'off');
 
 
 end

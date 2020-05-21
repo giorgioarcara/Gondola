@@ -1,4 +1,4 @@
-%% writeGTresGlobal(GTres, 'ResFields',{value}, 'LabFields', {value}, OutDir, 'value')
+%% writeGTresGlobal(GTres, 'ResFields',{value}, 'LabFields', {value}, 'OutFileName', 'value')
 %
 % This function take as input several a GTres struct (as obtained by a
 % BCT_analysis.m script) and export the results of a Global variable 
@@ -9,7 +9,7 @@
 % - GTres: a GTres object (a struct with results of GT analysis).
 % - ResFields: a cell with the names of the fields that should be exported
 % - LabFields: a cell with other fields to be added (typically subject name labels)
-% - OutDir= a string with the directory of the file to be saved
+% - OutFileName= a string with the output file name.
 %
 % Author: Giorgio Arcara
 %
@@ -20,14 +20,14 @@ function writeGTresGlobal(GTres, varargin)
 p = inputParser;
 addParameter(p, 'ResFields', [], @iscell);
 addParameter(p, 'LabFields', [], @iscell);
-addParameter(p, 'OutDir', [], @isstring);
+addParameter(p, 'OutFileName', 'GT_Globalresults.txt', @ischar);
 
 
 parse(p, varargin{:});
 
 ResFields = p.Results.ResFields;
 LabFields =  p.Results.LabFields;
-OutDir =  p.Results.OutDir;
+OutFileName =  p.Results.OutFileName;
 
 
 %% ResFields (numeric results to be exported, one per Subejct).
@@ -47,7 +47,7 @@ res = res';
 %% LabFields (numeric results to be exported, one per Subject).
 
 % find indices corresponding to name
-[~, ind, ~] = intersect(res_names, LabFields);
+[~, ~, ind] = intersect(LabFields ,res_names, 'stable');
 
 lab = res_cell(ind, :);
 
@@ -56,17 +56,20 @@ lab = lab';
 export_lab = lab;
 
 %% EXPORT FILE FOR NBS
-export_file=[OutDir 'GT_Globalresults.txt'];
+export_file=OutFileName;
 
 fid = fopen(export_file, 'w');
 
-fprintf(fid, '%s ', ResFields{:});
-fprintf(fid, '%s ', LabFields{:});
+sep=',';
+
+fprintf(fid, ['%s', sep], ResFields{:});
+fprintf(fid, ['%s', sep], LabFields{:});
 fprintf(fid, '\n', '');
 
 for i=1:size(res,1);%
-    fprintf(fid, '%d ', res(i,:)); % print only Coordinates
-    fprintf(fid, '%s ', export_lab{i, :});
+    fprintf(fid, ['%d', sep], res(i,:));
+    LabFields_exp = cellfun(@num2str, export_lab(i,:), 'UniformOutput', 0); % convert to str numeric fields in LabFields
+    fprintf(fid, ['%s', sep], LabFields_exp{:});
     fprintf(fid, '\n', '');
 end;
 fclose(fid);

@@ -15,7 +15,7 @@
 function tr = minSpanTree(adj)
 
 % check if graph is connected:
-if not(isConnected(adj)); printf('This graph is not connected. No spanning tree exists.\n'); return; end
+if not(isConnected(adj)); fprintf('This graph is not connected. No spanning tree exists.\n'); return; end
 
 n = length(adj); % number of nodes
 tr = zeros(n);   % initialize tree

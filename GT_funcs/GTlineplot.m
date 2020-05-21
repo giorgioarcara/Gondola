@@ -1,4 +1,4 @@
-%% GTlineplot(GTstruct, 'ResField', 'value', 'LabelFields', {value}, 'Ncols', value, 'Ylimits', 'value')
+%% GTlineplot(GTstruct, 'ResField', 'value', 'LabelFields', {value}, 'Ncols', value, 'Xlimits', 'value', 'NodeNames', {value})
 %
 % This function takes as input a GTstruct object (object with results from a
 % analysis with BCT_analysis.m script) and
@@ -10,10 +10,7 @@
 % - GTstruct: the GTstruct struct with the results.
 % - ResField: the name of the field tha will be plotted.
 % - labelfield: the name of the field to title the subplot.
-% - CoordNames: the names of the Nodes (to be displayed in the x axis).
-% - Ylimits: the colors (default is automatic and is taken from min and max of
-% all data). If "ind" is specified individual clim are made (based on
-% minimum and maximum of each subject.
+% - NodeNames: the names of the Nodes (to be displayed in the x axis).
 %
 % Author: Giorgio Arcara
 %
@@ -27,18 +24,20 @@ addParameter(p, 'ResField', [], @ischar);
 addParameter(p, 'LabelFields', [], @iscell);
 addParameter(p, 'Ncols', [], @isnumeric);
 checkContent = @(x) isnumeric(x) | ischar(x);
-addParameter(p, 'Ylimits', [], checkContent);
+addParameter(p, 'Xlimits', [], checkContent);
+addParameter(p, 'NodeNames', [], @iscell);
+
 
 parse(p, varargin{:});
 
 ResField = p.Results.ResField;
 LabelFields =  p.Results.LabelFields;
 Ncols =  p.Results.Ncols;
-Ylimits =  p.Results.Ylimits;
+Xlimits =  p.Results.Xlimits;
+NodeNames = p.Results.NodeNames;
 
-
-if (~exist('CoordNames'));
-    CoordNames=''
+if isempty(NodeNames);
+    CoordNames='';
 end;
 
 
@@ -47,10 +46,15 @@ end;
 curr_names = cell(1, length(GTstruct));
 
 figure
-for iSubj = 1:length(GTstruct)    
-   hold on
-   plot(GTstruct(iSubj).(ResField));
+for iSubj = 1:length(GTstruct)
+    set(gca,'TickLabelInterpreter', 'none');
     
+    hold on
+   subj_values = GTstruct(iSubj).(ResField);
+
+    for iN = 1:length(subj_values);
+        plot([0, subj_values(iN)], [iN iN], 'black');
+    end;
     % define curr name
     if ~isempty(LabelFields)
         % define title in a loop (if several fields are supplied).
@@ -60,7 +64,7 @@ for iSubj = 1:length(GTstruct)
                 curr_name = [curr_name, ' ', GTstruct(iSubj).(LabelFields{iF})];
             end;
         else
-            curr_name =  GTstruct(iSubj).(LabelFields);
+            curr_name =  GTstruct(iSubj).(LabelFields{1});
         end
         
         curr_names{iSubj} = curr_name;
@@ -73,28 +77,27 @@ hold off
 % set cursor stuff
 dcm=datacursormode;
 datacursormode on
-Coord = CoordNames;
-set(dcm, 'updatefcn', {@myFunction, Coord}); % note here that I specify the argument Coord to be used in the personalized Datatip.
+set(dcm, 'updatefcn', {@myFunction, NodeNames}); % note here that I specify the argument Coord to be used in the personalized Datatip.
 
 
-set(gca, 'XTick', 1:length(CoordNames), 'XTickLabel', CoordNames, 'XTickLabelRotation', 90);
+set(gca, 'YTick', 1:length(NodeNames), 'YTickLabel', NodeNames);% 'XTickLabelRotation', 90);
 
-if exist('Ylimits')
-    set(gca, 'Ylim', Ylimits);
+if ~isempty(Xlimits)
+    set(gca, 'Xlim', Xlimits);
 end;
 
 % change legend line width (taken from
 % https://it.mathworks.com/matlabcentral/answers/259402-how-to-change-the-legend-colored-linewidth-not-the-width-of-box-outline)
 [~, hObj] = legend(curr_names);
 hL=findobj(hObj,'type','line');  % get the lines, not text
-set(hL,'linewidth', 2);     
+set(hL,'linewidth', 2);
 
 end
 
 
 
 % create a personalized datatip function
-function output_txt = myFunction(obj ,event_obj, Coord);
+function output_txt = myFunction(obj ,event_obj, NodeNames);
 % Display the position of the data cursor
 % obj          Currently not used (empty)
 % event_obj    Handle to event object
@@ -105,15 +108,15 @@ pos = get(event_obj,'Position');
 Name = event_obj.Target.DisplayName;
 
 % Import x and y
-x = get(get(event_obj,'Target'),'XData');
+y = get(get(event_obj,'Target'),'YData');
 %y = get(get(event_obj,'Target'),'YData');
 
 % Find index
-index_x = find(x == pos(1));
+index_y = find(x == pos(1));
 
 % Set output text
-output_txt = {['Node: ', Coord{index_x}], ...
-              ['Name: ', Name]};
+output_txt = {['Node: ', NodeNames{index_y}], ...
+    ['Name: ', Name]};
 end
 
 

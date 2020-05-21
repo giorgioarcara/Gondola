@@ -1,4 +1,4 @@
-%% GTpermute_with2(GTstruct1, GTstruct2, ResField, value, 'Iterations', value, 'ResMat', value)
+%% GTpermute_with2(GTstruct1, GTstruct2, 'ResField', value, 'Iterations', value, 'ResMat', value)
 %
 % This function perform a permutation test from two GT struct
 % using a procedure as in Brookes at al 2016 (Neuroimage). http://dx.doi.org/10.1016/j.neuroimage.2016.02.045
@@ -40,7 +40,7 @@
 
 function [obs_diff_mat, p_mat_fdr, p_mat_unc, Rand_res] = GTpermute_with2(GTstruct1, GTstruct2, varargin)
 p = inputParser;
-addParameter(p, 'ResField', [], @iscell);
+addParameter(p, 'ResField', [], @ischar);
 addParameter(p, 'Iterations', [], @isnumeric)
 addParameter(p, 'ResMat', [], @ischar)
 parse(p, varargin{:});
@@ -70,15 +70,15 @@ n_subj = length(GTstruct1);
 n_groups = 2;
 
 % first isolate only half matrix according to resmat
-GTstruct1 = GTdiag_mat(GTstruct1, ResField, ResMat);
-GTstruct2 = GTdiag_mat(GTstruct2, ResField, ResMat);
+GTstruct1 = GTdiag_mat(GTstruct1, 'ResField', ResField);
+GTstruct2 = GTdiag_mat(GTstruct2, 'ResField', ResField);
 
 % create observed average
-obs_ave1 = GTaverage(GTstruct1, {ResField});
-obs_ave2 = GTaverage(GTstruct2, {ResField});
+obs_ave1 = GTaverage(GTstruct1, 'ResField', {ResField});
+obs_ave2 = GTaverage(GTstruct2, 'ResField', {ResField});
 
 % create observed difference of average
-obs_diff = GTdifference(obs_ave1, obs_ave2, {ResField});
+obs_diff = GTdifference(obs_ave1, obs_ave2, 'ResField', {ResField});
 
 
 
@@ -103,8 +103,8 @@ for iIter = 1:Iterations
             end;        
     end;
     
-    GTrand1 = GTaverage(GTrand_subj1, {ResField});
-    GTrand2 = GTaverage(GTrand_subj2, {ResField});
+    GTrand1 = GTaverage(GTrand_subj1, 'ResField', {ResField});
+    GTrand2 = GTaverage(GTrand_subj2, 'ResField', {ResField});
 
     % store results
     % initialize the object at first iteration
@@ -129,8 +129,8 @@ for iIter = 1:Iterations
     
 end;
 
-    Rand_diff = GTdifference(GTperm1, GTperm2, {'mat_or'});
-    Rand_values = [Rand_diff.mat_or];
+    Rand_diff = GTdifference(GTperm1, GTperm2, 'ResField', {ResField});
+    Rand_values = [Rand_diff.(ResField)];
     Rand_values = Rand_values(:);
     Rand_res = Rand_values(~isnan(Rand_values)); % important. exclude NaN
     

@@ -1,4 +1,4 @@
-%% GTdiag_mat(GTstruct, 'ResField', value, 'Type', value);
+%% GTdiag_mat(GTstruct, 'ResField', value, 'Type', value, 'DiagResField', value);
 %
 % This function extract (from a GTstruct) the upper or lower
 % triangular matrix (diagonal excluded), substituting with NaN, all other
@@ -15,6 +15,7 @@ function GTstruct_diag = GTdiag_mat(GTstruct, varargin)
 p = inputParser;
 addParameter(p, 'ResField', [], @ischar);
 addParameter(p, 'Type', [], @ischar);
+addParameter(p, 'DiagResField', [], @ischar);
 
 parse(p, varargin{:});
 

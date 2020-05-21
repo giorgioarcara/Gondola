@@ -48,7 +48,7 @@ if (~isempty('clim'));
    
 end
 
-if (~isempty('Ncols'));
+if isempty(Ncols);
     Ncols=1;
 end
 
