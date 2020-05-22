@@ -1,4 +1,4 @@
-%% GTimport_bst(FileNames, 'StructFields',value, 'ResFields', value, 'DataPath', value)
+%% GTload_bst(FileNames, 'StructFields',value, 'ResFields', value, 'DataPath', value)
 %
 % This function takes as input a cell with FileNames. This files are
 % expected to be Brainstorm Files as imported with process_export_conn_mat
@@ -21,7 +21,7 @@
 %
 %
 
-function GTres = GTimport_bst(FileNames, varargin);
+function GTres = GTload_bst(FileNames, varargin);
 
 
 % part to check if, in a given group

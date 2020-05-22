@@ -9,7 +9,7 @@ gondola
 % (note you should change the path, with your path).
 file_dir = dir('/Users/giorgioarcara/Documents/Gondola_code/External_funcs/NBS1.2/SchizophreniaExample/matrices');
 file_names = {file_dir(3:end).name}; %exclude '.', and '..'
-GTstruct = GTdlmread(file_names);
+GTres = GTdlmread(file_names);
 
 %% IMPORT - Option 2
 % load Connectivity Matrices from NBS toolbox sample data 
@@ -24,8 +24,7 @@ GTstruct = GTdlmread(file_names);
 %     GTstruct(iS).Subject = num2str(iS)
 % end;
 
-%% add info on Subjects (based on info on NBS
-% here I manually add the information
+% add info on Subjects (based on info on NBS)
 [GTstruct(1:12).group]= deal('Schiz');
 [GTstruct(13:27).group]= deal('Healthy');
 
