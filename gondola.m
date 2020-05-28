@@ -13,7 +13,7 @@ end;
 
 
 %
-if exist('gondola', 'file') & nargin==0
+if exist('GTmeasure', 'file') & nargin==0
     option='gondola_already_here';
 end;
 

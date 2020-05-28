@@ -22,7 +22,6 @@
 
 function GTres = GTdlmread(FileNames, varargin);
 
-
 % part to check if, in a given group
 p = inputParser;
 addParameter(p, 'OutResField', 'mat_or', @ischar);

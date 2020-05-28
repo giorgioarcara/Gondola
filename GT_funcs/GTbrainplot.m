@@ -150,7 +150,7 @@ for iSubj=1:length(GTstruct)
     hold on
     
     %% PLOT BRAIN
-    Brainplot = trisurf(tri, Braincoord(1,:),Braincoord(2,:), Braincoord(3,:), 'FaceColor', [0.5, 0.5, 0.5],'EdgeColor','none', 'FaceAlpha', 1 , 'EdgeAlpha', 1);
+    Brainplot = trisurf(tri, Braincoord(1,:),Braincoord(2,:), Braincoord(3,:), 'FaceColor', [0.8, 0.8, 0.8],'EdgeColor','none', 'FaceAlpha', 1 , 'EdgeAlpha', 1);
     
     
     %% LOW QUALITY

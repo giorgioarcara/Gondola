@@ -1,19 +1,20 @@
-%% GToperation2(GTstruct1, GTstruct2, 'ResField',value,'OtherFields', value, 'operation', 'GTres=GT1-GT2')
+%% GToperation(GTstruct, 'ResField',value,'OtherFields', value, 'operation', 'GT1^2')
 %
-% This function takes as input two GTstructs a perform an 'operation' involging the two matrices.
-% the operation  can be any legal Matlab operation between matrices.
+% This function takes as input two GTstructs a perform an 'operation' involging one matrix.
+% the operation  can be any legal Matlab operation appliable to a matrix.
 %
 %
 % INPUT
-% - GTstruct1: the first GTstruct struct with the results
-% - GTstruct2: the second GTstruct struct with the results
+% - GTstruct: the GTstruct 
 % - ResField: the name of the fields that will be subtracted between(GTstruct1 -
 % GTstruct2)between {} brackets
 % - OtherFields: the other fields to be kept between {} brackets
 % - operation: a text that will be evaluated to compute some operations
-% with two matrices.It should expressed as GTres = 'some operation'
+% with two matrices.
 %
 %
+%
+% example 
 %
 %
 %
@@ -24,12 +25,12 @@
 %
 
 
-function GTstruct = GToperation2(GTstruct1, GTstruct2, varargin)
+function GTstruct = GToperation(GTstruct1, varargin)
 
 p = inputParser;
 addParameter(p, 'ResField', [], @iscell);
 addParameter(p, 'OtherFields', [], @iscell);
-addParameter(p, 'operation', 'GTres=GT1-GT2', @ischar);
+addParameter(p, 'operation', [], @ischar);
 parse(p, varargin{:});
 
 
@@ -52,16 +53,13 @@ end
 % now load the data
 for k=1:length(GTstruct1);
     for iField = 1:length(ResField);
-        GT1 = GTstruct1(k).(ResField{iField}) ;
-        GT2 = GTstruct2(k).(ResField{iField});
-        eval(operation)
-        GTstruct(k).(ResField{iField}) = GTres;
+        GT1 = GTstruct1(k).(ResField{iField});
+        GT1_res = eval(operation);
+        GTstruct(k).(ResField{iField}) = eval(operation);
     end;
     
 end;
 fprintf(['\n\n - Operation performed: ', operation, '\n'] );
-warning('Be sure that the two GTstructs have the objects in the correct order!')
-
 
 
 

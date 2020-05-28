@@ -46,5 +46,5 @@ NBSview(NBSstat_res)
 
 %% plot results with GTbrainplot
 GTres.mat_res=CON_MAT{1};
-GTbrainplot(GTres, 'EdgeField', 'mat_res', 'Coords', Coords)
+GTbrainplot(GTres, 'EdgeField', 'mat_res', 'Coords', Coords, 'Quality', 'HQ', 'NodeSize', 3)
 

@@ -4,12 +4,27 @@ clear; clc; close all
 % INITIALIZE TOOLBOX (it should be in the search path).
 gondola
 
+%% DESCRIPTION
+% this script perform a whole network analysis in Gondola
+% using the data available with the NBS toolbox (Zalesky, Fornito,
+% Bullmore, 2010).
+%
+% the script load the data, and the extract a network measure (node degree)
+% than  
+
+
+
 %% IMPORT - Option 1
 % import connectivity matrices from files
 % (note you should change the path, with your path).
 file_dir = dir('/Users/giorgioarcara/Documents/Gondola_code/External_funcs/NBS1.2/SchizophreniaExample/matrices');
 file_names = {file_dir(3:end).name}; %exclude '.', and '..'
-GTres = GTdlmread(file_names);
+GTstruct = GTdlmread(file_names);
+
+% add subject number manually
+for iS = 1:length(GTstruct)
+    GTstruct(iS).Subject=num2str(iS);
+end;
 
 %% IMPORT - Option 2
 % load Connectivity Matrices from NBS toolbox sample data 
@@ -24,23 +39,37 @@ GTres = GTdlmread(file_names);
 %     GTstruct(iS).Subject = num2str(iS)
 % end;
 
-% add info on Subjects (based on info on NBS)
+%% add group info 
+% here I manually add the information (this is based on info in NBS
+% toolbox)
+% first 12 files refer to patients with Schizophrenia
+% remaining 15 files refer to healthy controls.
 [GTstruct(1:12).group]= deal('Schiz');
 [GTstruct(13:27).group]= deal('Healthy');
 
 
-% load coordinates and put in a single Coord object
-Coord_xyz = readtable('COG.txt', 'Delimiter', ' ', 'ReadVariableNames', 0, 'HeaderLines', 0);
-Coord_labels = readtable('nodeLabels.txt', 'Delimiter', '\t', 'ReadVariableNames', 0, 'HeaderLines', 0);
+%% Import data for Coord object
+% on crucial object in Gondola, is the coord object
+% Coord is a struct with 'xyz' coordinates and 'labels' of the nodes of
+% connectivity matrices.
+
+%load coordinates and put in a single Coord object
+Coord_xyz = readtable('SchizophreniaExample/COG.txt', 'Delimiter', ' ', 'ReadVariableNames', 0, 'HeaderLines', 0);
+Coord_labels = readtable('SchizophreniaExample/nodeLabels.txt', 'Delimiter', '\t', 'ReadVariableNames', 0, 'HeaderLines', 0);
 Coords.xyz = table2array(Coord_xyz);
 Coords.labels = table2array(Coord_labels);
 
-% create a backup (you never know).
+% create a backup og the GTstruct(you never know).
 GTstruct0 = GTstruct;
 
+%% use the help 
+% take your time to check the help of each function
+help GTmeasure
+help GTaverage
 
-%% absolute value (cause this is correlation).- suboptimal substitute excluding negative correlations.
-GTstruct = GTmeasure(GTstruct, 'ResField', 'mat_or', 'MeasureFunc', 'abs', 'MeasureName', 'mat_abs');
+%% absolute value 
+% Data are initially correlation data ranging from -1 to 1. 
+GTstruct = GToperation(GTstruct, 'ResField', {'mat_or'},  'Operation', 'GT1(GT1<0)=NaN');
 
 %% calculate threshold
 GTstruct = GTthreshold(GTstruct, 'ResField', 'mat_abs',  'Perc', 99, 'ThreshFieldName', 'mat_thresh');
@@ -64,7 +93,7 @@ GTm = GToperation2(GTSchiz_ave, GTHealthy_ave, 'ResField',  {'mat_or'},  'operat
 
 %% DIVIDE IN SEPARATE STRUCTS
 %% plot some images
-if 0
+if 1
 GTimagesc(GTSchiz(1:6), 'ResField', 'mat_or', 'LabelFields', {'Subject'}, 'Ncols', 2)
 GTimagesc(GTSchiz(1), 'ResField', 'mat_thresh', 'LabelFields', {'Subject'}, 'Ncols', 1)
 GTimagesc(GTSchiz(1:6), 'ResField', 'mat_bin', 'LabelFields', {'Subject'}, 'Ncols', 2)
@@ -75,7 +104,8 @@ GTlineplot(GTSchiz(6), 'ResField', 'degree', 'LabelFields', {'Subject'}, 'NodeNa
 %% plot brain with edges and node degrees (as node size)
 GTbrainplot(GTSchiz(6), 'NodeField', 'degree', 'EdgeField', 'mat_bin','Coords', Coords, 'Quality', 'lq', 'CamView', [0, 90],'CortexAlpha', 0.1);
 
-GTSchiz_plot = GToperation(GTSchiz, 'ResField', {'mat_thresh'}, 'OtherFields', {'degree'},  'operation', 'GT1*4');
+% for plottng reason I multiply the values in the connectivity matrix by 1.5.
+GTSchiz_plot = GToperation(GTSchiz, 'ResField', {'mat_thresh'}, 'OtherFields', {'degree'},  'operation', 'GT1*1.5');
 GTbrainplot(GTSchiz_plot(6), 'NodeField', 'degree', 'EdgeField', 'mat_thresh','Coords', Coords, 'Quality', 'HQ', 'CamView', [0, 90],'CortexAlpha', 0.1);
 
 end;
@@ -101,3 +131,9 @@ data_sel = data(strcmp(data.NodeLabels, 'Temporal_Sup_L'),:);
 v1 = table2array(data_sel(strcmp(data_sel.group, 'Schiz'), 'degree'));
 v2 = table2array(data_sel(strcmp(data_sel.group, 'Healthy'), 'degree'));
 [P_val, ~, Umann] = ranksum(v1,v2);
+
+P_val
+
+%% now you can go to the next sample Script for GLM with NBS using Gondola as interface
+
+open Step2_Gondola_NBS_sample_script
