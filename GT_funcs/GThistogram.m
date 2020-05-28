@@ -1,4 +1,4 @@
-%% GTimagesc(GTstruct, 'ResField', value, 'LabelField', value, 'NCols', value, 'xlimits', value, 'ylimits', value)
+%% GTimagesc(GTstruct, 'ResField', value, 'LabelFields', value, 'NCols', value, 'xlimits', value, 'ylimits', value)
 %
 % This function takes as input a GTstruct object (object with results from a
 % analysis with BCT_analysis.m script) and
@@ -28,7 +28,7 @@ function fig = GThistogram(GTstruct, varargin);
 
 p = inputParser;
 addParameter(p, 'ResField', [], @ischar);
-addParameter(p, 'LabelField', [], @ischar);
+addParameter(p, 'LabelFields', [], @iscell);
 addParameter(p, 'NCols', [], @isnumeric);
 addParameter(p, 'xlimits', [], @isnumeric);
 addParameter(p, 'ylimits', [], @isnumeric);
@@ -37,7 +37,7 @@ addParameter(p, 'ylimits', [], @isnumeric);
 parse(p, varargin{:});
 
 ResField = p.Results.ResField;
-LabelField =  p.Results.LabelField;
+LabelFields =  p.Results.LabelFields;
 NCols =  p.Results.NCols;
 xlimits =  p.Results.xlimits;
 ylimits =  p.Results.ylimits;
@@ -45,14 +45,14 @@ ylimits =  p.Results.ylimits;
 
 
 % create global clim if auto is specified
-if ( (~exist('xlimits')) | (isempty(xlimits)) );
+if isempty(xlimits)
     iField = find(strcmpi(ResField, fieldnames(GTstruct)));
     temp = struct2cell(GTstruct);
     data = [temp{iField, :, :}];
     xlimits = [min(data(:)), max(data(:))];
 end
 
-if (~exist('ylimits'))
+if isempty(ylimits)
     ylimits = [0, 100];
 end;
 
@@ -82,7 +82,7 @@ for k = 1:length(GTstruct)
                 panel_title = [panel_title,  ' ', eval(['GTstruct(', num2str(k), ').', LabelFields{iF}])];
             end;
         else
-            panel_title =  eval(['GTstruct(', num2str(k), ').', LabelFields]);
+            panel_title =  eval(['GTstruct(', num2str(k), ').', LabelFields{1}]);
         end
         
         title( panel_title );

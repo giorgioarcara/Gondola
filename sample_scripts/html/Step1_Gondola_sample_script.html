@@ -1,0 +1,352 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Step1_Gondola_sample_script</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2020-05-28"><meta name="DC.source" content="Step1_Gondola_sample_script.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">GONDOLA SAMPLE SCRIPT</a></li><li><a href="#2">DESCRIPTION</a></li><li><a href="#3">IMPORT - Option 1</a></li><li><a href="#4">IMPORT - Option 2</a></li><li><a href="#5">add group info</a></li><li><a href="#6">Import data for Coord object</a></li><li><a href="#7">use the help</a></li><li><a href="#8">use only positive values</a></li><li><a href="#9">calculate threshold</a></li><li><a href="#10">binarize</a></li><li><a href="#11">calculate node degree</a></li><li><a href="#12">DIVIDE IN SEPARATE STRUCTS</a></li><li><a href="#13">DIVIDE IN SEPARATE STRUCTS</a></li><li><a href="#14">plot some images</a></li><li><a href="#16">plot node degree line</a></li><li><a href="#17">plot brain with edges and node degrees (as node size)</a></li><li><a href="#19">plot 3d brains with nodes</a></li><li><a href="#21">export to Table for analysis</a></li><li><a href="#22">now you can go to the next sample Script for GLM with NBS using Gondola as interface</a></li></ul></div><h2>GONDOLA SAMPLE SCRIPT<a name="1"></a></h2><pre class="codeinput">clear; clc; close <span class="string">all</span>
+
+<span class="comment">% INITIALIZE TOOLBOX (it should be in the search path).</span>
+gondola
+</pre><pre class="codeoutput">
+
+--- Gondola appears to be already in the search path ---
+
+
+</pre><h2>DESCRIPTION<a name="2"></a></h2><p>this script perform a whole network analysis in Gondola using the data available with the NBS toolbox (Zalesky, Fornito, Bullmore, 2010).</p><p>the script load the data, and the extract a network measure (node degree) than</p><h2>IMPORT - Option 1<a name="3"></a></h2><p>import connectivity matrices from files (note you should change the path, with your path).</p><pre class="codeinput">file_dir = dir(<span class="string">'/Users/giorgioarcara/Documents/Gondola_code/External_funcs/NBS1.2/SchizophreniaExample/matrices'</span>);
+file_names = {file_dir(3:end).name}; <span class="comment">%exclude '.', and '..'</span>
+GTstruct = GTdlmread(file_names);
+
+<span class="comment">% add subject number manually</span>
+<span class="keyword">for</span> iS = 1:length(GTstruct)
+    GTstruct(iS).Subject=num2str(iS);
+<span class="keyword">end</span>;
+</pre><h2>IMPORT - Option 2<a name="4"></a></h2><p>load Connectivity Matrices from NBS toolbox sample data</p><pre class="codeinput"><span class="comment">%(it is a node x node x subject matrix)</span>
+<span class="comment">% NBS_data = load('matrices.mat');</span>
+<span class="comment">% NBS_datamat = NBS_data.Mat;</span>
+<span class="comment">%</span>
+<span class="comment">% % convert NBS data matrix to GTstruct containing Subject elements</span>
+<span class="comment">% % and a mat_or field with node x node matrix</span>
+<span class="comment">% for iS = 1:size(NBS_datamat,3)</span>
+<span class="comment">%     GTstruct(iS).mat_or = NBS_datamat(:,:, iS);</span>
+<span class="comment">%     GTstruct(iS).Subject = num2str(iS)</span>
+<span class="comment">% end;</span>
+</pre><h2>add group info<a name="5"></a></h2><p>here I manually add the information (this is based on info in NBS toolbox) first 12 files refer to patients with Schizophrenia remaining 15 files refer to healthy controls.</p><pre class="codeinput">[GTstruct(1:12).group]= deal(<span class="string">'Schiz'</span>);
+[GTstruct(13:27).group]= deal(<span class="string">'Healthy'</span>);
+</pre><h2>Import data for Coord object<a name="6"></a></h2><p>on crucial object in Gondola, is the coord object Coord is a struct with 'xyz' coordinates and 'labels' of the nodes of connectivity matrices.</p><pre class="codeinput"><span class="comment">%load coordinates and put in a single Coord object</span>
+Coord_xyz = readtable(<span class="string">'SchizophreniaExample/COG.txt'</span>, <span class="string">'Delimiter'</span>, <span class="string">' '</span>, <span class="string">'ReadVariableNames'</span>, 0, <span class="string">'HeaderLines'</span>, 0);
+Coord_labels = readtable(<span class="string">'SchizophreniaExample/nodeLabels.txt'</span>, <span class="string">'Delimiter'</span>, <span class="string">'\t'</span>, <span class="string">'ReadVariableNames'</span>, 0, <span class="string">'HeaderLines'</span>, 0);
+Coords.xyz = table2array(Coord_xyz);
+Coords.labels = table2array(Coord_labels);
+
+<span class="comment">% create a backup og the GTstruct(you never know).</span>
+GTstruct0 = GTstruct;
+</pre><h2>use the help<a name="7"></a></h2><p>take your time to check the help of each function</p><pre class="codeinput">help <span class="string">GTmeasure</span>
+help <span class="string">GTaverage</span>
+</pre><pre class="codeoutput">  GTmeasure(GTstruct, 'ResField',value, 'MeasureFunc', value, 'MeasureName', value)
+ 
+  this function calculates a GT measure (via a function specified as
+  MeasureFunc) and store in the results.
+  The results will be a GTstruct containing all the information of the
+  original plus the newly calculated GT measure.
+ 
+  INPUTS:
+ 
+  - GTstruct: a GTstruct
+  - ResField: a name with the field containing the matrix on which
+              calculate the GT measure.
+  - MeasureFunc: the function (typically from the BCT toolbox) to
+                  calculate the measure.
+  - MeasureName: the name of the new measure (it will be the name of the
+                   field in the output).
+  - opts : options, if necessary for gt measure.
+ 
+  Author: Giorgio Arcara
+ 
+  versione: 4/03/2018
+
+  GTAvgrage(GTstruct, 'ResField', {value}, 'OtherFields', 'value')
+ 
+  This function takes as input a GTstruct object (object with results from an analysis
+  with a script like BCT_analysis.m) and compute the average of the
+  matrices in a field.
+ 
+  INPUT
+  - GTstruct: the GTstruct struct with the results
+  - ResField: the name of the fields that will be averaged
+  - OtherFields: other fields to be stored (inherits from the first subject)
+ 
+  NOTE: the function some all the values and then divide by the numbers
+        so missing values can lead to wrong resuls
+ 
+ 
+  Author: Giorgio Arcara
+ 
+  version: 04/03/2018
+ 
+ 
+
+</pre><h2>use only positive values<a name="8"></a></h2><p>Data are initially correlation data ranging from -1 to 1.</p><pre class="codeinput">GTstruct = GToperation(GTstruct, <span class="string">'ResField'</span>, {<span class="string">'mat_or'</span>},  <span class="string">'Operation'</span>, <span class="string">'GTres(GTres&lt;0)=NaN'</span>);
+</pre><pre class="codeoutput">
+
+ - Operation performed: GTres(GTres&lt;0)=NaN
+</pre><h2>calculate threshold<a name="9"></a></h2><pre class="codeinput">GTstruct = GTthreshold(GTstruct, <span class="string">'ResField'</span>, <span class="string">'mat_or'</span>,  <span class="string">'Perc'</span>, 99, <span class="string">'ThreshFieldName'</span>, <span class="string">'mat_thresh'</span>);
+</pre><h2>binarize<a name="10"></a></h2><pre class="codeinput">GTstruct = GTbinarize(GTstruct, <span class="string">'ResField'</span>, <span class="string">'mat_thresh'</span>, <span class="string">'BinFieldName'</span>, <span class="string">'mat_bin'</span>);
+</pre><h2>calculate node degree<a name="11"></a></h2><pre class="codeinput">GTstruct = GTmeasure(GTstruct, <span class="string">'ResField'</span>, <span class="string">'mat_bin'</span>, <span class="string">'MeasureFunc'</span>, <span class="string">'degrees_und'</span>, <span class="string">'MeasureName'</span>, <span class="string">'degree'</span>);
+</pre><h2>DIVIDE IN SEPARATE STRUCTS<a name="12"></a></h2><pre class="codeinput">GTSchiz = GTsel(GTstruct, <span class="string">'Field'</span>, <span class="string">'group'</span>, <span class="string">'Content'</span>,<span class="string">'Schiz'</span>);
+GTHealthy = GTsel(GTstruct, <span class="string">'Field'</span>, <span class="string">'group'</span>, <span class="string">'Content'</span>, <span class="string">'Healthy'</span>);
+
+GTSchiz_ave = GTaverage(GTSchiz, <span class="string">'ResField'</span>, {<span class="string">'mat_or'</span>, <span class="string">'mat_thresh'</span>});
+GTHealthy_ave = GTaverage(GTHealthy, <span class="string">'ResField'</span>, {<span class="string">'mat_or'</span>, <span class="string">'mat_thresh'</span>});
+
+GTm = GToperation2(GTSchiz_ave, GTHealthy_ave, <span class="string">'ResField'</span>,  {<span class="string">'mat_or'</span>},  <span class="string">'operation'</span>, <span class="string">'GT1/GT2'</span>);
+</pre><pre class="codeoutput error">Index exceeds matrix dimensions.
+
+Error in GTaverage (line 46)
+    all_data_mat_r = reshape(all_data_mat, size(GTstruct(1).(ResField{iField}), 1), size(GTstruct(1).(ResField{iField}), 2), length(GTstruct));
+
+Error in Step1_Gondola_sample_script (line 88)
+GTSchiz_ave = GTaverage(GTSchiz, 'ResField', {'mat_or', 'mat_thresh'});
+</pre><h2>DIVIDE IN SEPARATE STRUCTS<a name="13"></a></h2><h2>plot some images<a name="14"></a></h2><pre class="codeinput"><span class="keyword">if</span> 1
+</pre><pre class="codeinput">GTimagesc(GTSchiz(1:6), <span class="string">'ResField'</span>, <span class="string">'mat_or'</span>, <span class="string">'LabelFields'</span>, {<span class="string">'Subject'</span>}, <span class="string">'Ncols'</span>, 2)
+GTimagesc(GTSchiz(1), <span class="string">'ResField'</span>, <span class="string">'mat_thresh'</span>, <span class="string">'LabelFields'</span>, {<span class="string">'Subject'</span>}, <span class="string">'Ncols'</span>, 1)
+GTimagesc(GTSchiz(1:6), <span class="string">'ResField'</span>, <span class="string">'mat_bin'</span>, <span class="string">'LabelFields'</span>, {<span class="string">'Subject'</span>}, <span class="string">'Ncols'</span>, 2)
+</pre><h2>plot node degree line<a name="16"></a></h2><pre class="codeinput">GTlineplot(GTSchiz(6), <span class="string">'ResField'</span>, <span class="string">'degree'</span>, <span class="string">'LabelFields'</span>, {<span class="string">'Subject'</span>}, <span class="string">'NodeNames'</span>, Coords.labels);
+</pre><h2>plot brain with edges and node degrees (as node size)<a name="17"></a></h2><pre class="codeinput">GTbrainplot(GTSchiz(6), <span class="string">'NodeField'</span>, <span class="string">'degree'</span>, <span class="string">'EdgeField'</span>, <span class="string">'mat_bin'</span>,<span class="string">'Coords'</span>, Coords, <span class="string">'Quality'</span>, <span class="string">'lq'</span>, <span class="string">'CamView'</span>, [0, 90],<span class="string">'CortexAlpha'</span>, 0.1);
+
+<span class="comment">% for plottng reason I multiply the values in the connectivity matrix by 1.5.</span>
+GTSchiz_plot = GToperation(GTSchiz, <span class="string">'ResField'</span>, {<span class="string">'mat_thresh'</span>}, <span class="string">'OtherFields'</span>, {<span class="string">'degree'</span>},  <span class="string">'operation'</span>, <span class="string">'GT1*1.5'</span>);
+GTbrainplot(GTSchiz_plot(6), <span class="string">'NodeField'</span>, <span class="string">'degree'</span>, <span class="string">'EdgeField'</span>, <span class="string">'mat_thresh'</span>,<span class="string">'Coords'</span>, Coords, <span class="string">'Quality'</span>, <span class="string">'HQ'</span>, <span class="string">'CamView'</span>, [0, 90],<span class="string">'CortexAlpha'</span>, 0.1);
+</pre><pre class="codeinput"><span class="keyword">end</span>;
+</pre><h2>plot 3d brains with nodes<a name="19"></a></h2><pre class="codeinput">GTbrainplot(GTSchiz_ave,  <span class="string">'EdgeField'</span>, <span class="string">'mat_thresh'</span>,<span class="string">'Coords'</span>, Coords, <span class="string">'Quality'</span>, <span class="string">'lq'</span>, <span class="string">'CamView'</span>, [0, 90],<span class="string">'CortexAlpha'</span>, 0.1, <span class="string">'NodeSize'</span>, 3);
+GTbrainplot(GTHealthy_ave,  <span class="string">'EdgeField'</span>, <span class="string">'mat_thresh'</span>,<span class="string">'Coords'</span>, Coords, <span class="string">'Quality'</span>, <span class="string">'lq'</span>, <span class="string">'CamView'</span>, [0, 90],<span class="string">'CortexAlpha'</span>, 0.1, <span class="string">'NodeSize'</span>, 3);
+</pre><p><img vspace="5" hspace="5" src="BRAIN.PNG" alt=""> </p><pre class="codeinput"><span class="comment">%print('brain', '-djpeg', '-r200');</span>
+snapnow
+</pre><h2>export to Table for analysis<a name="21"></a></h2><pre class="codeinput">ResTable = writeGTresNode(GTstruct, <span class="string">'ResFields'</span>, {<span class="string">'degree'</span>}, <span class="string">'LabFields'</span>, {<span class="string">'Subject'</span>,<span class="string">'group'</span>},  <span class="string">'NodeLabels'</span>, Coords.labels);
+
+<span class="comment">% to export the result to an external File.</span>
+<span class="comment">% ResTable = writeGTresNode(GTstruct, 'ResFields', {'degree'}, 'LabFields',</span>
+<span class="comment">% {'Subject','group'}, 'OutFileName', 'Exported_data.csv', 'NodeLabels', Coords.labels);</span>
+<span class="comment">%reimport data for analysis on matlab</span>
+<span class="comment">%data = readtable('Exported_data.csv', 'ReadVariableNames', 1, 'HeaderLines', 0);</span>
+
+<span class="comment">% a short non-parametric analysis with Mann-Whitney</span>
+data= ResTable;
+data_sel = data(strcmp(data.NodeLabels, <span class="string">'Temporal_Sup_L'</span>),:);
+v1 = table2array(data_sel(strcmp(data_sel.group, <span class="string">'Schiz'</span>), <span class="string">'degree'</span>));
+v2 = table2array(data_sel(strcmp(data_sel.group, <span class="string">'Healthy'</span>), <span class="string">'degree'</span>));
+[P_val, ~, Umann] = ranksum(v1,v2);
+
+P_val
+</pre><h2>now you can go to the next sample Script for GLM with NBS using Gondola as interface<a name="22"></a></h2><pre class="codeinput">open <span class="string">Step2_Gondola_NBS_sample_script</span>
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% GONDOLA SAMPLE SCRIPT
+clear; clc; close all
+
+% INITIALIZE TOOLBOX (it should be in the search path).
+gondola
+
+%% DESCRIPTION
+% this script perform a whole network analysis in Gondola
+% using the data available with the NBS toolbox (Zalesky, Fornito,
+% Bullmore, 2010).
+%
+% the script load the data, and the extract a network measure (node degree)
+% than  
+
+
+
+%% IMPORT - Option 1
+% import connectivity matrices from files
+% (note you should change the path, with your path).
+file_dir = dir('/Users/giorgioarcara/Documents/Gondola_code/External_funcs/NBS1.2/SchizophreniaExample/matrices');
+file_names = {file_dir(3:end).name}; %exclude '.', and '..'
+GTstruct = GTdlmread(file_names);
+
+% add subject number manually
+for iS = 1:length(GTstruct)
+    GTstruct(iS).Subject=num2str(iS);
+end;
+
+%% IMPORT - Option 2
+% load Connectivity Matrices from NBS toolbox sample data 
+%(it is a node x node x subject matrix)
+% NBS_data = load('matrices.mat');
+% NBS_datamat = NBS_data.Mat;
+% 
+% % convert NBS data matrix to GTstruct containing Subject elements 
+% % and a mat_or field with node x node matrix
+% for iS = 1:size(NBS_datamat,3)
+%     GTstruct(iS).mat_or = NBS_datamat(:,:, iS);
+%     GTstruct(iS).Subject = num2str(iS)
+% end;
+
+%% add group info 
+% here I manually add the information (this is based on info in NBS
+% toolbox)
+% first 12 files refer to patients with Schizophrenia
+% remaining 15 files refer to healthy controls.
+[GTstruct(1:12).group]= deal('Schiz');
+[GTstruct(13:27).group]= deal('Healthy');
+
+
+%% Import data for Coord object
+% on crucial object in Gondola, is the coord object
+% Coord is a struct with 'xyz' coordinates and 'labels' of the nodes of
+% connectivity matrices.
+
+%load coordinates and put in a single Coord object
+Coord_xyz = readtable('SchizophreniaExample/COG.txt', 'Delimiter', ' ', 'ReadVariableNames', 0, 'HeaderLines', 0);
+Coord_labels = readtable('SchizophreniaExample/nodeLabels.txt', 'Delimiter', '\t', 'ReadVariableNames', 0, 'HeaderLines', 0);
+Coords.xyz = table2array(Coord_xyz);
+Coords.labels = table2array(Coord_labels);
+
+% create a backup og the GTstruct(you never know).
+GTstruct0 = GTstruct;
+
+%% use the help 
+% take your time to check the help of each function
+help GTmeasure
+help GTaverage
+
+%% use only positive values 
+% Data are initially correlation data ranging from -1 to 1. 
+GTstruct = GToperation(GTstruct, 'ResField', {'mat_or'},  'Operation', 'GTres(GTres<0)=NaN');
+
+%% calculate threshold
+GTstruct = GTthreshold(GTstruct, 'ResField', 'mat_or',  'Perc', 99, 'ThreshFieldName', 'mat_thresh');
+
+%% binarize
+GTstruct = GTbinarize(GTstruct, 'ResField', 'mat_thresh', 'BinFieldName', 'mat_bin');
+
+%% calculate node degree
+GTstruct = GTmeasure(GTstruct, 'ResField', 'mat_bin', 'MeasureFunc', 'degrees_und', 'MeasureName', 'degree');
+
+
+%% DIVIDE IN SEPARATE STRUCTS
+GTSchiz = GTsel(GTstruct, 'Field', 'group', 'Content','Schiz');
+GTHealthy = GTsel(GTstruct, 'Field', 'group', 'Content', 'Healthy');
+
+GTSchiz_ave = GTaverage(GTSchiz, 'ResField', {'mat_or', 'mat_thresh'});
+GTHealthy_ave = GTaverage(GTHealthy, 'ResField', {'mat_or', 'mat_thresh'});
+
+GTm = GToperation2(GTSchiz_ave, GTHealthy_ave, 'ResField',  {'mat_or'},  'operation', 'GT1/GT2');
+
+
+%% DIVIDE IN SEPARATE STRUCTS
+%% plot some images
+if 1
+GTimagesc(GTSchiz(1:6), 'ResField', 'mat_or', 'LabelFields', {'Subject'}, 'Ncols', 2)
+GTimagesc(GTSchiz(1), 'ResField', 'mat_thresh', 'LabelFields', {'Subject'}, 'Ncols', 1)
+GTimagesc(GTSchiz(1:6), 'ResField', 'mat_bin', 'LabelFields', {'Subject'}, 'Ncols', 2)
+
+%% plot node degree line
+GTlineplot(GTSchiz(6), 'ResField', 'degree', 'LabelFields', {'Subject'}, 'NodeNames', Coords.labels);
+
+%% plot brain with edges and node degrees (as node size)
+GTbrainplot(GTSchiz(6), 'NodeField', 'degree', 'EdgeField', 'mat_bin','Coords', Coords, 'Quality', 'lq', 'CamView', [0, 90],'CortexAlpha', 0.1);
+
+% for plottng reason I multiply the values in the connectivity matrix by 1.5.
+GTSchiz_plot = GToperation(GTSchiz, 'ResField', {'mat_thresh'}, 'OtherFields', {'degree'},  'operation', 'GT1*1.5');
+GTbrainplot(GTSchiz_plot(6), 'NodeField', 'degree', 'EdgeField', 'mat_thresh','Coords', Coords, 'Quality', 'HQ', 'CamView', [0, 90],'CortexAlpha', 0.1);
+
+end;
+
+%% plot 3d brains with nodes
+GTbrainplot(GTSchiz_ave,  'EdgeField', 'mat_thresh','Coords', Coords, 'Quality', 'lq', 'CamView', [0, 90],'CortexAlpha', 0.1, 'NodeSize', 3);
+GTbrainplot(GTHealthy_ave,  'EdgeField', 'mat_thresh','Coords', Coords, 'Quality', 'lq', 'CamView', [0, 90],'CortexAlpha', 0.1, 'NodeSize', 3);
+%%
+% 
+% <<BRAIN.PNG>>
+% 
+
+%print('brain', '-djpeg', '-r200');
+snapnow
+%% export to Table for analysis
+
+ResTable = writeGTresNode(GTstruct, 'ResFields', {'degree'}, 'LabFields', {'Subject','group'},  'NodeLabels', Coords.labels);
+
+% to export the result to an external File.
+% ResTable = writeGTresNode(GTstruct, 'ResFields', {'degree'}, 'LabFields',
+% {'Subject','group'}, 'OutFileName', 'Exported_data.csv', 'NodeLabels', Coords.labels);
+%reimport data for analysis on matlab
+%data = readtable('Exported_data.csv', 'ReadVariableNames', 1, 'HeaderLines', 0);
+
+% a short non-parametric analysis with Mann-Whitney
+data= ResTable;
+data_sel = data(strcmp(data.NodeLabels, 'Temporal_Sup_L'),:);
+v1 = table2array(data_sel(strcmp(data_sel.group, 'Schiz'), 'degree'));
+v2 = table2array(data_sel(strcmp(data_sel.group, 'Healthy'), 'degree'));
+[P_val, ~, Umann] = ranksum(v1,v2);
+
+P_val
+
+%% now you can go to the next sample Script for GLM with NBS using Gondola as interface
+
+open Step2_Gondola_NBS_sample_script
+
+##### SOURCE END #####
+--></body></html>

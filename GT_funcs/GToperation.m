@@ -53,7 +53,7 @@ end
 % now load the data
 for k=1:length(GTstruct1);
     for iField = 1:length(ResField);
-        GT1 = GTstruct1(k).(ResField{iField});
+        GTres = GTstruct1(k).(ResField{iField});
         eval([operation, ';']);
         GTstruct(k).(ResField{iField}) = GTres;
     end;

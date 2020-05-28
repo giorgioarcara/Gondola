@@ -41,7 +41,8 @@ GTstruct_bin = GTstruct;
 
 % loop over all objects in GTstruct and compute the measure.
 for iK = 1:length(GTstruct)
-    GTstruct_bin(iK).(BinFieldName) = double(GTstruct_bin(iK).(ResField) ~= 0);
+    Res = GTstruct_bin(iK).(ResField) ~= 0 & ~isnan(GTstruct_bin(iK).(ResField));
+    GTstruct_bin(iK).(BinFieldName) = double(Res);
     % note that numbers are stored as double cause several measures in BCT
     % functions expect numbers
 end;
