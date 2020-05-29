@@ -10,8 +10,6 @@ gondola
 % Bullmore, 2010).
 %
 % the script load the data, and the extract a network measure (node degree)
-% than  
-
 
 
 %% IMPORT - Option 1
@@ -42,8 +40,8 @@ end;
 %% add group info 
 % here I manually add the information (this is based on info in NBS
 % toolbox)
-% first 12 files refer to patients with Schizophrenia
-% remaining 15 files refer to healthy controls.
+% first 12 files are patients with Schizophrenia
+% remaining 15 files are healthy controls.
 [GTstruct(1:12).group]= deal('Schiz');
 [GTstruct(13:27).group]= deal('Healthy');
 
@@ -71,7 +69,7 @@ help GTaverage
 % use only positive values 
 % Data are initially correlation data ranging from -1 to 1. Set negative
 % values to 0.
-GTstruct = GToperation(GTstruct, 'ResField', {'mat_or'},  'OtherFields', {'FileName', 'Subject', 'group'}, 'Operation', 'GTres(GTres<0)=NaN' );
+GTstruct = GToperation(GTstruct, 'ResField', {'mat_or'},  'OtherFields', {'FileName', 'Subject', 'group'}, 'Operation', 'GT1(GT1<0)=0; GTres=GT1' );
 
 % calculate threshold
 GTstruct = GTthreshold(GTstruct, 'ResField', 'mat_or',  'Perc', 95, 'ThreshFieldName', 'mat_thresh');
@@ -106,30 +104,34 @@ GTlineplot(GTSchiz(1), 'ResField', 'degree', 'LabelFields', {'Subject'}, 'NodeNa
 
 
 %% 3D brain plot
-% plot brain with edges and node degrees (as node size)
+% plot low quality brain with edges and node degrees (as node size)
 GTbrainplot(GTSchiz(1), 'NodeField', 'degree', 'EdgeField', 'mat_bin','Coords', Coords, 'Quality', 'lq', 'CamView', [0, 90],'CortexAlpha', 0.1);
 
-%% for graphical reasons, I multiply the values of node degree by 0.5 (it would look like better).
-GTSchiz_plot = GToperation(GTSchiz(1), 'ResField', {'degree'}, 'OtherFields', {'mat_thresh'},  'operation', 'GTres=GTres*0.5');
+% set up a high-quality plot with a similar call
+% for better graphic in this case, I multiply the values of node degree by 0.5 (it would look like better).
+GTSchiz_plot = GToperation(GTSchiz(1), 'ResField', {'degree'}, 'OtherFields', {'mat_thresh'},  'operation', 'GTres=GT1*0.5');
 GTbrainplot(GTSchiz_plot(1), 'NodeField', 'degree', 'EdgeField', 'mat_thresh','Coords', Coords, 'Quality', 'HQ', 'CamView', [0, 90],'CortexAlpha', 0.1);
 
 
 %% export to Table for analysis
+% this function convert results to a table for analysis in matlab, but could also be used to export to a .txt file. 
 ResTable = writeGTresNode(GTstruct, 'ResFields', {'degree'}, 'LabFields', {'Subject','group'},  'NodeLabels', Coords.labels);
 
 % to export the result to an external File.
 % ResTable = writeGTresNode(GTstruct, 'ResFields', {'degree'}, 'LabFields',
 % {'Subject','group'}, 'OutFileName', 'Exported_data.csv', 'NodeLabels', Coords.labels);
-%reimport data for analysis on matlab
+%reimport data back
 %data = readtable('Exported_data.csv', 'ReadVariableNames', 1, 'HeaderLines', 0);
 
 % a short non-parametric analysis with Mann-Whitney
+% comparing the node degree in the Superior parietal cortex between the two
+% groups
 data= ResTable;
-data_sel = data(strcmp(data.NodeLabels, 'Temporal_Sup_L'),:);
+
+data_sel = data(strcmp(data.NodeLabels, 'Parietal_Sup_R'),:);
 v1 = table2array(data_sel(strcmp(data_sel.group, 'Schiz'), 'degree'));
 v2 = table2array(data_sel(strcmp(data_sel.group, 'Healthy'), 'degree'));
 [P_val, ~, Umann] = ranksum(v1,v2);
-
 P_val
 
 %% now you can go to the next sample Script for GLM with NBS using Gondola as interface

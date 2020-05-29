@@ -1,4 +1,4 @@
-%% GToperation(GTstruct, 'ResField',value,'OtherFields', value, 'operation', 'GT1^2')
+%% GToperation(GTstruct, 'ResField',value,'OtherFields', value, 'operation', 'GTres=GT1^2')
 %
 % This function takes as input two GTstructs a perform an 'operation' involging one matrix.
 % the operation  can be any legal Matlab operation appliable to a matrix.
@@ -53,7 +53,7 @@ end
 % now load the data
 for k=1:length(GTstruct1);
     for iField = 1:length(ResField);
-        GTres = GTstruct1(k).(ResField{iField});
+        GT1 = GTstruct1(k).(ResField{iField});
         eval([operation, ';']);
         GTstruct(k).(ResField{iField}) = GTres;
     end;
