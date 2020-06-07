@@ -1,4 +1,4 @@
-%% GTpermute_with2(GTstruct1, GTstruct2, 'ResField', value, 'Iterations', value, 'ResMat', value)
+%% GTpermute_with2_test(GTstruct1, GTstruct2, 'ResField', value, 'Iterations', value, 'ResMat', value)
 %
 % This function perform a permutation test from two GT struct
 % using a procedure as in Brookes at al 2016 (Neuroimage). http://dx.doi.org/10.1016/j.neuroimage.2016.02.045
@@ -38,10 +38,10 @@
 
 
 
-function [obs_diff_mat, p_mat_fdr, p_mat_unc, Rand_res] = GTpermute_with2(GTstruct1, GTstruct2, varargin)
+function [obs_diff_mat, p_mat_fdr, p_mat_unc, Rand_res] = GTpermute_with2_test(GTstruct1, GTstruct2, varargin)
 p = inputParser;
 addParameter(p, 'ResField', [], @ischar);
-addParameter(p, 'Iterations', [], @isnumeric)
+addParameter(p, 'Iterations', 1000, @isnumeric)
 addParameter(p, 'ResMat', [], @ischar)
 parse(p, varargin{:});
 
@@ -54,15 +54,8 @@ if length(GTstruct1)~=length(GTstruct2)
     error('GT: The length of GTstruct1 should be the same of the length of GTstruct2 (this function is for within subject design).')    
 end;
 
-if nargin < 3
-    error('3 inputs are mandatory: GTstruct1, GTstruct2 and the ResField')    
-end;
 
-if nargin < 4
-    Iterations = 1000;
-end;
-
-if nargin < 5
+if isempty(ResMat)
     ResMat = 'upper';
 end;
 

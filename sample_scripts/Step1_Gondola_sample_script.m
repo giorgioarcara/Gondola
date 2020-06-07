@@ -15,14 +15,10 @@ gondola
 %% IMPORT - Option 1
 % import connectivity matrices from files
 % (note you should change the path, with your path).
-file_dir = dir('/Users/giorgioarcara/Documents/Gondola_code/External_funcs/NBS1.2/SchizophreniaExample/matrices');
-file_names = {file_dir(3:end).name}; %exclude '.', and '..'
+file_names = get_file_names('/Users/giorgioarcara/Documents/Gondola_code/External_funcs/NBS1.2/SchizophreniaExample/matrices');
 GTstruct = GTdlmread(file_names);
 
-% add subject number manually
-for iS = 1:length(GTstruct)
-    GTstruct(iS).Subject=num2str(iS);
-end;
+GTstruct = GTaddvalue(GTstruct,'OutFieldName', 'Subject', 'OutValue', 1:length(GTstruct));
 
 %% IMPORT - Option 2
 % load Connectivity Matrices from NBS toolbox sample data 
@@ -42,8 +38,11 @@ end;
 % toolbox)
 % first 12 files are patients with Schizophrenia
 % remaining 15 files are healthy controls.
-[GTstruct(1:12).group]= deal('Schiz');
-[GTstruct(13:27).group]= deal('Healthy');
+%[GTstruct(1:12).group]= deal('Schiz');
+%[GTstruct(13:27).group]= deal('Healthy');
+GTstruct = GTaddvalue(GTstruct,'OutFieldName', 'group', 'OutValue',{'Schiz'}, 'Elements', 1:12);
+GTstruct = GTaddvalue(GTstruct,'OutFieldName', 'group', 'OutValue',{'Healthy'}, 'Elements', 13:27);
+
 
 
 %% Import data for Coord object
