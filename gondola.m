@@ -1,6 +1,9 @@
 %% Initialize Gondola:
 %GRAPH THEORY ANALYSIS SCRIPTS
 
+% - start
+% - restart
+% - remove
 
 
 function gondola(varargin);
@@ -8,15 +11,13 @@ function gondola(varargin);
 if nargin==0
     option='start';
 else
-  option = varargin{1};
+    option = varargin{1};
 end;
-
 
 %
-if exist('GTmeasure', 'file') & nargin==0
-    option='gondola_already_here';
-end;
-
+% if exist('GTmeasure', 'file') & nargin==0
+%     option='gondola_already_here';
+% end;
 
 
 % start gondola if not existing
@@ -71,12 +72,27 @@ if (strcmp(option, 'start') |  strcmp(option, 'restart'))
     fprintf('--- version: 0.2');
     fprintf('\n\n\n\n');
     
-elseif 'gondola_already_here'
+end;
+if strcmp(option, 'gondola_already_here');
     
     fprintf('\n\n');
     fprintf('--- Gondola appears to be already in the search path ---\n');
     fprintf('\n\n');
     
 end
+
+if strcmp(option, 'remove');
+    
+    script_name = mfilename('fullpath');
+    curr_script_folder = fileparts(script_name);
+    % open analysis and add path
+    rmpath(genpath([curr_script_folder]));
+    
+    
+    fprintf('\n\n');
+    fprintf('--- Gondola removed from search path ---\n');
+    fprintf('\n\n');
+    
+end;
 
 end

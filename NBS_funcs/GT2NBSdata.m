@@ -1,4 +1,4 @@
-%% GT2NBSdata(GTstruct, 'ResField', 'value')
+%% GT2NBSdata(GTstruct, 'InField', 'value')
 % This function starts from a GTstruct and create a matrix that can be
 % supplied to NBSglm, for Glm
 %
@@ -18,24 +18,24 @@
 function [y] = GT2NBSdata(GTstruct, varargin)
 
 p = inputParser;
-addParameter(p, 'ResField', [], @ischar);
+addParameter(p, 'InField', [], @ischar);
 parse(p, varargin{:});
-ResField = p.Results.ResField;
+InField = p.Results.InField;
 
-if isempty(ResField)
-    error('GT: you must specify a ResField')
+if isempty(InField)
+    error('GT: you must specify a InField')
 end;
 
 % take first element for matrix initialization
-template = GTstruct(1).(ResField);
+template = GTstruct(1).(InField);
 n_subjects = length(GTstruct);
 n_conn_values = ((size(template,1)^2) - size(template,1))/2;
 
 y = zeros(n_subjects, n_conn_values);
 
-GTdiag_res = GTdiag_mat(GTstruct, 'ResField', ResField);
+GTdiag_res = GTdiag_mat(GTstruct, 'InField', InField, 'OutField', InField);% overwrite on input field
 for iG=1:length(GTdiag_res)
-    curr_mat = GTdiag_res(iG).(ResField);
+    curr_mat = GTdiag_res(iG).(InField);
     y(iG,:) = curr_mat(~isnan(curr_mat))';
 end;
 

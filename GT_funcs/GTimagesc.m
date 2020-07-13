@@ -1,4 +1,4 @@
-%% GTimagesc(GTstruct, 'ResField', 'value', 'LabelFields', {value}, 'Ncols', value, 'clim', 'value', 'CoordNames', {value})
+%% GTimagesc(GTstruct, 'DataField', 'value', 'LabelFields', {value}, 'Ncols', value, 'clim', 'value', 'CoordNames', {value})
 %
 % This function takes as input a GTstruct object (object with results from a
 % analysis with BCT_analysis.m script) and
@@ -7,7 +7,7 @@
 %
 % INPUT
 % - GTstruct: the GTstruct struct with the results.
-% - ResField: the name of the field that will be plotted.
+% - DataField: the name of the field that will be plotted.
 % - LabelFields: the name of the field to title the subplot.
 % - Ncols: the number of cols of resulting image. The rows will be
 % determined as consequencew
@@ -23,7 +23,7 @@
 function fig = GTimagesc(GTstruct, varargin);
 
 p = inputParser;
-addParameter(p, 'ResField', [], @ischar);
+addParameter(p, 'DataField', [], @ischar);
 addParameter(p, 'LabelFields', [], @iscell);
 addParameter(p, 'Ncols', [], @isnumeric);
 checkContent = @(x) isnumeric(x) | ischar(x);
@@ -34,7 +34,7 @@ addParameter(p, 'CoordNames', [], @iscell);
 
 parse(p, varargin{:});
 
-ResField = p.Results.ResField;
+DataField = p.Results.DataField;
 LabelFields =  p.Results.LabelFields;
 Ncols =  p.Results.Ncols;
 clim =  p.Results.clim;
@@ -43,7 +43,7 @@ CoordNames =  p.Results.CoordNames;
 
 % create global clim if no clim is specified
 if strcmp('clim', 'auto')
-    iField = find(strcmpi(ResField, fieldnames(GTstruct)));
+    iField = find(strcmpi(DataField, fieldnames(GTstruct)));
     temp = struct2cell(GTstruct);
     data = [temp{iField, :, :}];
     clim = [min(data(:)), max(data(:))];
@@ -66,7 +66,7 @@ figure
 for k = 1:length(GTstruct)
     
     subplot_tight(n_rows, Ncols, k, .05)
-    imagesc(GTstruct(k).(ResField));
+    imagesc(GTstruct(k).(DataField));
     colorbar
     
     % define title in a loop (if several fields are supplied).

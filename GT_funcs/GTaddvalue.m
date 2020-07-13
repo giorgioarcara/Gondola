@@ -1,9 +1,10 @@
-%% GTaddvalue(GTstruct, 'OutFieldName', 'value', 'OutValue', [values])
+%% GTaddvalue(GTstruct, 'InField', 'value', 'NewValue', [values], 'Elements', [values])
 %
 % This function takes as input a GTstruct and create a new field with a
-% defined values.
+% the specified values.
 % There are two options: either specify one single value (it will be
-% applied to all the elements of the GTstruct) or a vector of values.
+% applied to all the elements of the GTstruct) or a vector of values that will replace
+% the GTstruct elements specified in 'Elements'.
 %
 %
 % INPUT
@@ -16,24 +17,24 @@
 %
 % Author: Giorgio Arcara
 %
-% version: 31/05/2020
+% version: 09/06/2020
 %
 %
 
-function GTres = GTaddvalue(GTstruct, varargin);
+function GTstruct_res = GTaddvalue(GTstruct, varargin);
 
 p = inputParser;
-addParameter(p, 'OutFieldName', [], @ischar);
+addParameter(p, 'InField', [], @ischar);
 checkContent = @(x) isnumeric(x) | iscell(x);
-addParameter(p, 'OutValue', [], checkContent);
+addParameter(p, 'NewValue', [], checkContent);
 addParameter(p, 'Elements', [], @isnumeric);
 
 parse(p, varargin{:});
-OutFieldName = p.Results.OutFieldName;
-OutValue =  p.Results.OutValue;
+InField = p.Results.InField;
+NewValue =  p.Results.NewValue;
 Elements =  p.Results.Elements;
 
-if (isempty(OutValue))
+if (isempty(NewValue))
     error('You must specify the value of the new Field');
 end;
 
@@ -43,40 +44,40 @@ if isempty(Elements)
 end;
 
 
-if (length(OutValue)~=1 & length(OutValue)~=length(Elements))
-    error('If OutValue is more than 1 value, it should match the length of Elements');
+if (length(NewValue)~=1 & length(NewValue)~=length(Elements))
+    error('If NewValue is more than 1 value, it should match the length of Elements');
 end;
 
 
 
 
-GTres = GTstruct;
+GTstruct_res = GTstruct;
 
 % case only, one value is specified.
-if length(OutValue)==1
+if length(NewValue)==1
     
-    if iscell(OutValue)
-        curr_Value = OutValue{1};
+    if iscell(NewValue)
+        curr_Value = NewValue{1};
     else
-        curr_Value =  OutValue(1);
+        curr_Value =  NewValue(1);
     end;
         
-    [GTres(Elements).(OutFieldName)] = deal(curr_Value);
+    [GTstruct_res(Elements).(InField)] = deal(curr_Value);
     
 end;
 
 % case a vector of Values is specified.
-if length(OutValue)>1;
+if length(NewValue)>1;
     for iE = 1:length(Elements)
         
         curr_E = Elements(iE);
         
-        if iscell(OutValue)
-            curr_Value = OutValue{iE};
+        if iscell(NewValue)
+            curr_Value = NewValue{iE};
         else
-            curr_Value =  OutValue(iE);
+            curr_Value =  NewValue(iE);
         end;
-        GTres(curr_E).(OutFieldName) = curr_Value;
+        GTstruct_res(curr_E).(InField) = curr_Value;
     end
     
 end

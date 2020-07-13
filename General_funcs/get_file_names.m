@@ -16,6 +16,15 @@
 function file_names = get_file_names(Dir)
 
 file_dir = dir(Dir);
+% return error for non existing directory
+if (length(file_dir)==0)
+    error('GT: the specified directory is non existing.');
+end;
+
 file_names = {file_dir(3:end).name}; %exclude '.', and '..'
+
+if (length(file_names)==0)
+    error('GT: the specified directory is empty.');
+end;
 
 end

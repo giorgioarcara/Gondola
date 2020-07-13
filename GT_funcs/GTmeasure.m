@@ -1,4 +1,4 @@
-%% GTmeasure(GTstruct, 'ResField',value, 'MeasureFunc', value, 'MeasureName', value)
+%% GTmeasure(GTstruct, 'InField',value, 'MeasureFunc', value, 'MeasureName', value)
 %
 % this function calculates a GT measure (via a function specified as
 % MeasureFunc) and store in the results.
@@ -8,7 +8,7 @@
 % INPUTS:
 %
 % - GTstruct: a GTstruct
-% - ResField: a name with the field containing the matrix on which
+% - InField: a name with the field containing the matrix on which
 %             calculate the GT measure.
 % - MeasureFunc: the function (typically from the BCT toolbox) to
 %                 calculate the measure.
@@ -25,14 +25,14 @@
 function GTres = GTmeasure(GTstruct, varargin)
 
 p = inputParser;
-addParameter(p, 'ResField', [], @ischar);
+addParameter(p, 'InField', [], @ischar);
 addParameter(p, 'MeasureFunc', [], @ischar);
 addParameter(p, 'MeasureName', [], @ischar);
 
 
 parse(p, varargin{:});
 
-ResField = p.Results.ResField;
+InField = p.Results.InField;
 MeasureFunc =  p.Results.MeasureFunc;
 MeasureName =  p.Results.MeasureName;
 
@@ -44,7 +44,7 @@ GTres = GTstruct;
 
 % loop over all objects in GTstruct and compute the measure.
 for iK = 1:length(GTstruct)
-    GTres(iK).(MeasureName) = myfunc(GTstruct(iK).(ResField));
+    GTres(iK).(MeasureName) = myfunc(GTstruct(iK).(InField));
 end;
 
 

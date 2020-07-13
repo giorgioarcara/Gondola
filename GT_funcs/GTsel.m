@@ -1,4 +1,4 @@
-%% GTsel(GTstruct, 'Field', value, 'Content', value);
+%% GTsel(GTstruct, 'InField', value, 'Content', value);
 %
 % This function select all field based on a value found in a field.
 % Call the functions multiple times to perform selection on more than one
@@ -15,27 +15,27 @@ function GTstruct = GTsel(GTstruct, varargin)
 
 % part to check if, in a given group
 p = inputParser;
-addParameter(p, 'Field', [], @ischar);
+addParameter(p, 'InField', [], @ischar);
 checkContent = @(x) isnumeric(x) | ischar(x);
 addParameter(p, 'Content', [], checkContent);
 
 parse(p, varargin{:});
 
-Field = p.Results.Field;
+InField = p.Results.InField;
 Content =  p.Results.Content;
 
-if (isempty(Field) |  isempty(Content))
-    error('Field or Content are empty: check your code')
+if (isempty(InField) |  isempty(Content))
+    error('InField or Content are empty: check your code')
 end;
 
   
 fieldnames = fields(GTstruct);
 
-iField = strcmp(Field, fieldnames);
+iInField = strcmp(InField, fieldnames);
 
 GTcell = struct2cell(GTstruct);
 
-GTContent = squeeze({GTcell{iField, :,:}});
+GTContent = squeeze({GTcell{iInField, :,:}});
 
 % note I use the sel_files_bst to select, in the case Content are a cell
 if ischar(Content)

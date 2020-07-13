@@ -1,4 +1,4 @@
-%% GTimagesc2(GTstruct1, GTstruct2, ResField, LabelFields, Ncols)
+%% GTimagesc(GTstruct1, GTstruct2, 'DataField', 'value', 'LabelFields', {value}, 'Ncols', value, 'clim', 'value', 'CoordNames', {value})
 %
 % This function takes as input two GTres objects (object with results from a
 % analysis with BCT_analysis.m script) and
@@ -8,7 +8,7 @@
 % INPUT
 % - GTstruct1: the first struct with the results.
 % - GTstruct2: the first struct of the second struct with results.
-% - ResField: the name of the field tha will be plotted.
+% - DataField: the name of the field tha will be plotted.
 % - labelfield: the name of the field to title the subplot.
 % - Ncols: the number of cols of resulting image. The rows will be
 % determined as consequence
@@ -29,7 +29,7 @@ end;
 
 
 p = inputParser;
-addParameter(p, 'ResField', [], @ischar);
+addParameter(p, 'DataField', [], @ischar);
 addParameter(p, 'LabelFields', [], @iscell);
 checkContent = @(x) isnumeric(x) | ischar(x);
 addParameter(p, 'clim', 'auto', checkContent);
@@ -39,7 +39,7 @@ addParameter(p, 'Ncols', [], @isnumeric);
 
 parse(p, varargin{:});
 
-ResField = p.Results.ResField;
+DataField = p.Results.DataField;
 LabelFields =  p.Results.LabelFields;
 clim =  p.Results.clim;
 CoordNames =  p.Results.CoordNames;
@@ -52,7 +52,7 @@ end
 % create global clim if no clim is specified
 if strcmp(clim, 'auto')
     GTstruct = [GTstruct1, GTstruct2];
-    iField = find(strcmpi(ResField, fieldnames(GTstruct)));
+    iField = find(strcmpi(DataField, fieldnames(GTstruct)));
     temp = struct2cell(GTstruct);
     data = [temp{iField, :, :}];
     clim = [min(data(:)), max(data(:))];
@@ -83,7 +83,7 @@ for k = 1:length(GTstruct1)
     
     
     %% PLOT IMAGE 1
-    imagesc(GTstruct1(k).(ResField));
+    imagesc(GTstruct1(k).(DataField));
     colorbar
     
     %% ADD TITLE 1
@@ -107,7 +107,7 @@ for k = 1:length(GTstruct1)
     subplot(n_rows, 2, iPlot);
     
     %% PLOT IMAGE 1
-    imagesc(GTstruct2(k).(ResField));
+    imagesc(GTstruct2(k).(DataField));
     colorbar
     
     %% ADD TITLE 1

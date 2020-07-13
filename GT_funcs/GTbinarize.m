@@ -1,4 +1,4 @@
-%% GTbinarize(GTstruct, 'ResField', value, 'BinFieldName', value)
+%% GTbinarize(GTstruct, 'InField', value, 'OutField', value)
 %
 % this function binarize a matrix. Positive values are retained as 1.
 % Negative values or zeros, as 0. Usually it is used after the function
@@ -7,17 +7,17 @@
 % INPUTS:
 %
 % - GTstruct: a GTstruct
-% - ResField: a name with the field containing the matrix on which
+% - InField: a name with the field containing the matrix on which
 %             apply the GTthreshold.
 %
-% - BinFieldName: a string with the output name for the binarized matrix.
+% - OutField: a string with the output name for the binarized matrix.
 %
 %
 % OUTPUTS:
 %
 % GTstruct_bin: the original GTstruct with the addition one field:
-%               - BinFieldName (a as argument) the binarized matrix
-%               (specified in the ResField).
+%               - OutField (a as argument) the binarized matrix
+%               (specified in the InField).
 %
 % Author: Giorgio Arcara
 %
@@ -26,14 +26,14 @@
 
 function GTstruct_bin = GTbinarize(GTstruct, varargin)
 p = inputParser;
-addParameter(p, 'ResField', [], @ischar);
-addParameter(p, 'BinFieldName', [], @ischar);
+addParameter(p, 'InField', [], @ischar);
+addParameter(p, 'OutField', [], @ischar);
 
 
 parse(p, varargin{:});
 
-ResField = p.Results.ResField;
-BinFieldName =  p.Results.BinFieldName;
+InField = p.Results.InField;
+OutField =  p.Results.OutField;
 
 
 % initialize results
@@ -41,8 +41,8 @@ GTstruct_bin = GTstruct;
 
 % loop over all objects in GTstruct and compute the measure.
 for iK = 1:length(GTstruct)
-    Res = GTstruct_bin(iK).(ResField) ~= 0 & ~isnan(GTstruct_bin(iK).(ResField));
-    GTstruct_bin(iK).(BinFieldName) = double(Res);
+    Res = GTstruct_bin(iK).(InField) ~= 0 & ~isnan(GTstruct_bin(iK).(InField));
+    GTstruct_bin(iK).(OutField) = double(Res);
     % note that numbers are stored as double cause several measures in BCT
     % functions expect numbers
 end;

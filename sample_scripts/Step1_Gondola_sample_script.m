@@ -12,13 +12,14 @@ gondola
 % the script load the data, and the extract a network measure (node degree)
 
 
-%% IMPORT - Option 1
+% IMPORT - Option 1
 % import connectivity matrices from files
 % (note you should change the path, with your path).
-file_names = get_file_names('/Users/giorgioarcara/Documents/Gondola_code/External_funcs/NBS1.2/SchizophreniaExample/matrices');
+%file_names = get_file_names('/Users/giorgioarcara/Desktop/prova');
+file_names = get_file_names('/Users/giorgioarcara/Documents/Gondola_code/External/NBS1.2/SchizophreniaExample/matrices');
 GTstruct = GTdlmread(file_names);
 
-GTstruct = GTaddvalue(GTstruct,'OutFieldName', 'Subject', 'OutValue', 1:length(GTstruct));
+GTstruct = GTaddvalue(GTstruct,'InField', 'Subject', 'NewValue', 1:length(GTstruct));
 
 %% IMPORT - Option 2
 % load Connectivity Matrices from NBS toolbox sample data 
@@ -40,8 +41,8 @@ GTstruct = GTaddvalue(GTstruct,'OutFieldName', 'Subject', 'OutValue', 1:length(G
 % remaining 15 files are healthy controls.
 %[GTstruct(1:12).group]= deal('Schiz');
 %[GTstruct(13:27).group]= deal('Healthy');
-GTstruct = GTaddvalue(GTstruct,'OutFieldName', 'group', 'OutValue',{'Schiz'}, 'Elements', 1:12);
-GTstruct = GTaddvalue(GTstruct,'OutFieldName', 'group', 'OutValue',{'Healthy'}, 'Elements', 13:27);
+GTstruct = GTaddvalue(GTstruct, 'InField', 'group', 'NewValue',{'Schiz'}, 'Elements', 1:12);
+GTstruct = GTaddvalue(GTstruct,'InField', 'group', 'NewValue',{'Healthy'}, 'Elements', 13:27);
 
 
 
@@ -68,47 +69,49 @@ help GTaverage
 % use only positive values 
 % Data are initially correlation data ranging from -1 to 1. Set negative
 % values to 0.
-GTstruct = GToperation(GTstruct, 'ResField', {'mat_or'},  'OtherFields', {'FileName', 'Subject', 'group'}, 'Operation', 'GT1(GT1<0)=0; GTres=GT1' );
+GTstruct = GToperation(GTstruct, 'InFields', {'mat_or'},  'OtherFields', {'FileName', 'Subject', 'group'}, 'Operation', 'GT1(GT1<0)=0; GTres=GT1' );
 
 % calculate threshold
-GTstruct = GTthreshold(GTstruct, 'ResField', 'mat_or',  'Perc', 95, 'ThreshFieldName', 'mat_thresh');
-GTimagesc(GTstruct(6), 'ResField', 'mat_thresh', 'LabelFields', {'Subject'});
+GTstruct = GTthreshold(GTstruct, 'InField', 'mat_or',  'Perc', 95, 'ThreshFieldName', 'mat_thresh');
+GTimagesc(GTstruct(6), 'DataField', 'mat_thresh', 'LabelFields', {'Subject'});
 % binarize
-GTstruct = GTbinarize(GTstruct, 'ResField', 'mat_thresh', 'BinFieldName', 'mat_bin');
-GTimagesc(GTstruct(6), 'ResField', 'mat_bin', 'LabelFields', {'Subject'});
-
-
+GTstruct = GTbinarize(GTstruct, 'InField', 'mat_thresh', 'OutField', 'mat_bin');
+GTimagesc(GTstruct(6), 'DataField', 'mat_bin', 'LabelFields', {'Subject'});
 
 % calculate node degree
-GTstruct = GTmeasure(GTstruct, 'ResField', 'mat_bin', 'MeasureFunc', 'degrees_und', 'MeasureName', 'degree');
+GTstruct = GTmeasure(GTstruct, 'InField', 'mat_bin', 'MeasureFunc', 'degrees_und', 'MeasureName', 'degree');
 
 
 %% DIVIDE IN SEPARATE STRUCTS
-GTSchiz = GTsel(GTstruct, 'Field', 'group', 'Content','Schiz');
-GTHealthy = GTsel(GTstruct, 'Field', 'group', 'Content', 'Healthy');
+GTSchiz = GTsel(GTstruct, 'InField', 'group', 'Content','Schiz');
+GTHealthy = GTsel(GTstruct, 'InField', 'group', 'Content', 'Healthy');
 
-GTSchiz_ave = GTaverage(GTSchiz, 'ResField', {'mat_or', 'mat_thresh'});
-GTHealthy_ave = GTaverage(GTHealthy, 'ResField', {'mat_or', 'mat_thresh'});
+GTSchiz_ave = GTaverage(GTSchiz, 'InFields', {'mat_or', 'mat_thresh'});
+GTHealthy_ave = GTaverage(GTHealthy, 'InFields', {'mat_or', 'mat_thresh'});
 
 GTm = GToperation2(GTSchiz_ave, GTHealthy_ave, 'ResField',  {'mat_or'},  'operation', 'GTres=GT1/GT2');
 
 
 %% plot some images
-GTimagesc(GTSchiz(1:6), 'ResField', 'mat_or', 'LabelFields', {'Subject'}, 'Ncols', 2)
-GTimagesc(GTSchiz(1:6), 'ResField', 'mat_thresh', 'LabelFields', {'Subject'}, 'Ncols', 2)
-GTimagesc(GTSchiz(1:6), 'ResField', 'mat_bin', 'LabelFields', {'Subject'}, 'Ncols', 2)
+GTimagesc(GTSchiz(1:6), 'DataField', 'mat_or', 'LabelFields', {'Subject'}, 'Ncols', 2)
+GTimagesc(GTSchiz(1:6), 'DataField', 'mat_thresh', 'LabelFields', {'Subject'}, 'Ncols', 2)
+GTimagesc(GTSchiz(1:6), 'DataField', 'mat_bin', 'LabelFields', {'Subject'}, 'Ncols', 2)
 
 %% plot node degree line
-GTlineplot(GTSchiz(1), 'ResField', 'degree', 'LabelFields', {'Subject'}, 'NodeNames', Coords.labels);
+GTlineplot(GTSchiz(1), 'DataField', 'degree', 'LabelFields', {'Subject'}, 'NodeNames', Coords.labels);
 
 
 %% 3D brain plot
 % plot low quality brain with edges and node degrees (as node size)
 GTbrainplot(GTSchiz(1), 'NodeField', 'degree', 'EdgeField', 'mat_bin','Coords', Coords, 'Quality', 'lq', 'CamView', [0, 90],'CortexAlpha', 0.1);
 
+
+GTbrainplot2(GTSchiz(1:2), GTHealthy(1:2), 'NodeField', 'degree', 'EdgeField', 'mat_bin','Coords', Coords, 'Quality', 'lq', 'CamView', [0, 90],'CortexAlpha', 0.1);
+
+
 % set up a high-quality plot with a similar call
 % for better graphic in this case, I multiply the values of node degree by 0.5 (it would look like better).
-GTSchiz_plot = GToperation(GTSchiz(1), 'ResField', {'degree'}, 'OtherFields', {'mat_thresh'},  'operation', 'GTres=GT1*0.5');
+GTSchiz_plot = GToperation(GTSchiz(1), 'InField', {'degree'}, 'OtherFields', {'mat_thresh'},  'operation', 'GTres=GT1*0.5');
 GTbrainplot(GTSchiz_plot(1), 'NodeField', 'degree', 'EdgeField', 'mat_thresh','Coords', Coords, 'Quality', 'HQ', 'CamView', [0, 90],'CortexAlpha', 0.1);
 
 

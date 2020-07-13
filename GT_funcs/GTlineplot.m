@@ -1,4 +1,4 @@
-%% GTlineplot(GTstruct, 'ResField', 'value', 'LabelFields', {value}, 'Ncols', value, 'Xlimits', 'value', 'NodeNames', {value})
+%% GTlineplot(GTstruct, 'DataField', 'value', 'LabelFields', {value}, 'Ncols', value, 'Xlimits', 'value', 'NodeNames', {value})
 %
 % This function takes as input a GTstruct object (object with results from a
 % analysis with BCT_analysis.m script) and
@@ -8,7 +8,7 @@
 %
 % INPUT
 % - GTstruct: the GTstruct struct with the results.
-% - ResField: the name of the field tha will be plotted.
+% - DataField: the name of the field tha will be plotted.
 % - labelfield: the name of the field to title the subplot.
 % - NodeNames: the names of the Nodes (to be displayed in the x axis).
 %
@@ -20,7 +20,7 @@
 function fig = GTlineplot(GTstruct,varargin);
 
 p = inputParser;
-addParameter(p, 'ResField', [], @ischar);
+addParameter(p, 'DataField', [], @ischar);
 addParameter(p, 'LabelFields', [], @iscell);
 addParameter(p, 'Ncols', [], @isnumeric);
 checkContent = @(x) isnumeric(x) | ischar(x);
@@ -30,7 +30,7 @@ addParameter(p, 'NodeNames', [], @iscell);
 
 parse(p, varargin{:});
 
-ResField = p.Results.ResField;
+DataField = p.Results.DataField;
 LabelFields =  p.Results.LabelFields;
 Ncols =  p.Results.Ncols;
 Xlimits =  p.Results.Xlimits;
@@ -50,7 +50,7 @@ for iSubj = 1:length(GTstruct)
     set(gca,'TickLabelInterpreter', 'none');
     
     hold on
-   subj_values = GTstruct(iSubj).(ResField);
+   subj_values = GTstruct(iSubj).(DataField);
 
     for iN = 1:length(subj_values);
         plot([0, subj_values(iN)], [iN iN], 'black');
@@ -85,12 +85,12 @@ set(gca, 'YTick', 1:length(NodeNames), 'YTickLabel', NodeNames);% 'XTickLabelRot
 if ~isempty(Xlimits)
     set(gca, 'Xlim', Xlimits);
 end;
-
+title(curr_names)
 % change legend line width (taken from
 % https://it.mathworks.com/matlabcentral/answers/259402-how-to-change-the-legend-colored-linewidth-not-the-width-of-box-outline)
-[~, hObj] = legend(curr_names);
-hL=findobj(hObj,'type','line');  % get the lines, not text
-set(hL,'linewidth', 2);
+% [~, hObj] = legend(curr_names);
+% hL=findobj(hObj,'type','line');  % get the lines, not text
+% set(hL,'linewidth', 2);
 
 end
 

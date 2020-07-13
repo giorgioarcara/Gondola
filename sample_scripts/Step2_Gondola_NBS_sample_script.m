@@ -5,8 +5,8 @@
 
 % data matrix (y in GLM object). it is the vectorized version of the
 % triupper of matrices.
-y1 = GT2NBSdata(GTSchiz, 'ResField', 'mat_or');
-y2 = GT2NBSdata(GTHealthy, 'ResField', 'mat_or');
+y1 = GT2NBSdata(GTSchiz, 'InField', 'mat_or');
+y2 = GT2NBSdata(GTHealthy, 'InField', 'mat_or');
 
 y = [y1; y2];
 

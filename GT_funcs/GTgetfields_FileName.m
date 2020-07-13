@@ -1,4 +1,4 @@
-%% GTgetfields_FileName(FileNames, 'FileNamefields',value, 'FileNameIgnore', value)
+%% GTgetfields_FileName(FileNames, 'FileNameFields',value, 'FileNameIgnore', value)
 %
 % This function takes as input a cell with FileNames and retrieve some
 % useful information from the name (splitting according to specified criteria)
@@ -6,7 +6,7 @@
 %
 % INPUT
 % - Filenames:A cell with the Filenames
-% - FileNamefields: a string indicating the FileNameFields in
+% - FileNameFields: a string indicating the FileNameFields in
 %                   the follwing format 'field1_field2_XX'. 
 %                   the parts in XX will be ignored when getting the filename.
 % - FileNameIgnore: a string (typically the extension) to be ignored in the
@@ -14,14 +14,14 @@
 %
 %
 % EXAMPLE: if the filename is SUBJECT01_DEVIANT_ALPHA
-% FileNamefields could be subject_condition_Freq, that will lead to the
+% FileNameFields could be subject_condition_Freq, that will lead to the
 % struct with fields:
 % 
 % GTstruct.subject
 % GTstruct.condition
 % GTstruct.Freq
 %
-% GTstruct = GTgetfields_FileName(all_files, 'FileNamefields', 'measure_nscouts_XX_type_XX_XX_time_Subject_cond', 'FileNameIgnore', '.mat')
+% GTstruct = GTgetfields_FileName(all_files, 'FileNameFields', 'measure_nscouts_XX_type_XX_XX_time_Subject_cond', 'FileNameIgnore', '.mat')
 %                  
 %
 % Author: Giorgio Arcara
@@ -35,12 +35,12 @@ function GTstruct = GTgetfields_FileName(FileNames, varargin);
 
 % part to check if, in a given group
 p = inputParser;
-addParameter(p, 'FileNamefields', [], @isstr);
+addParameter(p, 'FileNameFields', [], @isstr);
 addParameter(p, 'FileNameIgnore', [], @isstr);
 
 parse(p, varargin{:});
 
-FileNameFields = p.Results.FileNamefields;
+FileNameFields = p.Results.FileNameFields;
 FileNameIgnore =  p.Results.FileNameIgnore;
 
 

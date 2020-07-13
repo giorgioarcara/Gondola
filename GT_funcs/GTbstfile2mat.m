@@ -1,4 +1,4 @@
-%% GTfile2mat(GTmat_filename, 'InDir', path, 'OutDir', path, 'Freq', value)
+%% GTbstfile2mat(GTmat_filename, 'InDir', path, 'OutDir', path, 'Freq', value)
 % this function takes as input a .mat file containing a
 % GTstruct (i.e., struct as exported from process_export_conn_mat in brainstorm)
 % it returns files with the same name but only with matrices (getting rid
@@ -12,10 +12,12 @@
 % - InDir: the input path (Default value= ' ')
 % - OutDir: the output path (Default value= 'new_mat_files')
 % - Freq: the frequency bin to select (Default value = 1)
+%
 % Author: Giorgio Arcara
+%
 % version: 10/01/2018
 
-function GTfile2mat(GTmat_filename, varargin)
+function GTbstfile2mat(GTmat_filename, varargin)
 p = inputParser;
 addParameter(p, 'InDir', [], @ischar);
 addParameter(p, 'OutDir', [], @ischar);

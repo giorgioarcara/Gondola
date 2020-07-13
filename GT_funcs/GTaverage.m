@@ -1,51 +1,48 @@
-%% GTAvgrage(GTstruct, 'ResField', {value}, 'OtherFields', 'value')
+%% GTaverage(GTstruct, 'InFields', {value}, 'OtherFields', 'value')
 %
-% This function takes as input a GTstruct object (object with results from an analysis
-% with a script like BCT_analysis.m) and compute the average of the
-% matrices in a field.
+% This function takes as input a GTstruct and perform the average of the
+% data of all elements of the GTstruct in the InFields.
 %
 % INPUT
-% - GTstruct: the GTstruct struct with the results
-% - ResField: the name of the fields that will be averaged
+% - GTstruct: the GTstruct (either CMstruct or TSstruct)
+% - InFields: the name of the fields that will be averaged
 % - OtherFields: other fields to be stored (inherits from the first subject)
-%
-% NOTE: the function some all the values and then divide by the numbers
-%       so missing values can lead to wrong resuls
 %
 %
 % Author: Giorgio Arcara
 %
-% version: 04/03/2018
+% version: 09/06/2020
 %
 %
 
-function Avg = GTAverage(GTstruct, varargin);
+function GTstruct_res = GTaverage(GTstruct, varargin);
 
 p = inputParser;
-addParameter(p, 'ResField', [], @iscell);
+addParameter(p, 'InFields', [], @iscell);
 addParameter(p, 'OtherFields', [], @iscell);
 
 parse(p, varargin{:});
-ResField = p.Results.ResField;
+InFields = p.Results.InFields;
 OtherFields =  p.Results.OtherFields;
 
 if ~isempty(OtherFields)
     % first copy all the other fields (from the first subject)
-    for fn = OtherFields
-        Avg.(fn{1}) = GTstruct(1).(fn{1});
+    for iF = OtherFields
+        GTstruct_res.(iF{1}) = GTstruct(1).(iF{1});
     end
     warning('OtherFields have been copied from the first element of the GTstruct')
     
 end
 
-for iField = 1:length(ResField)
+for iField = 1:length(InFields)
     
-    all_data_mat = [GTstruct.(ResField{iField})];
+    % This code is used to avoid a loop over all elements of the GTstruct.
+    all_data_mat = [GTstruct.(InFields{iField})];
     
-    % use the first object as reference to get the sizes. and
-    all_data_mat_r = reshape(all_data_mat, size(GTstruct(1).(ResField{iField}), 1), size(GTstruct(1).(ResField{iField}), 2), length(GTstruct));
+    % use the first object as reference to get the sizes
+    all_data_mat_r = reshape(all_data_mat, size(GTstruct(1).(InFields{iField}), 1), size(GTstruct(1).(InFields{iField}), 2), size(GTstruct(1).(InFields{iField}), 3), length(GTstruct));
     
-    Avg.(ResField{iField}) = mean(all_data_mat_r, length(size(all_data_mat_r)));
+    GTstruct_res.(InFields{iField}) = mean(all_data_mat_r, length(size(all_data_mat_r)));
     
 end
 

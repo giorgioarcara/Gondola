@@ -1,4 +1,4 @@
-%% GTdifference(GTstruct1, GTstruct2, 'ResField',value,'OtherFields', value)
+%% GTdifference(GTstruct1, GTstruct2, 'InFields', {value},'OtherFields', {value})
 %
 % This function takes as input a GTstruct object (object with results from an analysis
 % with a script like BCT_analysis.m) and compute the average of the
@@ -7,11 +7,11 @@
 % INPUT
 % - GTstruct1: the first GTstruct struct with the results
 % - GTstruct2: the second GTstruct struct with the results
-% - ResField: the name of the fields that will be subtracted between(GTstruct1 -
+% - InFields: the name of the fields that will be subtracted between(GTstruct1 -
 % GTstruct2)between {} brackets
 % - OtherFields: the other fields to be kept between {} brackets
 %
-% IMPORTANTE: The function will perform GTstruct1.resfield - GTstruct2.resfield
+% IMPORTANTE: The function will perform GTstruct1.InFields - GTstruct2.InFields
 %
 % to be meaningful it is fundamental that the user supply GTstruct in which
 % the subjects are in the same order.
@@ -27,12 +27,12 @@
 function GTdiff = GTdifference(GTstruct1, GTstruct2, varargin)
 
 p = inputParser;
-addParameter(p, 'ResField', [], @iscell);
+addParameter(p, 'InFields', [], @iscell);
 addParameter(p, 'OtherFields', [], @iscell);
 
 parse(p, varargin{:});
 
-ResField = p.Results.ResField;
+InFields = p.Results.InFields;
 OtherFields =  p.Results.OtherFields;
 
 GTdiff = struct();
@@ -48,9 +48,9 @@ end
 
 
 % now load the data
-for k=1:length(GTstruct1);
-    for iField = 1:length(ResField);
-        GTdiff(k).(ResField{iField}) = GTstruct1(k).(ResField{iField}) - GTstruct2(k).(ResField{iField});
+for iE=1:length(GTstruct1);
+    for iField = 1:length(InFields);
+        GTdiff(iE).(InFields{iField}) = GTstruct1(iE).(InFields{iField}) - GTstruct2(iE).(InFields{iField});
     end;
     
 end;
@@ -61,7 +61,7 @@ warning('Be sure to have the two GTstructs with the objects in the appropriate o
 
 
 % note an alternative way is to get all values
-% Res = [GTstruct.ResField], reshape with 3rd dimension and then average
+% Res = [GTstruct.InFields], reshape with 3rd dimension and then average
 
 
 

@@ -1,7 +1,7 @@
-%% GTfileROIselect(GTfiles, 'ROIs',value, 'InDir',path, 'OutDir',path)
+%% GTbstfileScoutselect(GTbstfiles, 'ROIs',value, 'InDir',path, 'OutDir',path)
 %
 % This function take as input several GT .mat files.
-% It loads the files create new files in which only some ROis are inclued
+% It loads the files and write new files in which only some ROis are inclued
 %
 % INPUT:
 % - GTfiles: a cell of file names of GT structure (as exported by
@@ -14,7 +14,7 @@
 %
 % version: 1/2/2018
 
-function GTfileROIselect(GTfiles,varargin)
+function GTbstfileScoutselect(GTfiles,varargin)
 p = inputParser;
 addParameter(p, 'ROIs', [], @ischar);
 addParameter(p, 'InDir', [], @ischar);
