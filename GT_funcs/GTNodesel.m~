@@ -63,7 +63,7 @@ end;
 
 % find indices of Node
 %[~, Node_ind, ~] = intersect(Nodes, SelNodes, 'stable');
-Node_ind = find(ismember(Nodes, SelNodes));
+NOde_find(ismember(Nodes, SelNodes);
 
 % loop over all elements in the struct and select
 for k=1:length(GTstruct);
