@@ -1,4 +1,4 @@
-%% GTpermute_with2_test(GTstruct1, GTstruct2, 'ResField', value, 'Iterations', value, 'ResMat', value)
+%% GTpermute_with2_test(GTstruct1, GTstruct2, 'InField', value, 'Iterations', value, 'ResMat', value)
 %
 % This function perform a permutation test from two GT struct
 % using a procedure as in Brookes at al 2016 (Neuroimage). http://dx.doi.org/10.1016/j.neuroimage.2016.02.045
@@ -20,7 +20,7 @@
 %
 % - GTstruct1: the first GTstruct
 % - GTstruct2: the second GTstruct
-% - ResField: a cell with the fields of the GTstruct that should be used
+% - InField: a cell with the fields of the GTstruct that should be used
 %              to calculated permuted average.
 % - Iterations: number indicating the number of permutation (default is
 % 1000).
@@ -40,12 +40,12 @@
 
 function [obs_diff_mat, p_mat_fdr, p_mat_unc, Rand_res] = GTpermute_with2_test(GTstruct1, GTstruct2, varargin)
 p = inputParser;
-addParameter(p, 'ResField', [], @ischar);
+addParameter(p, 'InField', [], @ischar);
 addParameter(p, 'Iterations', 1000, @isnumeric)
 addParameter(p, 'ResMat', [], @ischar)
 parse(p, varargin{:});
 
-ResField = p.Results.ResField;
+InField = p.Results.InField;
 Iterations =  p.Results.Iterations;
 ResMat =  p.Results.ResMat;
 
@@ -66,15 +66,15 @@ n_subj = length(GTstruct1);
 n_groups = 2;
 
 % first isolate only half matrix according to resmat
-GTstruct1 = GTdiag_mat(GTstruct1, 'ResField', ResField);
-GTstruct2 = GTdiag_mat(GTstruct2, 'ResField', ResField);
+GTstruct1 = GTdiag_mat(GTstruct1, 'InField', InField, 'OutField', InField);
+GTstruct2 = GTdiag_mat(GTstruct2, 'InField', InField, 'OutField', InField);
 
 % create observed average
-obs_ave1 = GTaverage(GTstruct1, 'ResField', {ResField});
-obs_ave2 = GTaverage(GTstruct2, 'ResField', {ResField});
+obs_ave1 = GTaverage(GTstruct1, 'InField', {InField});
+obs_ave2 = GTaverage(GTstruct2, 'InField', {InField});
 
 % create observed difference of average
-obs_diff = GTdifference(obs_ave1, obs_ave2, 'ResField', {ResField});
+obs_diff = GTdifference(obs_ave1, obs_ave2, 'InField', {InField});
 
 
 
@@ -91,16 +91,16 @@ for iIter = 1:Iterations
     for iSubj = 1:n_subj
         
             if perm_signs(iSubj) == 1 % case one: don't swap
-                GTrand_subj1(iSubj).(ResField) = GTstruct1(iSubj).(ResField);
-                GTrand_subj2(iSubj).(ResField) = GTstruct2(iSubj).(ResField);
+                GTrand_subj1(iSubj).(InField) = GTstruct1(iSubj).(InField);
+                GTrand_subj2(iSubj).(InField) = GTstruct2(iSubj).(InField);
             elseif perm_signs(iSubj) == -1 % case two: swap.
-                GTrand_subj1(iSubj).(ResField) = GTstruct2(iSubj).(ResField);
-                GTrand_subj2(iSubj).(ResField) = GTstruct1(iSubj).(ResField);
+                GTrand_subj1(iSubj).(InField) = GTstruct2(iSubj).(InField);
+                GTrand_subj2(iSubj).(InField) = GTstruct1(iSubj).(InField);
             end;        
     end;
     
-    GTrand1 = GTaverage(GTrand_subj1, 'ResField', {ResField});
-    GTrand2 = GTaverage(GTrand_subj2, 'ResField', {ResField});
+    GTrand1 = GTaverage(GTrand_subj1, 'InField', {InField});
+    GTrand2 = GTaverage(GTrand_subj2, 'InField', {InField});
 
     % store results
     % initialize the object at first iteration
@@ -125,14 +125,14 @@ for iIter = 1:Iterations
     
 end;
 
-    Rand_diff = GTdifference(GTperm1, GTperm2, 'ResField', {ResField});
-    Rand_values = [Rand_diff.(ResField)];
+    Rand_diff = GTdifference(GTperm1, GTperm2, 'InField', {InField});
+    Rand_values = [Rand_diff.(InField)];
     Rand_values = Rand_values(:);
     Rand_res = Rand_values(~isnan(Rand_values)); % important. exclude NaN
     
-    % p_res = arrayfun(@(x)(invprctile(Rand_res, x)), obs_diff.(ResField)); 
+    % p_res = arrayfun(@(x)(invprctile(Rand_res, x)), obs_diff.(InField)); 
     
-    values_mat = obs_diff.(ResField);
+    values_mat = obs_diff.(InField);
     values = values_mat(:); % to unlist in a vector
     
     % to take into account that I want extreme values Itransform everything in negative absolute values 

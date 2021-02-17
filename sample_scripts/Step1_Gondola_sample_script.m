@@ -89,7 +89,7 @@ GTHealthy = GTsel(GTstruct, 'InField', 'group', 'Content', 'Healthy');
 GTSchiz_ave = GTaverage(GTSchiz, 'InFields', {'mat_or', 'mat_thresh'});
 GTHealthy_ave = GTaverage(GTHealthy, 'InFields', {'mat_or', 'mat_thresh'});
 
-GTm = GToperation2(GTSchiz_ave, GTHealthy_ave, 'ResField',  {'mat_or'},  'operation', 'GTres=GT1/GT2');
+GTm = GToperation2(GTSchiz_ave, GTHealthy_ave, 'InFields',  {'mat_or'},  'operation', 'GTres=GT1/GT2');
 
 
 %% plot some images

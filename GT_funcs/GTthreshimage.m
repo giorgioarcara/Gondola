@@ -29,10 +29,8 @@ p = inputParser;
 addParameter(p, 'CoordNames', [], @iscell);
 addParameter(p, 'Thresholds', [], @isnumeric);
 addParameter(p, 'ThreshMat', [], @isnumeric);
-addParameter(p, 'DrawLabels', 1, @isnumeric);
+addParameter(p, 'DrawLabels', [], @isnumeric);
 addParameter(p, 'Clim', [], @isnumeric);
-
-
 parse(p, varargin{:});
 
 CoordNames = p.Results.CoordNames;

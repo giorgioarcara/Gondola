@@ -1,4 +1,4 @@
-%% GTthreshold(GTstruct, 'InField', 'value', 'Perc', 'value', 'ThreshFieldName', "value")
+%% GTthreshold(GTstruct, 'InField', 'value', 'Perc', 'value', 'ThreshFieldName', 'value')
 %
 % this function apply a threshold to a 
 % GTstruct. Currently only Percentile thresholds are allowed.

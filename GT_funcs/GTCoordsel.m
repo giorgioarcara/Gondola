@@ -43,7 +43,7 @@ All_Coords=Coord.(CoordField);
 
 
 
-if (length(unique(All_Nodes))<length(All_Nodes) | length(unique(Nodesel) < length(Nodesel)))
+if (length(unique(All_Nodes))<length(All_Nodes) || length(unique(Nodesel)) < length(Nodesel))
     error('foo:bar', ['GT: There are some duplicate names in your node names,\n',...
         'either in the original Nodes or in the selection.\n',...
         'Please check your input data']);
