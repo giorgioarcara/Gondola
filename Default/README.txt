@@ -1,0 +1,1 @@
+All atlases are in MNI space

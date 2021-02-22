@@ -1,8 +1,7 @@
-%% GTSortNodes(CMstruct, 'Nodes', {value}, 'TargetNodes', value, 'DataField', value, 'OtherFields', value);
+%% GTSortNodes(CMstruct, 'OrNodes', {value}, 'TargetNodes', value, 'DataField', value, 'OtherFields', value, 'Indices', value);
 %
-% This function start from a GT struct. It selects the rows and columns of the adjacency matrix data
-% given some names, supplied as a cell and associated to nodes (i.e., rows
-% and columns).
+% This function start from a GT struct. It sort the rows and cols of
+% DataField according to some other supplied values.
 %
 %
 % INPUT:
@@ -13,30 +12,32 @@
 %            supplied as DataField.
 % - TargetNodes: a cell with the names of the Nodes in the new Order.
 % - DataField: the name of the field containing the adjacency matrices.
-% - othersfields: a cell with name of fields that should be inherited from
-% CMstruct.
+% - othersfields: a cell with name of fields that should be inherited from CMstruct.
+% - Indices: override Nodes, and Target Nodes, and reorder both rows and
+%         with the new supplied order.
 %
 %
 % Author: Giorgio Arcara
 % Data: 19/11/2019
 
-function CMres = GTTargetNodes(CMstruct, varargin)
+function CMres = GTSortNodes(CMstruct, varargin)
 
 % part to check if, in a given group
 p = inputParser;
-addParameter(p, 'Nodes', [], @iscell);
+addParameter(p, 'OrNodes', [], @iscell);
 addParameter(p, 'TargetNodes', [], @iscell);
 addParameter(p, 'DataField', [], @ischar);
 addParameter(p, 'OtherFields', [], @iscell);
+addParameter(p, 'Indices', [], @isnumeric);
 
 
 parse(p, varargin{:});
 
- Nodes = p.Results.Nodes;
- TargetNodes =  p.Results.TargetNodes;
- DataField =  p.Results.DataField;
- OtherFields =  p.Results.OtherFields;
-
+OrNodes = p.Results.OrNodes;
+TargetNodes =  p.Results.TargetNodes;
+DataField =  p.Results.DataField;
+OtherFields =  p.Results.OtherFields;
+Indices = p.Results.Indices;
 
 
 % initialize empty object
@@ -61,8 +62,16 @@ elseif (isempty(OtherFields))
     
 end;
 
-% find indices of Node
-[~, ~, New_Node_ind] = intersect(TargetNodes, Nodes, 'stable');
+% case one
+if ~(isempty(TargetNodes)&isempty(OrNodes))
+    
+    % find indices of Node
+    [~, ~, New_Node_ind] = intersect(TargetNodes, OrNodes, 'stable');
+    
+else
+    New_Node_ind = Indices;
+    
+end;
 
 % loop over all elements in the struct and select
 for k=1:length(CMstruct);
@@ -70,6 +79,7 @@ for k=1:length(CMstruct);
     sel_data = curr_data(New_Node_ind, New_Node_ind);
     CMres_temp(k).(DataField) = sel_data;
 end;
+
 
 CMres = CMres_temp;
 

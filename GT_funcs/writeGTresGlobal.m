@@ -16,7 +16,7 @@
 % version: 12/1/2018
 
 
-function writeGTresGlobal(GTres, varargin)
+function ResTable = writeGTresGlobal(GTres, varargin)
 p = inputParser;
 addParameter(p, 'ResFields', [], @iscell);
 addParameter(p, 'LabFields', [], @iscell);
@@ -55,7 +55,18 @@ lab = lab';
 
 export_lab = lab;
 
-%% EXPORT FILE FOR NBS
+
+% create table
+ResTable = table( );
+for iF = 1:length(LabFields)
+    ResTable.(LabFields{iF}) = export_lab(:,iF);
+end;
+for iRF = 1:length(ResFields)
+    ResTable.(ResFields{iRF}) = res(:, iRF);
+end;
+
+
+%% EXPORT FILE
 export_file=OutFileName;
 
 fid = fopen(export_file, 'w');

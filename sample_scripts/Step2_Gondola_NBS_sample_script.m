@@ -5,7 +5,7 @@
 
 % data matrix (y in GLM object). it is the vectorized version of the
 % triupper of matrices.
-y1 = GT2NBSdata(GTSchiz, 'InField', 'mat_or');
+y1 = GT2NBSdata(, 'InField', 'mat_or');
 y2 = GT2NBSdata(GTHealthy, 'InField', 'mat_or');
 
 y = [y1; y2];
@@ -26,7 +26,7 @@ NBSglm_res = NBSglm(GLM);
 STATS.thresh=3.1; % arbitrary (see NBS tutorial)
 STATS.alpha = 0.05; % 
 STATS.size = 'Extent';
-STATS.N = 74;
+STATS.N = 74; % number of Nodes of the matrices
 STATS.test_stat = NBSglm_res;
 
 % for fdr

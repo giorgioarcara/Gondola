@@ -1,4 +1,4 @@
-%% GTSelNodes(GTstruct, 'Nodes', {value}, 'SelNodes', value, 'DataField', value, 'OtherFields', value);
+%% GTNodeSel(GTstruct, 'Nodes', {value}, 'SelNodes', value, 'DataField', value, 'OtherFields', value, 'Indices', value);
 %
 % This function start from a GT struct. It selects the rows and columns of the adjacency matrix data
 % given some names, supplied as a cell and associated to nodes (i.e., rows
@@ -14,13 +14,15 @@
 % - SelNodes: a cell with the names of the Nodes to be selected.
 % - DataField: the name of the field containing the adjacency matrices.
 % - othersfields: a cell with name of fields that should be inherited from
+% - indices: a vector indicating which nodes to select (override other
+% values).
 % GTstruct.
 %
 %
 % Author: Giorgio Arcara
-% Data: 19/11/2019
+% Data: 20/02/2021
 
-function GTres = GTSelNodes(GTstruct, varargin)
+function GTres = GTNodeSel(GTstruct, varargin)
 
 % part to check if, in a given group
 p = inputParser;
@@ -28,6 +30,7 @@ addParameter(p, 'Nodes', [], @iscell);
 addParameter(p, 'SelNodes', [], @iscell);
 addParameter(p, 'DataField', [], @ischar);
 addParameter(p, 'OtherFields', [], @iscell);
+addParameter(p, 'Indices', [], @isnumeric);
 
 
 parse(p, varargin{:});
@@ -36,7 +39,7 @@ parse(p, varargin{:});
  SelNodes =  p.Results.SelNodes;
  DataField =  p.Results.DataField;
  OtherFields =  p.Results.OtherFields;
-
+ Indices =  p.Results.Indices;
 
 
 % initialize empty object
@@ -63,7 +66,11 @@ end;
 
 % find indices of Node
 %[~, Node_ind, ~] = intersect(Nodes, SelNodes, 'stable');
-Node_ind = find(ismember(Nodes, SelNodes));
+if (isempty(Indices))
+    Node_ind = find(ismember(Nodes, SelNodes));
+else
+    Node_ind = Indices;
+end;
 
 % loop over all elements in the struct and select
 for k=1:length(GTstruct);

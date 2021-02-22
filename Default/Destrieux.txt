@@ -1,4 +1,4 @@
-#Desikan-Killiany Atlas 68 nodes
+#Desikan-Killiany Atlas 68 nodes. from adapted from download github of brainGraph, R package
 -36.46 -7.484 -0.058 1 1 l.G_Ins_lg_and_S_cent_ins
 37.305 -4.064 -3.656 1 1 r.G_Ins_lg_and_S_cent_ins
 -10.877 39.073 8.334 1 1 l.G_and_S_cingul-Ant

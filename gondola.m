@@ -68,9 +68,10 @@ if (strcmp(option, 'start') |  strcmp(option, 'restart'))
     fprintf('\n\n');
     fprintf('--- Gondola toolbox now in search path ---\n');
     % fprintf('--- Requires: BCT toolbox\n');
-    fprintf('--- by: Giorgio Arcara, Gian Marco Duma, Marco Marino, Annalisa Pascarella, Giovanni Pellegrino\n');
-    fprintf('--- version: 0.2');
-    fprintf('\n\n\n\n');
+    fprintf('--- For questions write to giorgio.arcara@gmail.com\n');
+    %fprintf('--- Contributors: Gian Marco Duma, Marco Marino, Annalisa Pascarella, Giovanni Pellegrino\n');
+    fprintf('--- version: 0.3. February 2021');
+    fprintf('\n\n');
     
 end;
 if strcmp(option, 'gondola_already_here');
