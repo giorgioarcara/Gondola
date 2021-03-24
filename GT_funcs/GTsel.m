@@ -6,9 +6,9 @@
 %
 % INPUT: 
 %
-% - GTstruct: a struct, resullting from BCT script analysis
-% - field: the field for the selection
-% - content: an expression (also with logical) to select the fields.
+% - GTstruct: a struct for Gondola
+% - InField: the field for the selection
+% - Content: an expression (also with logical) to select the fields.
 
 function GTstruct = GTsel(GTstruct, varargin)
 

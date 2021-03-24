@@ -1,2 +1,2 @@
 - use subtightplot or subaxis in GTimagesc.
-- add cylinder between two points and spheres for better graph plots.
+- add GTsel for multiple selection in one line
