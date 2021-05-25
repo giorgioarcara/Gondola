@@ -56,7 +56,7 @@ res = res';
 %% LabField (numeric results to be exported, one per Subject).
 
 % find indices corresponding to name
-[~, ~, ind] = intersect(LabFields ,res_names, 'stable');
+[~, ind, ~] = intersect(res_names, LabFields);
 
 lab = res_cell(ind, :);
 

@@ -55,7 +55,7 @@ for iE=1:length(GTstruct1);
     
 end;
 
-warning('Be sure to have the two GTstructs with the objects in the appropriate order!')
+warning('Make sure to have the two GTstructs with the objects in the appropriate order!')
 
 
 

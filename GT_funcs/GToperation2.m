@@ -10,6 +10,8 @@
 % - InFields: the name of the fields that will be subtracted between(GTstruct1 -
 % GTstruct2)between {} brackets
 % - OtherFields: the other fields to be kept between {} brackets
+% - OutFields: the name of the Output Field. If not specified is the Infield
+% name.
 % - operation: a text that will be evaluated to compute some operations
 % with two matrices.It should expressed as GTres = 'some operation'
 %
@@ -29,12 +31,14 @@ function GTstruct = GToperation2(GTstruct1, GTstruct2, varargin)
 p = inputParser;
 addParameter(p, 'InFields', [], @iscell);
 addParameter(p, 'OtherFields', [], @iscell);
+addParameter(p, 'OutFields', [], @iscell);
 addParameter(p, 'operation', 'GTres=GT1-GT2', @ischar);
 parse(p, varargin{:});
 
 
 InFields = p.Results.InFields;
 OtherFields =  p.Results.OtherFields;
+OutFields = p.Results.OutFields;
 operation = p.Results.operation;
 
 GTstruct = struct();
@@ -48,6 +52,11 @@ if (exist('OtherFields')&~isempty('OtherFields'))
     end
 end
 
+if isempty(OutFields)
+    OutFields = InFields;
+    fprintf(['\n\n- GT Warning: the original InFields were replaced by results of the operation.\n'] );
+end;
+
 
 % now load the data
 for k=1:length(GTstruct1);
@@ -55,12 +64,12 @@ for k=1:length(GTstruct1);
         GT1 = GTstruct1(k).(InFields{iField}) ;
         GT2 = GTstruct2(k).(InFields{iField});
         eval([operation,';'])
-        GTstruct(k).(InFields{iField}) = GTres;
+        GTstruct(k).(OutFields{iField}) = GTres;
     end;
     
 end;
-fprintf(['\n\n - Operation performed: ', operation, '\n'] );
-warning('Be sure that the two GTstructs have the objects in the correct order!')
+fprintf(['- Operation performed: ', operation, '\n'] );
+warning('Make sure that the two GTstructs have the objects in the correct order!')
 
 
 
