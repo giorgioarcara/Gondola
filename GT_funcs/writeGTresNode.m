@@ -17,10 +17,11 @@
 % - OutFileName = a string with the directory of the file to be saved
 % Author: Giorgio Arcara
 %
-% version: 12/1/2018
+% version: 30/05/2021
 
 
 function ResTable = writeGTresNode(GTres, varargin)
+
 
 p = inputParser;
 addParameter(p, 'ResFields', [], @iscell);
@@ -28,7 +29,6 @@ addParameter(p, 'LabFields', [], @iscell);
 addParameter(p, 'NodeLabels', [], @iscell);
 addParameter(p, 'OtherNodeLabels', [], @iscell);
 addParameter(p, 'OutFileName', [], @ischar);
-
 
 parse(p, varargin{:});
 
@@ -38,6 +38,7 @@ NodeLabels =  p.Results.NodeLabels;
 OtherNodeLabels =  p.Results.OtherNodeLabels;
 OutFileName =  p.Results.OutFileName;
 
+%%
 
 %% ResField (numeric results to be exported, one per node).
 
@@ -46,7 +47,7 @@ res_names = fields(GTres);
 res_cell=squeeze(struct2cell(GTres));
 
 % find indices corresponding to name
-[~, ind, ~] = intersect(res_names, ResFields);
+[~, ~, ind] = intersect(ResFields, res_names, 'stable');
 
 restemp = res_cell(ind, :);
 
@@ -56,15 +57,25 @@ res = res';
 %% LabField (numeric results to be exported, one per Subject).
 
 % find indices corresponding to name
-[~, ind, ~] = intersect(res_names, LabFields);
+[~, ~, ind] = intersect( LabFields, res_names,'stable');
 
 lab = res_cell(ind, :);
 
 lab = lab';
 
+%% GF START
+% bug solved, export_lab was arranged in conditions x nodes, whereas
+% export_nodes in nodes x conditions
+%export_lab = repmat(lab, length(NodeLabels), 1); % OLD CALL
+export_lab = []; % NEW CALL
+conditions = size(lab); conditions = conditions(1);
+for index = 1 : conditions
+    export_lab = [export_lab; repmat(lab(index,:), length(NodeLabels), 1)];
+end
+%% GF END
 
-export_lab = repmat(lab, length(NodeLabels), 1);
 export_nodes = repmat(NodeLabels, length(lab), 1);
+
 other_vars = cell(length(lab)*length(NodeLabels), length(OtherNodeLabels));
 for iN=1:length(OtherNodeLabels)
     if length(OtherNodeLabels{iN})~=length(NodeLabels)
@@ -91,7 +102,7 @@ end;
 
 
 if ~isempty(OutFileName)
-    %% EXPORT FILE FOR NBS
+    %% EXPORT FILE 
     fid = fopen(OutFileName, 'w');
     
     sep=',';

@@ -13,7 +13,7 @@
 %
 % Author: Giorgio Arcara
 %
-% version: 12/1/2018
+% version: 30/05/2021
 
 
 function ResTable = writeGTresGlobal(GTres, varargin)
@@ -37,7 +37,7 @@ res_names = fields(GTres);
 res_cell=squeeze(struct2cell(GTres));
 
 % find indices corresponding to name
-[~, ind, ~] = intersect(res_names, ResFields);
+[~,  ~, ind] = intersect(ResFields, res_names, 'stable');
 
 restemp = res_cell(ind, :);
 
@@ -45,16 +45,14 @@ res = cell2mat(restemp);
 res = res';
 
 %% LabFields (numeric results to be exported, one per Subject).
-
 % find indices corresponding to name
-[~, ind, ~] = intersect(res_names, LabFields);
+[~,  ~, ind] = intersect(LabFields, res_names, 'stable');
 
 lab = res_cell(ind, :);
 
 lab = lab';
 
 export_lab = lab;
-
 
 % create table
 ResTable = table( );

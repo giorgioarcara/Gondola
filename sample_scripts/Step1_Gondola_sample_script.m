@@ -51,9 +51,12 @@ GTstruct = GTaddvalue(GTstruct,'InField', 'group', 'NewValue',{'Healthy'}, 'Elem
 % Coord is a struct with 'xyz' coordinates and 'labels' of the nodes of
 % connectivity matrices.
 
+% note that the files in the next lines are loaded from 
+% gondola_code/External/NBS1.2/SchizophreniaExample
+
 %load coordinates and put in a single Coord object
-Coord_xyz = readtable('SchizophreniaExample/COG.txt', 'Delimiter', ' ', 'ReadVariableNames', 0, 'HeaderLines', 0);
-Coord_labels = readtable('SchizophreniaExample/nodeLabels.txt', 'Delimiter', '\t', 'ReadVariableNames', 0, 'HeaderLines', 0);
+Coord_xyz = readtable('COG.txt', 'Delimiter', ' ', 'ReadVariableNames', 0, 'HeaderLines', 0);
+Coord_labels = readtable('nodeLabels.txt', 'Delimiter', '\t', 'ReadVariableNames', 0, 'HeaderLines', 0);
 Coords.xyz = table2array(Coord_xyz);
 Coords.labels = table2array(Coord_labels);
 
