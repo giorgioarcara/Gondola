@@ -51,6 +51,7 @@ if (~isempty(OtherFields));
         for fn = OtherFields
             for isubj = 1:length(CMstruct);
                 CMres_temp(isubj).(fn{1}) = CMstruct(isubj).(fn{1});
+                
             end
         end
     end

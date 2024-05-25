@@ -1,4 +1,4 @@
-%% writeGTresNode(GTstruct, 'ResFields', {value}, 'LabFields', {value}, 'NodeLabels', {value}, 'OtherNodeLabels', {values}, 'OutFileName', 'value')
+%% writeGTresMat (GTstruct, 'ResMat', {value}, 'p_mats', {value}, 'LabFields', {value}, 'NodeLabels', {value}, 'OtherNodeLabels', {values}, 'OutFileName', 'value')
 %
 % This function take as input several a GTres struct (as obtained by a
 % BCT_analysis.m script)
@@ -20,11 +20,12 @@
 % version: 30/05/2021
 
 
-function ResTable = writeGTresNode(GTres, varargin)
+function ResTable = writeGTresMat(GTres, varargin)
 
 
 p = inputParser;
-addParameter(p, 'ResFields', [], @iscell);
+addParameter(p, 'ResMat', [], @iscell);
+addParameter(p, 'p_mats', [], @iscell); %% optional
 addParameter(p, 'LabFields', [], @iscell);
 addParameter(p, 'NodeLabels', [], @iscell);
 addParameter(p, 'OtherNodeLabels', [], @iscell);
@@ -32,7 +33,8 @@ addParameter(p, 'OutFileName', [], @ischar);
 
 parse(p, varargin{:});
 
-ResFields = p.Results.ResFields;
+ResMat = p.Results.ResMat;
+p_mats = p.Results.p_mats;
 LabFields =  p.Results.LabFields;
 NodeLabels =  p.Results.NodeLabels;
 OtherNodeLabels =  p.Results.OtherNodeLabels;
