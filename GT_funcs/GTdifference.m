@@ -19,7 +19,7 @@
 %
 % Author: Giorgio Arcara
 %
-% version: 1/02/2018
+% version: 17/07/2024
 %
 %
 
@@ -29,11 +29,14 @@ function GTdiff = GTdifference(GTstruct1, GTstruct2, varargin)
 p = inputParser;
 addParameter(p, 'InFields', [], @iscell);
 addParameter(p, 'OtherFields', [], @iscell);
+addParameter(p, 'Verbose', 1, @isnumeric);
+
 
 parse(p, varargin{:});
 
 InFields = p.Results.InFields;
 OtherFields =  p.Results.OtherFields;
+Verbose =  p.Results.Verbose;
 
 GTdiff = struct();
 
@@ -55,7 +58,9 @@ for iE=1:length(GTstruct1);
     
 end;
 
-warning('Make sure to have the two GTstructs with the objects in the appropriate order!')
+if Verbose
+    warning('Make sure to have the two GTstructs with the objects in the appropriate order!');
+end;
 
 
 

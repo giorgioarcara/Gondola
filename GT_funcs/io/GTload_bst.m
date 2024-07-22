@@ -37,6 +37,13 @@ StructFields = p.Results.StructFields;
 ResFields =  p.Results.ResFields;
 DataPath =  p.Results.DataPath;
 
+if isempty(ResFields)
+   error("ResFields is a mandatory field of this function, check the help")
+end
+
+if isempty(StructFields)
+   error("StructFields is a mandatory field of this function, check the help")
+end
 
 
 for iFile = 1:length(FileNames)
@@ -61,6 +68,3 @@ for iFile = 1:length(FileNames)
     
     
 end
-
-
-

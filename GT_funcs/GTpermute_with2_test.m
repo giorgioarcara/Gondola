@@ -11,7 +11,7 @@
 % - convert observed difference in empirical p-values by comparing with
 % distribution X
 % group average for the separate groups it then create a difference between
-% the two objects and then extract only the 
+% the two objects and then extract only the
 %
 % VERSION 2
 %
@@ -24,7 +24,7 @@
 %              to calculated permuted average.
 % - Iterations: number indicating the number of permutation (default is
 % 1000).
-% - ResMat: string indicating ... 
+% - ResMat: string indicating ...
 % currently it works only with one field.
 %
 % OUTPUT:
@@ -51,7 +51,7 @@ ResMat =  p.Results.ResMat;
 
 % preliminary checks
 if length(GTstruct1)~=length(GTstruct2)
-    error('GT: The length of GTstruct1 should be the same of the length of GTstruct2 (this function is for within subject design).')    
+    error('GT: The length of GTstruct1 should be the same of the length of GTstruct2 (this function is for within subject design).')
 end;
 
 
@@ -80,25 +80,25 @@ obs_diff = GTdifference(obs_ave1, obs_ave2, 'InField', {InField});
 
 % for loop over Iterations
 for iIter = 1:Iterations
-    
+
     % permute labels
     perm_signs = datasample([1, -1], n_subj);
     % this will decide which labels I will swap.
-    
+
     GTrand_subj1 = struct();
     GTrand_subj2 = struct();
-    
+
     for iSubj = 1:n_subj
-        
-            if perm_signs(iSubj) == 1 % case one: don't swap
-                GTrand_subj1(iSubj).(InField) = GTstruct1(iSubj).(InField);
-                GTrand_subj2(iSubj).(InField) = GTstruct2(iSubj).(InField);
-            elseif perm_signs(iSubj) == -1 % case two: swap.
-                GTrand_subj1(iSubj).(InField) = GTstruct2(iSubj).(InField);
-                GTrand_subj2(iSubj).(InField) = GTstruct1(iSubj).(InField);
-            end;        
+
+        if perm_signs(iSubj) == 1 % case one: don't swap
+            GTrand_subj1(iSubj).(InField) = GTstruct1(iSubj).(InField);
+            GTrand_subj2(iSubj).(InField) = GTstruct2(iSubj).(InField);
+        elseif perm_signs(iSubj) == -1 % case two: swap.
+            GTrand_subj1(iSubj).(InField) = GTstruct2(iSubj).(InField);
+            GTrand_subj2(iSubj).(InField) = GTstruct1(iSubj).(InField);
+        end;
     end;
-    
+
     GTrand1 = GTaverage(GTrand_subj1, 'InField', {InField});
     GTrand2 = GTaverage(GTrand_subj2, 'InField', {InField});
 
@@ -114,50 +114,50 @@ for iIter = 1:Iterations
         GTperm2(end+1) = GTrand2;
 
     end;
-    
+
     % debug
     %imagesc(GTrand1.mat_or)
     %figure
-    %imagesc(GTrand2.mat_or)  
-    
+    %imagesc(GTrand2.mat_or)
+
     % draw progress
     GTprogressbar(iIter, Iterations);
-    
-end;
 
-    Rand_diff = GTdifference(GTperm1, GTperm2, 'InField', {InField});
+    Rand_diff = GTdifference(GTperm1, GTperm2, 'InField', {InField}, 'Verbose', 0);
     Rand_values = [Rand_diff.(InField)];
     Rand_values = Rand_values(:);
     Rand_res = Rand_values(~isnan(Rand_values)); % important. exclude NaN
-    
-    % p_res = arrayfun(@(x)(invprctile(Rand_res, x)), obs_diff.(InField)); 
-    
-    values_mat = obs_diff.(InField);
-    values = values_mat(:); % to unlist in a vector
-    
-    % to take into account that I want extreme values Itransform everything in negative absolute values 
-    % and then in negative.
-    % In this way to use a single call to calculate probability of more extrame values
-    % to invprctile
-    neg_abs_values = -abs(values);
-    
-    p_res = invprctile(Rand_res, neg_abs_values)./100; % divide by 100 to transform in p-values
-    
-    % create matrix with uncorrected p values.
-    p_mat_unc = reshape(p_res, size(values_mat));
-    
-   [~, ~, ~, adj_p] = fdr_bh(p_mat_unc(~isnan(p_mat_unc)), 0.05);
-    
-    p_mat_fdr = nan(size(p_mat_unc));
-    p_mat_fdr(~isnan(p_mat_unc)) = adj_p;
-    
-    
-    
-    obs_diff_mat = values_mat;
-    %  to check the reshaping was ok
-    % values_mat2 = reshape(values, size(values_mat));
 
-    
+    Rand_max(iIter) = max(abs(Rand_res));
+
+end;
+
+values_mat = obs_diff.(InField);
+values = values_mat(:); % to unlist in a vector
+
+values_mat = obs_diff.(InField);
+values = values_mat(:); % to unlist in a vector
+
+p_res = zeros(size(values));
+
+for iV = 1:length(values)
+    p_res(iV) = sum(Rand_max>=abs(values(iV))) / Iterations;
+end;
+
+% create matrix with uncorrected p values.
+p_mat_unc = reshape(p_res, size(values_mat));
+
+[~, ~, ~, adj_p] = fdr_bh(p_mat_unc(~isnan(p_mat_unc)), 0.05);
+
+p_mat_fdr = nan(size(p_mat_unc));
+p_mat_fdr(~isnan(p_mat_unc)) = adj_p;
+
+
+obs_diff_mat = values_mat;
+%  to check the reshaping was ok
+% values_mat2 = reshape(values, size(values_mat));
+
+
 
 
 end

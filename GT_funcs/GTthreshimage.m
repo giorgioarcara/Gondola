@@ -117,7 +117,7 @@ end;
 dcm=datacursormode;
 datacursormode off
 Coord = CoordNames;
-set(dcm, 'updatefcn', {@myFunction, Coord}); % note here that I specify the argument Coord to be used in the personalized Datatip.
+set(dcm, 'updatefcn', {@myFunction, Coord}, 'Interpreter', 'None'); % note here that I specify the argument Coord to be used in the personalized Datatip.
 
 
 end

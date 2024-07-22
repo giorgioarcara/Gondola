@@ -117,6 +117,12 @@ GTbrainplot2(GTSchiz(1:2), GTHealthy(1:2), 'NodeField', 'degree', 'EdgeField', '
 GTSchiz_plot = GToperation(GTSchiz(1), 'InField', {'degree'}, 'OtherFields', {'mat_thresh'},  'operation', 'GTres=GT1*0.5');
 GTbrainplot(GTSchiz_plot(1), 'NodeField', 'degree', 'EdgeField', 'mat_thresh','Coords', Coords, 'Quality', 'HQ', 'CamView', [0, 90],'CortexAlpha', 0.1);
 
+%% Permutation test
+
+[obs_diff_mat, p_mat_fdr, p_mat_unc, Rand_res] = GTpermute_bet2_test(GTHealthy, GTSchiz,  'InField', 'mat_or', 'Iterations', 1000);
+
+
+GTthreshimage(obs_diff_mat, 'CoordNames', Coords.labels, 'Thresholds', [-Inf, 0.1],'ThreshMat', p_mat_fdr,'DrawLabels', 1)
 
 %% export to Table for analysis
 % this function convert results to a table for analysis in matlab, but could also be used to export to a .txt file. 

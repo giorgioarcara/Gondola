@@ -1,4 +1,4 @@
-%% GTpermute_bet(GTstructcell, 'ResFields', value, 'Iterations', value)
+%% GTpermute_bet(GTstructcell, 'ResField', value, 'Iterations', value)
 %
 % (BETWEEN SUBJECT PERMUTATION)
 % This function takes as input a cell with at least two GTres struct with single
@@ -26,8 +26,8 @@
 function GTpermcell = GTpermute_bet(GTstructcell, varargin)
 
 p = inputParser;
-addParameter(p, 'ResField', [], @iscell);
-addParameter(p, 'Iterations', [], @isnumeric)
+addParameter(p, 'ResField', [], @ischar);
+addParameter(p, 'Iterations', 1000, @isnumeric)
 parse(p, varargin{:});
 
 ResField = p.Results.ResField;
@@ -35,12 +35,8 @@ Iterations =  p.Results.Iterations;
 
 % preliminary checks
 
-if nargin < 2
+if isempty(ResField)
     error('2 inputs are mandatory: the GTstructcell and the ResFields')
-elseif nargin ==2
-    Iterations = 1000;
-else
-    Iterations = varargin{2};
 end
 
 
@@ -74,7 +70,7 @@ for iIter = 1:Iterations
         
         % compute average
         curr_indices = find(perm_labels == iRandGroup); % note I can do this cause labels are 1,2, ...n
-        GTrand = GTaverage(GTallstruct(curr_indices), ResFields);
+        GTrand = GTaverage(GTallstruct(curr_indices), 'InFields', {ResField});
         % store results
         % initialize the object at first Iteration
         if iIter == 1
