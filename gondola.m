@@ -22,14 +22,15 @@ end;
 
 % start gondola if not existing
 
+script_name = mfilename('fullpath');
+curr_script_folder = fileparts(script_name);
+
 if (strcmp(option, 'start') |  strcmp(option, 'restart'))
-    
-    script_name = mfilename('fullpath');
-    curr_script_folder = fileparts(script_name);
-    
-    
+
     % open analysis and add path
-    addpath(genpath([curr_script_folder]));
+    addpath(curr_script_folder);
+    path_funcs = genpath(fullfile(curr_script_folder, 'functions'));
+    addpath(path_funcs);
     
     %hFig = gcf;
     %hAx  = gca;
@@ -83,11 +84,11 @@ if strcmp(option, 'gondola_already_here');
 end
 
 if strcmp(option, 'remove');
-    
-    script_name = mfilename('fullpath');
-    curr_script_folder = fileparts(script_name);
-    % open analysis and add path
-    rmpath(genpath([curr_script_folder]));
+
+    % remove path path
+    rmpath(curr_script_folder);
+    path_funcs = genpath(fullfile(curr_script_folder, 'functions'));
+    rmpath(path_funcs);
     
     
     fprintf('\n\n');
