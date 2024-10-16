@@ -1,4 +1,4 @@
-classdef GT_dlmread_Test < GondolaTest
+classdef GTdlmread_Test < GondolaTest
     
     properties
         % Here test parameters

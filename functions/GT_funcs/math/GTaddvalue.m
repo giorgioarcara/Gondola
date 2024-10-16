@@ -21,10 +21,11 @@
 %
 %
 
-function GTstruct_res = GTaddvalue(GTstruct, varargin);
-
+function GTstruct_res = GTaddvalue(GTstruct, varargin)
+%% Parsing arguments
 p = inputParser;
-addParameter(p, 'InField', [], @ischar);
+checkInput = @(x) ischar(x) & length(x)<=63; 
+addParameter(p, 'InField', [], checkInput);
 checkContent = @(x) isnumeric(x) | iscell(x);
 addParameter(p, 'NewValue', [], checkContent);
 addParameter(p, 'Elements', [], @isnumeric);
@@ -33,6 +34,12 @@ parse(p, varargin{:});
 InField = p.Results.InField;
 NewValue =  p.Results.NewValue;
 Elements =  p.Results.Elements;
+
+%% Check input
+if (isempty(InField))
+    error('You must specify the name of the new Field');
+elseif InField(1)
+end;
 
 if (isempty(NewValue))
     error('You must specify the value of the new Field');
@@ -44,11 +51,27 @@ if isempty(Elements)
 end;
 
 
-if (length(NewValue)~=1 & length(NewValue)~=length(Elements))
+if (length(NewValue)~=1 && length(NewValue)~=length(Elements))
     error('If NewValue is more than 1 value, it should match the length of Elements');
 end;
 
+%% Clean InField
+% Remove starting and final spaces
+InField = strip(InField);
+% Substitute spaces with _
+InField = strrep(InField, ' ', '_');
+% Remove special characters
+allowed_ascii_chars = [ ...
+    48:57, ... % From 0 to 9
+    65:90, ... % From A to Z
+    95, ... % _
+    97:122 % From a to z
+    ];
+InFieldAscii = double(InField);
 
+isAllowedAscii = ismember(InFieldAscii, allowed_ascii_chars);
+InFieldAsciiClean = InFieldAscii(isAllowedAscii);
+InField = char(InFieldAsciiClean);
 
 
 GTstruct_res = GTstruct;
