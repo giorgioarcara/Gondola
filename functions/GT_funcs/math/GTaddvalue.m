@@ -37,23 +37,32 @@ Elements =  p.Results.Elements;
 
 %% Check input
 if (isempty(InField))
-    error('You must specify the name of the new Field');
-elseif InField(1)
-end;
+    error('GT:inputCheck','You must specify the name of the new Field');
+elseif length(InField) > 63
+    error('GT:inputCheck','InField must be shorter than 64 characters')
+elseif InField(1) >= 48 && InField(1) <= 57
+    error('GT:inputCheck','InField cannot start with a number, must start with a letter')
+elseif InField(1) == '_'
+    error('GT:inputCheck','InField cannot start with an underscore, must start with a letter')
+end
 
 if (isempty(NewValue))
-    error('You must specify the value of the new Field');
-end;
+    error('GT:inputCheck','You must specify the value of the new Field');
+elseif length(NewValue) > length(GTstruct)
+    error('GT:inputCheck','Length of new values (%d) cannot be greater than lenght of the struct (%d)', length(NewValue), length(GTstruct))
+end
 
 if isempty(Elements)
     Elements = 1:length(GTstruct);
     fprintf('GT: Function applied to all elements of the GTstruct\n');
-end;
+elseif (length(NewValue)~=1 && length(NewValue)~=length(Elements))
+    error('GT:inputCheck','If NewValue is more than 1 value, it should match the length of Elements');
+elseif any(Elements>length(GTstruct))
+    error('GT:inputCheck','Elements cannot exceed the length of the GTstruct (%d)', length(GTstruct))
+elseif ~all(round(Elements)==Elements)
+    error('GT:inputCheck','Elements must all be integer indexes')
+end
 
-
-if (length(NewValue)~=1 && length(NewValue)~=length(Elements))
-    error('If NewValue is more than 1 value, it should match the length of Elements');
-end;
 
 %% Clean InField
 % Remove starting and final spaces

@@ -1,2 +1,8 @@
 - use subtightplot or subaxis in GTimagesc.
 - add GTsel for multiple selection in one line
+
+- internal name coherence
+- function name coherence
+- GTfuncs subfolders
+- test
+- 
