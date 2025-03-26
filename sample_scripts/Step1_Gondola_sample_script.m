@@ -16,9 +16,10 @@ gondola
 % import connectivity matrices from files
 % (note you should change the path, with your path).
 %file_names = get_file_names('/Users/giorgioarcara/Desktop/prova');
-gondola_path = which('gondola');
-file_names = get_file_names(fullfile(gondola_path, '..', 'functions/External/NBS1.2/SchizophreniaExample/matrices'));
-GTstruct = GTdlmread(file_names);
+gondola_path = fileparts(which('gondola'));
+data_path = fullfile(gondola_path, 'functions/External/NBS1.2/SchizophreniaExample/matrices');
+file_names = get_file_names(data_path);
+GTstruct = GTdlmread(file_names, "DataPath", data_path);
 
 GTstruct = GTaddvalue(GTstruct,'InField', 'Subject', 'NewValue', 1:length(GTstruct));
 

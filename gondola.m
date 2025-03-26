@@ -14,10 +14,10 @@ else
     option = varargin{1};
 end;
 
-%
-% if exist('GTmeasure', 'file') & nargin==0
-%     option='gondola_already_here';
-% end;
+
+if exist('GTmeasure', 'file') & nargin==0
+    option='gondola_already_here';
+end;
 
 
 % start gondola if not existing
@@ -46,7 +46,8 @@ if (strcmp(option, 'start') |  strcmp(option, 'restart'))
     fprintf('-\n');
     fprintf('--\n\n\n');
     
-    ascii_art=['                                              &                              \n', ...
+    ascii_art=[
+        '                                              &                              \n', ...
         '                                             *&&&&                             \n', ...
         '                                      *    /&&&&&                              \n', ...
         '                                     &&&&&&&&&&&&&                            \n', ...
