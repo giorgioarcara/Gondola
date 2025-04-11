@@ -2,9 +2,11 @@
 
 ![alt text](/Logo/GondolaLogo.png)
 
-*Mantainer: Arcara Giorgio (2020) - ver 0.3*
+*Mantainer: Giorgio Arcara (2020) - ver 0.3*
 
-Contributors: Giorgio Arcara, Duma Gian Marco, Marino Marco, Pascarella Annalisa, Pellegrino Giovanni 
+*Active contributors*: Alessandro Tonin, Ettore Napoli
+
+*Past contributors*: Gian Marco Duma, Marco Marino, Annalisa Pascarella, Giovanni Pellegrino 
 
 Gondola is a toolbox to facilitate Brain network analysis (and exploration) in Matlab.
 It contains functions that:
