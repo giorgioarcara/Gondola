@@ -2,10 +2,10 @@ function GTstruct_out = GTloadBst(FileNames, StructFields, opt)
     arguments
         FileNames (1,:) string
         StructFields (1,:) string
-        opt.InField (1,1) string {mustBeValidVariableName} = "mat_or"
+        opt.Field (1,1) string {mustBeValidVariableName} = "mat_or"
         opt.DataPath (1,1) string {mustBeFolder} = "./"
     end
-%% GTloadBst(FileNames, 'StructFields', ['value'], 'InField', 'value', 'DataPath', 'value')
+%% GTloadBst(FileNames, 'StructFields', ['value'], 'Field', 'value', 'DataPath', 'value')
 %
 % This function takes as input a cell with FileNames. This files are
 % expected to be Brainstorm Files as imported with process_export_conn_mat
@@ -16,7 +16,7 @@ function GTstruct_out = GTloadBst(FileNames, StructFields, opt)
 %   StructFields ([str]): Array of strings indicating the FileNameFields that will be imported
 %
 % Other Parameters:
-%   InField (str): A string indicating the name of the field. Default: 'mat_or'
+%   Field (str): A string indicating the name of the field. Default: 'mat_or'
 %   DataPath (str): The full path where the data are stored. Default: '.'
 
 % Author: Giorgio Arcara
@@ -38,7 +38,7 @@ function GTstruct_out = GTloadBst(FileNames, StructFields, opt)
 % ResFields =  p.Results.ResFields;
 % DataPath =  p.Results.DataPath;
 
-InField = opt.InField;
+InField = opt.Field;
 DataPath = opt.DataPath;
 
 for iFile = 1:length(FileNames)

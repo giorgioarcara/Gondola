@@ -1,40 +1,39 @@
-%% writeGTresGlobal(GTres, 'ResFields',{value}, 'LabFields', {value}, 'OutFileName', 'value')
+function ResTable = writeGTstructGlobal(GTstruct, opt)
+    arguments
+        GTstruct (1,:) struct
+        opt.ResFields (1,:) string {mustBeValidVariableName}
+        opt.OtherField (1,:) string {mustBeValidVariableName}
+        opt.FileName (1,1) string = "GT_Globalresults.txt"
+    end
+%% writeGTstructGlobal(GTstruct, 'ResFields', {value}, 'LabFields', {value}, 'FileName', 'value')
 %
-% This function take as input several a GTres struct (as obtained by a
+% This function take as input several a GTstruct struct (as obtained by a
 % BCT_analysis.m script) and export the results of a Global variable 
-% (i.e., one value per each GTres instance) in a friendly format for statistical analysis
+% (i.e., one value per each GTstruct instance) in a friendly format for statistical analysis
 % Data are exported in long format.
 %
-% INPUT:
-% - GTres: a GTres object (a struct with results of GT analysis).
-% - ResFields: a cell with the names of the fields that should be exported
-% - LabFields: a cell with other fields to be added (typically subject name labels)
-% - OutFileName= a string with the output file name.
+% Parameters:
+%   GTstruct (struct): a GTstruct object (a struct with results of GT analysis).
+%
+% Other Parameters:
+%   ResFields ([str]): a cell with the names of the fields that should be exported
+%   LabFields ([str]): a cell with other fields to be added (typically subject name labels)
+%   FileName (str): a string with the output file name. Default: 'GT_Globalresults.txt'
 %
 % Author: Giorgio Arcara
 %
 % version: 30/05/2021
 
-
-function ResTable = writeGTresGlobal(GTres, varargin)
-p = inputParser;
-addParameter(p, 'ResFields', [], @iscell);
-addParameter(p, 'LabFields', [], @iscell);
-addParameter(p, 'OutFileName', 'GT_Globalresults.txt', @ischar);
-
-
-parse(p, varargin{:});
-
-ResFields = p.Results.ResFields;
-LabFields =  p.Results.LabFields;
-OutFileName =  p.Results.OutFileName;
+ResFields = opt.ResFields;
+LabFields =  opt.LabFields;
+FileName =  opt.FileName;
 
 
 %% ResFields (numeric results to be exported, one per Subejct).
 
-res_names = fields(GTres);
+res_names = fields(GTstruct);
 
-res_cell=squeeze(struct2cell(GTres));
+res_cell=squeeze(struct2cell(GTstruct));
 
 % find indices corresponding to name
 [~,  ~, ind] = intersect(ResFields, res_names, 'stable');
@@ -65,7 +64,7 @@ end;
 
 
 %% EXPORT FILE
-export_file=OutFileName;
+export_file=FileName;
 
 fid = fopen(export_file, 'w');
 

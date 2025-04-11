@@ -1,49 +1,40 @@
-%% GTbstfileScoutselect(GTbstfiles, 'ROIs',value, 'InDir',path, 'OutDir',path)
+function GTbstfileScoutselect(FileNames, ROIs, opt)
+    arguments
+        FileNames (1,:) string
+        ROIs (1,:) string
+        opt.InDir (1,1) string {mustBeFolder} = './'
+        opt.OutDir (1,1) string {mustBeFolder} = './'
+    end
+%% GTbstfileScoutselect(GTbstfiles, ROIs, 'InDir', path, 'OutDir', path)
 %
 % This function take as input several GT .mat files.
 % It loads the files and write new files in which only some ROis are inclued
 %
-% INPUT:
-% - GTfiles: a cell of file names of GT structure (as exported by
-% process_conn_mat
-% - ROIs: a cell with ROI names (as in Brainstorm struct)
-% - InDir: the search folder for the files.
-% - OutDir: the output folder where the files will be created
+% Parameters:
+%   FileNames ([str]): a cell of file names of GT structure (as exported by process_conn_mat)
+%   ROIs ([str]): a cell with ROI names (as in Brainstorm struct)
+%
+% Other Parameters:
+%   InDir (str): the input path. Default: './'
+%   OutDir (str): the output path. Default: './new_mat_files'
 %
 % Author: Giorgio Arcara
 %
 % version: 1/2/2018
 
-function GTbstfileScoutselect(GTfiles,varargin)
-p = inputParser;
-addParameter(p, 'ROIs', [], @ischar);
-addParameter(p, 'InDir', [], @ischar);
-addParameter(p, 'OutDir', [], @ischar);
+
+InDir = opt.InDir;
+OutDir = opt.OutDir;
 
 
-parse(p, varargin{:});
-
-ROIs = p.Results.ROIs;
-InDir =  p.Results.InDir;
-OutDir =  p.Results.OutDir;
-
-
-if ~exist(InDir)
-    InDir='';
+if ~exist(OutDir, 'dir')
+    mkdir(OutDir)
 end
-
-if ~exist(OutDir)
-    OutDir='';
-end
-
-if length(GTfiles)==0
-    error('no files supplied');
-end;
 
 
 % load all data
-for iFile = 1:length(GTfiles)
-    curr_Conn = load([InDir, GTfiles{iFile}]);
+for iFile = 1:length(FileNames)
+    curr_Conn = load(fullfile(InDir, FileNames{iFile}));
     curr_Conn = curr_Conn.Conn; % enter in the struct loaded
     
     [~, roi_ind, ~] = intersect(curr_Conn.RefRowNames, ROIs);
@@ -61,6 +52,6 @@ for iFile = 1:length(GTfiles)
     Conn = curr_Conn;
     
     % save in ouput dir
-    save([OutDir, GTfiles{iFile}], 'Conn')    
+    save(fullfile(OutDir, FileNames{iFile}), 'Conn')    
     
 end;
