@@ -1,47 +1,49 @@
-%% GTgetfields_FileName(FileNames, 'FileNameFields',value, 'FileNameIgnore', value)
+function GTstruct = GTgetfields_FileName(FileNames, opt)
+    arguments
+        opt.FileNames (1,:) cell
+        opt.Fields (1, 1) string
+        opt.Ignore (1, 1) string
+    end
+
+
+%% GTgetfields_FileName - Parses file names into structured fields
 %
-% This function takes as input a cell with FileNames and retrieve some
-% useful information from the name (splitting according to specified criteria)
-% matrices in a field.
+% GTstruct = GTgetfields_FileName(FileNames, 'Fields', value, 'Ignore', value)
 %
-% INPUT
-% - Filenames:A cell with the Filenames
-% - FileNameFields: a string indicating the FileNameFields in
-%                   the follwing format 'field1_field2_XX'. 
-%                   the parts in XX will be ignored when getting the filename.
-% - FileNameIgnore: a string (typically the extension) to be ignored in the
-%                   parsins
+% This function takes a cell array of file names and extracts structured
+% information from them by splitting each file name based on underscores
+% (_) as assigning the parts to field names specified by the user
 %
-%
-% EXAMPLE: if the filename is SUBJECT01_DEVIANT_ALPHA
-% FileNameFields could be subject_condition_Freq, that will lead to the
-% struct with fields:
+% Inputs:
+%   Filenames (cell):A cell with the Filenames
 % 
-% GTstruct.subject
-% GTstruct.condition
-% GTstruct.Freq
+%   Fields (string, optional): A string with field names separated by
+%   underscores (e.g. 'subject_condition_freq). Parts named 'XX' are
+%   skipped. 
 %
-% GTstruct = GTgetfields_FileName(all_files, 'FileNameFields', 'measure_nscouts_XX_type_XX_XX_time_Subject_cond', 'FileNameIgnore', '.mat')
-%                  
-%
-% Author: Giorgio Arcara
-%
-% version: 14/08/2018
+%   Ignore (string, optional): A string (e.g. '.mat') to remove from
+%   filenames before parsing. 
 %
 %
-
-function GTstruct = GTgetfields_FileName(FileNames, varargin);
-
-
-% part to check if, in a given group
-p = inputParser;
-addParameter(p, 'FileNameFields', [], @isstr);
-addParameter(p, 'FileNameIgnore', [], @isstr);
-
-parse(p, varargin{:});
-
-FileNameFields = p.Results.FileNameFields;
-FileNameIgnore =  p.Results.FileNameIgnore;
+%
+% Output:
+%   GTstruct (struct): A struct array where each element contains fields
+%   parsed from the corresponding file name. 
+% 
+%
+% Example: 
+%   If FileNames = {'Sub01_Dev_Alpha.mat'} and 
+%   Fields = 'subject_condition_freq', Ignore = '.mat', 
+%   
+%   the result will be a struct:
+%       GTstruct.subject = 'Sub01'
+%       GTstruct.condition = 'Dev'
+%       GTstruct.freq = 'Alpha'
+% 
+% Authors: Giorgio Arcara, Ettore Napoli, Alessandro Tonin
+% 
+% Version: 28/05/2026
+%
 
 
 split_symbol = '_';

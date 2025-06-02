@@ -1,37 +1,49 @@
-%% GTsel(GTstruct, 'InField', value, 'Content', value);
+function GTstruct = GTsel(GTstruct, opt)
+    
+    arguments
+        GTstruct (1,:) struct
+        opt.Field (1, 1) string
+        opt.Content (1, 1) string
+    end
+
+
+
+
+
+%% GTsel - selects GTstruct elements based on a matching field value
 %
-% This function select all field based on a value found in a field.
-% Call the functions multiple times to perform selection on more than one
-% field
+% GTstruct = GTsel(GTstruct, 'Field', value, 'Content', value)
 %
-% INPUT: 
+% This function filters the elements of a GTstruct array by matching the
+% value in a specified field (`Field`) with a given string (`Content`).
+% Only elements where the specified field matches the content are retained.
 %
-% - GTstruct: a struct for Gondola
-% - InField: the field for the selection
-% - Content: an expression (also with logical) to select the fields.
+% Inputs: 
+%   GTstruct (struct): A GTstruct
+%   
+%   Field (string, optional): The name of the field used for selection
+%
+%   Content (strimg, optional): A string to be matched against the contents
+%   of the specified field
+%
+% Output:
+%   GTstruct (struct): A filtered GTstruct object where the values of the
+%   specified field matches the given content
+%
+% Authors: Giorgio Arcara, Ettore Napoli, Alessandro Tonin
+% 
+% Version: 28/05/2025
 
-function GTstruct = GTsel(GTstruct, varargin)
 
 
-% part to check if, in a given group
-p = inputParser;
-addParameter(p, 'InField', [], @ischar);
-checkContent = @(x) isnumeric(x) | ischar(x);
-addParameter(p, 'Content', [], checkContent);
-
-parse(p, varargin{:});
-
-InField = p.Results.InField;
-Content =  p.Results.Content;
-
-if (isempty(InField) |  isempty(Content))
+if (isempty(Field) |  isempty(Content))
     error('InField or Content are empty: check your code')
 end;
 
   
 fieldnames = fields(GTstruct);
 
-iInField = strcmp(InField, fieldnames);
+iInField = strcmp(Field, fieldnames);
 
 GTcell = struct2cell(GTstruct);
 

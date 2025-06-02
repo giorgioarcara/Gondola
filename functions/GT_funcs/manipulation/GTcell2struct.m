@@ -1,22 +1,29 @@
-% GTcell2struct(GTcellres)
+%% GTcell2struct - converts a cell array of GTstructs into a single struct
 %
-% This function takes as input a GTstructcell object (cell containing GTstruct
-% object) and return a single struct with all objects.
+% GTcell2Struct(GTcellres)
 %
-% INPUT
-% - GTcellres: the GTstruct cell with the results (usually for varying
-% thresholds).
+% This function takes as input a cell array of GTstruct objects (e.g.
+% resulting from analysis at different thresholds) and combines them into a
+% single struct. 
 %
+% Input: 
+%   GTcellres (cell): A cell array of GTstruct objects
 %
+% Output:
+%   GTstruct (struct): A struct array where each element corresponds to a
+%   GTstruct previously stored in the input cell
 %
-% Author: Giorgio Arcara
+% Authors: Giorgio Arcara, Ettore Napoli, Alessandro Tonin
 %
-% version: 21/02/2018
-%
-%
+% Version: 20/05/2025
 
-function GTstruct = GTcell2struct(GTcellres);
+function GTstruct = GTcell2struct(GTcellres)
+    arguments
+        GTcellres (1, :) cell
+    end
 
+    
+    
 GTstruct = GTcellres{1};
 
     for iCell = 2:length(GTcellres)

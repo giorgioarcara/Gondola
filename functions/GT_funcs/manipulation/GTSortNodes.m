@@ -1,43 +1,55 @@
-%% GTSortNodes(CMstruct, 'OrNodes', {value}, 'TargetNodes', value, 'DataField', value, 'OtherFields', value, 'Indices', value);
-%
-% This function start from a GT struct. It sort the rows and cols of
-% DataField according to some other supplied values.
-%
-%
-% INPUT:
-%
-% - CMstruct: a struct for analysis Gondola
-% - Nodes: the cell containing the names of the Node. The length should be
-%            the same of the Rows and columns of the adjacency matrix,
-%            supplied as DataField.
-% - TargetNodes: a cell with the names of the Nodes in the new Order.
-% - DataField: the name of the field containing the adjacency matrices.
-% - othersfields: a cell with name of fields that should be inherited from CMstruct.
-% - Indices: override Nodes, and Target Nodes, and reorder both rows and
-%         with the new supplied order.
-%
-%
-% Author: Giorgio Arcara
-% Data: 19/11/2019
-
-function CMres = GTSortNodes(CMstruct, varargin)
-
-% part to check if, in a given group
-p = inputParser;
-addParameter(p, 'OrNodes', [], @iscell);
-addParameter(p, 'TargetNodes', [], @iscell);
-addParameter(p, 'DataField', [], @ischar);
-addParameter(p, 'OtherFields', [], @iscell);
-addParameter(p, 'Indices', [], @isnumeric);
+function CMres = GTSortNodes(GTstruct, opt )
+    arguments
+        GTstruct (1, :) struct
+        opt.OrNodes (1, :) cell
+        opt.TargetNodes (1, :) cell
+        opt.Field (1, 1) char
+        opt.OtherFields (1, :) cell
+        opt.Indices (1, :) uint32
+    end
+    
 
 
-parse(p, varargin{:});
 
-OrNodes = p.Results.OrNodes;
-TargetNodes =  p.Results.TargetNodes;
-DataField =  p.Results.DataField;
-OtherFields =  p.Results.OtherFields;
-Indices = p.Results.Indices;
+
+
+
+
+%% GTSortNodes - reorders nodes in adjanency matrices based on a new node order or index
+%
+% CMres = GTSortNodes(GTstruct, 'OrNodes', {value}, 'TargetNodes', {value}, 
+%                     'Field', 'fieldname', 'OtherFields', {value}, 'Indices', [value])
+%
+% This function reorders the rows and columns of an adjacency matrix field
+% (e.g., a connectivity matrix) in a GTstruct, according to a new node
+% order or provided index. It is used to standardize the order of nodes
+% across multiple subjects or conditions.
+%
+% Inputs:
+%   GTstruct (struct): A GTstruct object
+%
+%   OrNodes (cell, optional): Cell array with the original node labels
+%   (must match the order in the matrix)
+%
+%   TargetNodes (cell, optional): Cell array specifying the desired node
+%   order
+%
+%   Field (string, optional): String name of the field containing the
+%   matrix to reorder
+%
+%   OtherFields (string, optional): Cell array with names of other fields
+%   to be inherited in the output GTstruct
+%
+%   Indices (uint32, optional): Vector of indices to directly reorder the
+%   matrix. Overrides 'OtherFields'
+%
+% Ouput:
+%   CMres (struct): Struct array with matrices reordered according to
+%   TargetNodes or Indices
+%
+% Authors: Giorgio Arcara, Ettore Napoli, Alessandro Tonin
+%
+% Version: 28/05/2025
 
 
 % initialize empty object
@@ -76,9 +88,9 @@ end;
 
 % loop over all elements in the struct and select
 for k=1:length(CMstruct);
-    curr_data = CMstruct(k).(DataField);
+    curr_data = CMstruct(k).(Field);
     sel_data = curr_data(New_Node_ind, New_Node_ind);
-    CMres_temp(k).(DataField) = sel_data;
+    CMres_temp(k).(Field) = sel_data;
 end;
 
 
