@@ -1,40 +1,40 @@
-%% GTmeasure(GTstruct, 'InField',value, 'MeasureFunc', value, 'MeasureName', value)
+function GTres = GTmeasure(GTstruct, opt)
+    arguments
+        GTstruct (1, :) struct
+        opt.Field (1, 1) string
+        opt.MeasureFunc (1, 1) string
+        opt.MeasureName (1, 1) string
+    end
+    
+
+%% GTmeasure - Returns a GTstruct with a computed graph measure
+% Gtres = GTmeasure(GTstruct, 'Field',value, 'MeasureFunc', value, 'MeasureName', value)
 %
-% this function calculates a GT measure (via a function specified as
-% MeasureFunc) and store in the results.
-% The results will be a GTstruct containing all the information of the
-% original plus the newly calculated GT measure.
+% This function calculates a graph theoretical measure using a
+% function (typically from the BCT toolbox) specified in MeasureFunc.
+% The resulting value is stored in a new field within the GTstruct.
 %
-% INPUTS:
+% Inputs:
+%   GTstruct (struct): A GTstruct object
 %
-% - GTstruct: a GTstruct
-% - InField: a name with the field containing the matrix on which
-%             calculate the GT measure.
-% - MeasureFunc: the function (typically from the BCT toolbox) to
-%                 calculate the measure.
-% - MeasureName: the name of the new measure (it will be the name of the
-%                  field in the output).
-% - opts : options, if necessary for gt measure.
+%   Field (string, optional): The name of the field containing the matrix
+%   for the graph theoretical measure calculation
 %
-% Author: Giorgio Arcara
+%   MeasureFunc (string, optional): The name of the function to compute the
+%   measure
 %
-% versione: 4/03/2018
+%   MeasureName (string, optional): The name of the new field to strore the
+%   computed graph theoretical measure
+%
+% Output:
+%   GTres (struct): The original GTstruct with an additional field named as
+%   MeasureName containing the computed graph measure
+%
+% Authors: Giorgio Arcara, Ettore Napoli, Alessandro Tonin
+%
+% Version: 29/05/2025
+%
 
-
-
-function GTres = GTmeasure(GTstruct, varargin)
-
-p = inputParser;
-addParameter(p, 'InField', [], @ischar);
-addParameter(p, 'MeasureFunc', [], @ischar);
-addParameter(p, 'MeasureName', [], @ischar);
-
-
-parse(p, varargin{:});
-
-InField = p.Results.InField;
-MeasureFunc =  p.Results.MeasureFunc;
-MeasureName =  p.Results.MeasureName;
 
 % retrieve function
 myfunc = str2func(MeasureFunc);
@@ -44,7 +44,7 @@ GTres = GTstruct;
 
 % loop over all objects in GTstruct and compute the measure.
 for iK = 1:length(GTstruct)
-    GTres(iK).(MeasureName) = myfunc(GTstruct(iK).(InField));
+    GTres(iK).(MeasureName) = myfunc(GTstruct(iK).(Field));
 end;
 
 

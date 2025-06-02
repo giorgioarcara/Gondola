@@ -2,40 +2,51 @@ function [cormat, pmat] = GTcorrelation(GTstruct1, GTstruct2, opt)
     arguments
         GTstruct1 (1,:) struct
         GTstruct2 (1,:) struct {mustBeSameSize(GTstruct1, GTstruct2)}
-        opt.ResField (1,1) string {isfield(GTstruct1, opt.ResField)} = requiredvalue
-        opt.ResField2 (1,1) string {isfield(GTstruct2, opt.ResField2)} = ""
+        opt.Field1 (1,1) string {isfield(GTstruct1, opt.ResField)} = requiredvalue
+        opt.Field2 (1,1) string {isfield(GTstruct2, opt.ResField2)} = ""
     end
-%% GTmat_cor(GTstruct1, GTstruct2,'ResField', value, 'ResField2', value )
+%% GTcorrelation - Correlates field values from two GTstructs
 %
-% This functions perform a correlation between two GTstruct by selecting a field.
+% [cormat, pmat] = GTcorrelation(GTstruct1, GTstruct2, 'Field1', value, 'Field2', value)
+% 
+% This functions perform a Pearson correlation between corresponding values
+% in a specified field of two GTstruct objects
 %
-% Parameters:
-%   GTstruct1 (struct): first data struct to correlate
-%   GTstruct2 (struct): second data struct to correlate
+% Inputs:
+%   GTstruct1 (struct): First struct array (e.g. data from group A)
 %
-% Other Parameters:
-%   ResField (str, required): Selected field of the first data struct to correlate between the two GTstructs
-%   ResField2 (str): Selected field of the second data struct to correlate
-%   between the two GTstructs. Default: Same of ResField
-% Author: Giorgio Arcara
+%   GTstruct2 (struct): Second struct array (e.g. data from group B)
 %
-% Data : 4/02/2018;
+%   Field1 (string, optional): Name of the field in GTstruct1 to ecxtract
+%   data to correlate
 %
+%   Field2 (string, optional): Name of the field in GTstruct2 to extract
+%   data to correlate
 %
-ResField = opt.ResField;
-if strlength(opt.ResField2) == 0
-    ResField2 = opt.ResField2;
+% Outputs:
+%   cormat: Correlation matrix
+%
+%   pmat: pvalue matrix
+%
+% Authors: Giorgio Arcara, Ettore Napoli, Alessandro Tonin
+%
+% Version: 29/05/2025
+
+
+Field1 = opt.Field1;
+if strlength(opt.Field2) == 0
+    Field2 = opt.Field2;
 else
-    ResField2 = ResField;
+    Field2 = Field1;
 end
 
-data1 = [GTstruct1.(ResField)];
-data2 = [GTstruct2.(ResField2)];
+data1 = [GTstruct1.(Field1)];
+data2 = [GTstruct2.(Field2)];
 
 
 % resstore the 3d dimension with subjects
-data1 = reshape(data1, size(GTstruct1(1).(ResField), 1), size(GTstruct1(1).(ResField), 2), length(GTstruct1));
-data2 = reshape(data2, size(GTstruct2(1).(ResField2), 1), size(GTstruct2(1).(ResField2), 2), length(GTstruct2));
+data1 = reshape(data1, size(GTstruct1(1).(Field1), 1), size(GTstruct1(1).(Field1), 2), length(GTstruct1));
+data2 = reshape(data2, size(GTstruct2(1).(Field2), 1), size(GTstruct2(1).(Field2), 2), length(GTstruct2));
 
 % suboptimal (made to work on all cells of a symmetric matrix) could be
 % optmized

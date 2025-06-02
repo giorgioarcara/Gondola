@@ -1,29 +1,49 @@
-%% GToperation2(GTstruct1, GTstruct2, 'InFields',value,'OtherFields', value, 'operation', 'GTres=GT1-GT2')
+function GTstruct = GToperation2(GTstruct1, GTstruct2, opt)
+    arguments
+        GTstruct1 (1, 1) struct
+        GTstruct2 (1, :) struct
+        opt.Fields (1, :) cell
+        opt.OtherFields (1, :) cell
+        opt.NewField (1, 1) cell
+        opt.Operation (1, 1) string
+    end
+    
+
+
+
+%% GToperation2 - Performs a custom operation between two GTstructs
+% 
+% GTstruct = GToperation2(GTstruct1, GTstruct2, 'Fields',value,'OtherFields', value, 'NewField', value, 'Operation', 'value')
 %
-% This function takes as input two GTstructs a perform an 'operation' involging the two matrices.
-% the operation  can be any legal Matlab operation between matrices.
+% This function takes as input two GTstructs and performs a specified operation
+% between the matching fields of the two structs. The operation 
+% must be a valid MATLAB expression, expressed as a string (e.g., "GTres = GT1 - GT2").
 %
+% Inputs:
+%   GTstruct1 (struct): The first GTstruct
+%   
+%   GTstruct2 (struct): The second GTstruct
 %
-% INPUT
-% - GTstruct1: the first GTstruct struct with the results
-% - GTstruct2: the second GTstruct struct with the results
-% - InFields: the name of the fields that will be subtracted between(GTstruct1 -
-% GTstruct2)between {} brackets
-% - OtherFields: the other fields to be kept between {} brackets
-% - OutFields: the name of the Output Field. If not specified is the Infield
-% name.
-% - operation: a text that will be evaluated to compute some operations
-% with two matrices.It should expressed as GTres = 'some operation'
+%   Fields (cell, optional): Cell array of fields to use to perform the
+%   operation from both the GTstructs
 %
+%   OtherFields (cell, optional): Cell array of the field names to inherit
+%   from the original GTstructs
 %
+%   NewField (cell, optional): Name of the output field where the results
+%   will be stored
 %
+%   Operation (string, optional): A string with a MATLAB expression to be
+%   applied (e.g., 'GTres = GT1 - GT2')
 %
+% Output:
+%   GTstruct (struct): A struct array containing 
+%   the result of the evaluated operation in the specified NewField
 %
-% Author: Giorgio Arcara
+% Authors: Giorgio Arcara, Ettore Napoli, Alessandro Tonin
 %
-% version: 19/05/2020
-%
-%
+% Version: 29/05/2025
+
 
 
 function GTstruct = GToperation2(GTstruct1, GTstruct2, varargin)
@@ -36,10 +56,10 @@ addParameter(p, 'operation', 'GTres=GT1-GT2', @ischar);
 parse(p, varargin{:});
 
 
-InFields = p.Results.InFields;
+Fields = p.Results.InFields;
 OtherFields =  p.Results.OtherFields;
-OutFields = p.Results.OutFields;
-operation = p.Results.operation;
+NewField = p.Results.OutFields;
+Operation = p.Results.operation;
 
 GTstruct = struct();
 
@@ -52,23 +72,23 @@ if (exist('OtherFields')&~isempty('OtherFields'))
     end
 end
 
-if isempty(OutFields)
-    OutFields = InFields;
+if isempty(NewField)
+    NewField = Fields;
     fprintf(['\n\n- GT Warning: the original InFields were replaced by results of the operation.\n'] );
 end;
 
 
 % now load the data
 for k=1:length(GTstruct1);
-    for iField = 1:length(InFields);
-        GT1 = GTstruct1(k).(InFields{iField}) ;
-        GT2 = GTstruct2(k).(InFields{iField});
-        eval([operation,';'])
-        GTstruct(k).(OutFields{iField}) = GTres;
+    for iField = 1:length(Fields);
+        GT1 = GTstruct1(k).(Fields{iField}) ;
+        GT2 = GTstruct2(k).(Fields{iField});
+        eval([Operation,';'])
+        GTstruct(k).(NewField{iField}) = GTres;
     end;
     
 end;
-fprintf(['- Operation performed: ', operation, '\n'] );
+fprintf(['- Operation performed: ', Operation, '\n'] );
 warning('Make sure that the two GTstructs have the objects in the correct order!')
 
 

@@ -1,31 +1,32 @@
 function GTstruct_res = GTaverage(GTstruct, opt)
     arguments
         GTstruct (1,:) struct
-        opt.InFields (1,:) string {isfield(GTstruct, opt.InFields)} = requiredvalue
+        opt.Fields (1,:) string {isfield(GTstruct, opt.InFields)} = requiredvalue
         opt.OtherFields (1,:) string {isfield(GTstruct, opt.OtherFields)} = {}
     end
-%% GTaverage(GTstruct, 'InFields', {'value'}, 'OtherFields', {'value'})
+%% GTaverage - Averages fields across a GTstruct array
 %
-% This function takes as input a GTstruct and perform the average of the
-% data of all elements of the GTstruct in the InFields. The output will be
-% a new single GTstruct with the averaged fields and, eventually, the
-% OtherFields inherited from the first entry of GTstruct.
-%
-% Parameters
-%   GTstruct (struct): the GTstruct
+% GTstruct_res = GTaverage(GTstruct, 'Fields', {'field1', 'field2'}, 'OtherFields', {'subject'})
 % 
-% Other Parameters:
-%   InFields ([str], required): The name of the fields that will be averaged
-%   OtherFields ([str]): Other fields to be stored (inherits from the first
-%   subject). Default: {}
-
-% Author: Giorgio Arcara
+% This function takes a GTstruct array and computes the average of the specified
+% fields across all entries. The result is a single GTstruct with the averaged
+% fields and any additional fields inherited from the first struct.
 %
-% version: 09/06/2020
-
-%% Parsing arguments
-InFields = opt.InFields;
-OtherFields =  opt.OtherFields;
+% Inputs:
+%   GTstruct (struct): GTstruct object
+%
+%   Fields (string, optional): Names of the fields to average
+%
+%   OtherFields (string, optional): Names of other fields to retain from
+%   the original GTstrut
+%
+% Output: 
+%   GTstruct_res (struct): A new struct object with averaged values in the
+%   specified fields and other fields copied from the original struct
+%
+% Authors: Giorgio Arcara, Ettore Napoli, Alessandro Tonin
+%
+% Version: 28/05/2025
 
 
 if ~isempty(OtherFields)
@@ -37,15 +38,15 @@ if ~isempty(OtherFields)
     
 end
 
-for iField = 1:length(InFields)
+for iField = 1:length(Fields)
     
     % This code is used to avoid a loop over all elements of the GTstruct.
-    all_data_mat = [GTstruct.(InFields{iField})];
+    all_data_mat = [GTstruct.(Fields{iField})];
     
     % use the first object as reference to get the sizes
-    all_data_mat_r = reshape(all_data_mat, size(GTstruct(1).(InFields{iField}), 1), size(GTstruct(1).(InFields{iField}), 2), size(GTstruct(1).(InFields{iField}), 3), length(GTstruct));
+    all_data_mat_r = reshape(all_data_mat, size(GTstruct(1).(Fields{iField}), 1), size(GTstruct(1).(Fields{iField}), 2), size(GTstruct(1).(Fields{iField}), 3), length(GTstruct));
     
-    GTstruct_res.(InFields{iField}) = mean(all_data_mat_r, length(size(all_data_mat_r)));
+    GTstruct_res.(Fields{iField}) = mean(all_data_mat_r, length(size(all_data_mat_r)));
     
 end
 end
