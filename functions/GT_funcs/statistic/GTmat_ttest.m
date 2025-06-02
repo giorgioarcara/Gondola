@@ -1,3 +1,13 @@
+function [tmat, pmat] = GTmat_ttest(GTstruct, Field,  opt);
+    arguments
+        GTstruct (1, :) struct
+        Field (1, 1) string
+        opt.Res_Mat (1, 1) string = "upper"
+    end
+
+
+
+
 %% GTmat_ttest(GTres_diff)
 %
 % This functions perform a paired t-test.

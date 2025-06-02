@@ -1,3 +1,15 @@
+function GTperm = GTpermute_with(GTstruct1, GTstruct2, Fields, opt);
+    arguments
+        GTstruct1 (1, :) struct
+        GTstruct2 (1, :) struct
+        Fields (1, :) cell
+        opt.Iterations (1, 1) uint32 = 1000
+    end
+
+
+
+
+
 %% GTpermute_with(GTstruct1, GTstruct2, 'ResFields', value, 'Iterations', value)
 %
 % (WITHIN SUBJECT PERMUTATION)

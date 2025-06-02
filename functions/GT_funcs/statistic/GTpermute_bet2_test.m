@@ -1,3 +1,7 @@
+
+
+
+
 %% GTpermute_bet2_test(GTstruct1, GTstruct2, 'InField', value, 'Iterations', value, 'ResMat', value)
 %
 % This function perform a between permutation test from two GT structs

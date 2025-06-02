@@ -1,3 +1,12 @@
+function [tmat, pmat] = GTmat_ttest2(GTstruct1, GTstruct2, Field);
+    arguments
+        GTstruct1 (1, :) struct
+        GTstruct2 (1, :) struct
+        Field (1, 1) sring
+    end
+    
+
+
 %% GTmat_ttest(2GTres_diff)
 %
 % This functions perform a independent sample t-test.
