@@ -1,42 +1,45 @@
-%% GTthreshold(GTstruct, 'InField', 'value', 'Perc', 'value', 'ThreshFieldName', 'value')
-%
-% this function apply a threshold to a 
-% GTstruct. Currently only Percentile thresholds are allowed.
-%
-% INPUTS:
-%
-% - GTstruct: a GTstruct
-% - InField: a cell with the name of the field containing the matrix on which
-%             apply the GTthreshold.
-% - Perc: the PercENTILE (e.g., 80) to define the threshold.
-%
-% - ThreshFieldName: a string with the output name for the thresholded matrix.
-%
-%
-% OUTPUTS:
-%
-% GTres_thresh: the original GTstruct with the addition two fields:
-%               - Perc: a field with the percentile value
-%               - Thresh: a field threshold applied
-%               - thresh_name (a as argument) the tresholded matrix
-%               (specified in the InField).
-%
-% Author: Giorgio Arcara
-%
-% versione: 4/03/2018
+function GTres_thresh = GTthreshold(GTstruct, opt);
+    arguments
+        GTstruct (1, :) struct
+        opt.Field (1, 1) string
+        opt.Perc (1, 1) uint32
+        opt.NewField (1, 1) string
+    end
+    
 
 
-function GTres_thresh = GTthreshold(GTstruct, varargin);
 
-p = inputParser;
-addParameter(p, 'InField', [], @ischar);
-addParameter(p, 'Perc', [], @isnumeric);
-addParameter(p, 'ThreshFieldName', [], @ischar);
-parse(p, varargin{:});
 
-InField = p.Results.InField;
-Perc =  p.Results.Perc;
-ThreshFieldName =  p.Results.ThreshFieldName;
+
+%% GTthreshold - Applies a percentile-based threshold to a matrix
+%
+% GTres_thresh = GTthreshold(GTstruct, 'Field', 'value', 'Perc', 'value', NewField', 'value')
+%
+% This function applies a percentile threshold to a field in a GTstruct.
+% Values above the specified percentile are retained; all others are set to zero.
+%
+% Inputs:
+%   GTstruct (struct): GTstruct containing the matrix to perform the
+%   thresholding operation on
+%
+%   Field (string, optional): The name of the field to be thresholded
+%
+%   Perc (uint32, optional): The percentile value used for thresholding
+%
+%   NewField (string, optional): The name for the new field where the
+%   thresholded matrix will be stored
+%
+% Output:
+%   GTres_thresh (struct): GTres_thresh: the same GTstruct with the following additional fields:
+%     - Perc: the percentile value used
+%     - Thresh: the threshold value computed
+%     - NewField: the thresholded matrix (same size as original)
+%
+% Authors: Giorgio Arcara, Ettore Napoli, Alessandro Tonin
+%
+% Version: 29/05/2025
+
+
 
 
 
@@ -45,10 +48,10 @@ GTres_thresh = GTstruct;
 
 % loop over all objects in GTstruct and compute the measure.
 for iK = 1:length(GTstruct)
-    temp = squeeze(GTstruct(iK).(InField)); % get original matrix % 
+    temp = squeeze(GTstruct(iK).(Field)); % get original matrix % 
     temp = nonzeros(triu(temp, 1)); % get only upper matrix, getting rid of diagonal
     Thresh =  prctile(temp, Perc); % calculate Percentile
-    GTres_thresh(iK).(ThreshFieldName) = threshold_absolute(GTstruct(iK).(InField), Thresh);
+    GTres_thresh(iK).(NewField) = threshold_absolute(GTstruct(iK).(Field), Thresh);
     GTres_thresh(iK).thresh = Thresh;
     GTres_thresh(iK).Perc = Perc;
 

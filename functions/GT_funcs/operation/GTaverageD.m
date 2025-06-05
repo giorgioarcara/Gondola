@@ -1,63 +1,52 @@
-%% GTaverageD(GTstruct, 'InFields', {value}, 'Dim', Value, 'OutFields', {'new_field'}, 'OtherFields', {'value'})
-%
-% This function takes as input a GTstruct and perfom the average of the
-% matrix in the 'DataField', along the dimension 'Dim' (1 2 or 3).
-%
-% INPUT
-% - GTstruct: the GTstruct (either CMstruct or TSstruct)
-% - InFields: the name of the fields containing the matrix whose dimension
-%             will be averaged
-% - Dim: the dimension (1, 2, 3) to be averaged.
-% - OutFields : the name of the Field that will be created (can overwrite
-%              existing fields)
-% - OtherFields: other fields to be stored (inherits from the first subject)
-%
-%
-%
-% Author: Giorgio Arcara
-%
-% version: 09/06/2020
-%
-%
-
 function GTstruct_res = GTaverageD(GTstruct, opt)
     arguments
         GTstruct (1,:) struct
-        opt.InFields (1,:) string {isfield(GTstruct, opt.InFields)} = requiredvalue
+        opt.Fields (1,:) string {isfield(GTstruct, opt.Fields)} = requiredvalue
         opt.Dim (1,:) uint32 {mustBeNonempty,mustBeGreaterThan(opt.Dim,0)} = 1
-        opt.OutFields (1,:) string = ""
+        opt.NewField (1,:) string = ""
+        opt.OtherFields (1, :) string
     end
-%% GTaverageD(GTstruct, 'InFields', {value}, 'Dim', Value, 'OutFields', {'new_field'}, 'OtherFields', {'value'})
-%
-% This function takes as input a GTstruct and perfom the average of the
-% values in the 'InFields', along the dimension 'Dim'. The result is stored
-% in 'OutFields'.
-%
-% Parameters:
-%   GTstruct: the GTstruct
-%
-% Other Parameters:
-%   InFields ([str], required): The name of the fields containing the matrix whose dimension
-%             will be averaged
-%   Dim ([int]): the dimension to be averaged.
-%   OutFields ([str]): the name of the Field that will be created (can overwrite
-%              existing fields)
-% - OtherFields: other fields to be stored (inherits from the first subject)
-%
-%
-%
-% Author: Giorgio Arcara
-%
-% version: 09/06/2020
-%% Parsing arguments
 
-InFields = opt.InFields;
-Dim = opt.Dim;
-OutFields = opt.OutFields;
+
+
+
+%% GTaverageD - Averages field values across specified dimensions
+%
+% GTstruct_res = GTaverageD(GTstruct, 'InFields', ["field1"], 'Dim', 3, ...
+%                                        'OutFields', ["field1_avg"], ...
+%                                        'OtherFields', ["subject"]);
+%
+% This function takes a GTstruct array and averages the content of the
+% specified fields along the provided dimension (1, 2, or 3). The resulting
+% averaged fields are stored under new field names (or overwrite the old ones).
+%
+% Inputs:
+%   GTstruct (struct): GTstruct object
+%
+%   Fields (string, optional): Fields whose values will be averaged
+%
+%   Dim (uint32, optional): The dimension over which to perform the
+%   averaging
+%
+%   NewField (string, optional): New field names to store the averages.
+%   Must match the number of Fields.
+%
+%   Otherfields (string, optional): Names of the fields to be retained from
+%   the original GTstruct
+%
+% Output.
+%   GTstruct_res (struct): A new struct object with averaged values in the
+%   specified fields and other fields copied from the original struct
+%
+% Authors: Giorgio Arcara, Ettore Napoli, Alessandro Tonin
+%
+% Version: 28/05/2025
+
 
 %% Check input
-Dim = mustBeValidDimension(GTstruct, InFields, Dim);
-OutFields = mustBeValidOutFields(OutFields, InFields);
+Dim = mustBeValidDimension(GTstruct, Fields, Dim);
+NewF
+ield = mustBeValidOutFields(NewField, Fields);
 
 %% Do average
 % intialize from original object
@@ -65,11 +54,11 @@ GTstruct_res = GTstruct;
 
 for iE = 1:length(GTstruct)
     
-    for iField = 1:length(InFields)
+    for iField = 1:length(Fields)
         
-        curr_data = GTstruct(iE).(InFields{iField});
+        curr_data = GTstruct(iE).(Fields{iField});
         
-        GTstruct_res(iE).(OutFields{iField}) = squeeze(mean(curr_data, Dim(iField)));
+        GTstruct_res(iE).(NewField{iField}) = squeeze(mean(curr_data, Dim(iField)));
         
     end    
     
