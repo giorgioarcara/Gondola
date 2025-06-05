@@ -1,3 +1,14 @@
+function GTstruct_rand = GTrandomize(GTstruct, opt)
+    arguments
+        GTstruct (1, :) struct
+        opt.Fields (1, :) cell
+        opt.MeasureFunc (1, 1) string
+        opt.Iterations (1, 1) uint32 = 1000
+    end
+    
+
+
+
 %% GTstruct_rand = GTrandomize(GTstruct, 'ResField', {value}, 'MeasureFunc', 'value, 'Iterations', value)
 % 
 % This function start from a GTstruct object and create a null distribution

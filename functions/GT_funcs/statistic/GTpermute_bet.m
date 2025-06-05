@@ -1,3 +1,14 @@
+function GTpermcell = GTpermute_bet(GTstructcell, opt)
+    arguments
+        GTstructcell (1, :) cell
+        opt.Fields (1, :) cell
+        opt.Iterations (1, 1) uint32 = 1000
+    end
+    
+
+
+
+
 %% GTpermute_bet(GTstructcell, 'ResField', value, 'Iterations', value)
 %
 % (BETWEEN SUBJECT PERMUTATION)
