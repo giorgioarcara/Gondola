@@ -1,22 +1,35 @@
-% GTMerge(GTstruct1, GTstruct2)
+function GTstruct = GTmerge(GTstruct1, GTstruct2)
+    arguments
+        GTstruct1 (1, :) struct
+        GTstruct2 (1, :) struct
+    end
+
+
+
+
+%% GTMerge - merges two GTstruct objects field-wise
 %
-% This function merge two structs. It assumes that the structs have
-% the same number of elements that refers to the same observations.
-% The fields of the second struct will be added to the first
+% GTstruct = GTmerge(GTstruct1, GTstruct2)
+%
+% This function merges two GTstruct objects by appending all fields from 
+% GTstruct2 to GTstruct1. It assumes that both structs have the same number 
+% of elements and correspond to the same observations.
+%
+% Inputs
+%   GTstruct1 (struct): The base GTstruct object
+%   GTstruct2 (struct): The GTstruct object whose fields will be added to GTstruct1
+%
+% Output:
+%   GTstruct (struct): A new struct where each element includes fields from
+%   both inputs
 %
 %
-% INPUT
-% - struct1: the first struct to be merged
-% - struct2: the second struct to be merged
+% Authors: Giorgio Arcara, Ettore Napoli, Alessandro Tonin
 %
-%
-% Author: Giorgio Arcara
-%
-% version: 29/08/2018
+% version: 28/05/2025
 %
 %
 
-function GTstruct = GTmerge(GTstruct1, GTstruct2);
 
 if nargin < 2
     error('2 inputs are mandatory')

@@ -1,41 +1,52 @@
-%% GTsels(GTstruct, 'InFields', {value}, 'Contents', {values});
+function GTstruct = GTsels(GTstruct, opt)
+
+    arguments
+        GTstruct (1,:) struct
+        opt.Field (1, :) cell
+        opt.Content (1, :) cell
+    end
+    
+%% GTsels - Applies multiple sequential selections on a GTstruct based on multiple field values
+% 
+% GTstruct = GTsels(GTstruct, 'Field', {field1, field2, ...}, 'Content', {value1, value2, ...})
+% 
+% This function filters a GTstruct array by applying multiple selections
+% based on specified fields and corresponding content values. Internally,
+% it calls the `GTsel` function recursively for each field-content pair.
 %
-% This function select all field based on a value found in a field.
-% It calls recursively GTsel to perform more than one selection in a single
-% call
+% Inputs: 
+%   GTstruct (struct): A GTstruct object
 %
-% INPUT: 
+%   Field (cell, optional): A cell array of field names to be used for the
+%   selection
 %
-% - GTstruct: a struct for Gondola
-% - InField: the field for the selection
-% - Content: an expression (also with logical) to select the fields.
+%   Content (cell, optional): A cell array of values to match in each
+%   corresponding field
 %
-% Author: Giorgio Arcara, 22/03/2021
+% Output:
+%   GTstruct (struct): A filtered GTstruct array containing only the elemts
+%   that match all field-content pairs
+%
+% Notes:
+%   - The dimension of 'Field' and 'Content' must match
+%   - The selection is applied sequentially in the order of the provided
+%   pairs
+%
+% Authors: Giorgio Arcara, Ettore Napoli, Alessandro Tonin
+%
+% Version: 28/05/2025
+%
 
-
-function GTstruct = GTsels(GTstruct, varargin)
-
-
-% part to check if, in a given group
-p = inputParser;
-addParameter(p, 'InFields', [], @iscell);
-addParameter(p, 'Contents', [], @iscell);
-
-parse(p, varargin{:});
-
-InFields = p.Results.InFields;
-Contents =  p.Results.Contents;
-
-if (isempty(InFields) |  isempty(Contents))
+if (isempty(Field) |  isempty(Content))
     error('InFields or Contents are empty: check your code')
 end;
 
   
 fieldnames = fields(GTstruct);
 
-for iField = 1:length(InFields)
+for iField = 1:length(Field)
     
-    GTstruct = GTsel(GTstruct, 'InField', InFields{iField}, 'Content', Contents{iField});
+    GTstruct = GTsel(GTstruct, 'InField', Field{iField}, 'Content', Content{iField});
 end
 
 
