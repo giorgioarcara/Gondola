@@ -1,13 +1,4 @@
-function fig = GTlineplot(GTstruct, opt);
-    arguments
-        GTstruct (1,:) struct
-        opt.Field (1,1) string {mustBeValidVariableName}
-        opt.OtherFields (1,:) string
-        opt.Ncols (1,1) uint32 {mustBeNumeric} = 1 % Unused
-        opt.Xlimits (1,2) double {mustBeNumeric};
-        opt.NodeNames (1,:) string
-    end
-%% GTlineplot(GTstruct, 'Field', 'value', 'OtherFields', {value}, 'Ncols', value, 'Xlimits', 'value', 'NodeNames', {value})
+%% GTlineplot(GTstruct, 'DataField', 'value', 'LabelFields', {value}, 'Ncols', value, 'Xlimits', 'value', 'NodeNames', {value})
 %
 % This function takes as input a GTstruct object (object with results from a
 % analysis with BCT_analysis.m script) and
@@ -15,26 +6,35 @@ function fig = GTlineplot(GTstruct, opt);
 % inspection. The function also uses a customize datatip to help identify
 % the Node.
 %
-% Parameters:
-%   GTstruct (struct): a GTstruct object (a struct with results of GT analysis).
-%
-% Other Parameters:
-%   Field ([str]): the name of the field tha will be plotted.
-%   OtherFields ([str]): a cell with other fields to be added (typically subject name labels).
-%   Ncols (int): unused
-%   Xlimits ([Xmin, Xmax]): x limits
-%   NodeNames ([str]): the names of the Nodes (to be displayed in the x axis).
+% INPUT
+% - GTstruct: the GTstruct struct with the results.
+% - DataField: the name of the field tha will be plotted.
+% - labelfield: the name of the field to title the subplot.
+% - NodeNames: the names of the Nodes (to be displayed in the x axis).
 %
 % Author: Giorgio Arcara
 %
 % version: 12/01/2018
 %
+%
+function fig = GTlineplot(GTstruct,varargin);
 
-Field = opt.Field;
-OtherFields = opt.OtherFields;
-Ncols =  opt.Ncols;
-Xlimits =  opt.Xlimits;
-NodeNames = opt.NodeNames;
+p = inputParser;
+addParameter(p, 'DataField', [], @ischar);
+addParameter(p, 'LabelFields', [], @iscell);
+addParameter(p, 'Ncols', [], @isnumeric);
+checkContent = @(x) isnumeric(x) | ischar(x);
+addParameter(p, 'Xlimits', [], checkContent);
+addParameter(p, 'NodeNames', [], @iscell);
+
+
+parse(p, varargin{:});
+
+DataField = p.Results.DataField;
+LabelFields =  p.Results.LabelFields;
+Ncols =  p.Results.Ncols;
+Xlimits =  p.Results.Xlimits;
+NodeNames = p.Results.NodeNames;
 
 if isempty(NodeNames);
     CoordNames='';
@@ -50,21 +50,21 @@ for iSubj = 1:length(GTstruct)
     set(gca,'TickLabelInterpreter', 'none');
     
     hold on
-   subj_values = GTstruct(iSubj).(Field);
+   subj_values = GTstruct(iSubj).(DataField);
 
     for iN = 1:length(subj_values);
         plot([0, subj_values(iN)], [iN iN], 'black');
     end;
     % define curr name
-    if ~isempty(OtherFields)
-        % define OtherFields in a loop (if several fields are supplied).
-        if (iscell(OtherFields) & length(OtherFields)>1)
+    if ~isempty(LabelFields)
+        % define title in a loop (if several fields are supplied).
+        if (iscell(LabelFields) & length(LabelFields)>1)
             curr_name =[];
-            for iF=1:length(OtherFields)
-                curr_name = [curr_name, ' ', GTstruct(iSubj).(OtherFields{iF})];
+            for iF=1:length(LabelFields)
+                curr_name = [curr_name, ' ', GTstruct(iSubj).(LabelFields{iF})];
             end;
         else
-            curr_name =  GTstruct(iSubj).(OtherFields{1});
+            curr_name =  GTstruct(iSubj).(LabelFields{1});
         end
         
         curr_names{iSubj} = curr_name;
@@ -85,7 +85,7 @@ set(gca, 'YTick', 1:length(NodeNames), 'YTickLabel', NodeNames);% 'XTickLabelRot
 if ~isempty(Xlimits)
     set(gca, 'Xlim', Xlimits);
 end;
-OtherFields(curr_names)
+title(curr_names)
 % change legend line width (taken from
 % https://it.mathworks.com/matlabcentral/answers/259402-how-to-change-the-legend-colored-linewidth-not-the-width-of-box-outline)
 % [~, hObj] = legend(curr_names);
