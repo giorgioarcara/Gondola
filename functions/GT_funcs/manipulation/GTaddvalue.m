@@ -1,34 +1,43 @@
+%% GTaddvalue - Creates a new field with the specified values. 
+% This function takes as input a GTstruct and creates a new field with the
+% specified values.
+% You can either:
+%   - specify one single value to be applied to all elements of the
+%   GTstruct
+%   - provide a vector of values that will be assigned only to the GTstruct
+%     elements specified in 'Elements'.
+%
+% Inputs:
+%   GTstruct (struct): GTstruct object containing the results
+%   
+%   Field (string array, optional): String indicating the name of the new
+%   field. Default: 'new_val'
+%
+%   NewValue (any, optional): the value(s) to assign. Can be a single value
+%   or a vector. 
+%
+%   Elements (int, optional): Indices of GTstruct elements to modify.
+%   Default: 1:length(GTstruct)
+%
+% Output:
+%   GTstruct_out (struct): Modified GTstruct with the new field added
+% 
+% Authors: Giorgio Arcara, Ettore Napoli, Alessandro Tonin
+%
+% Version: 20/05/2025
+%
+%
+%
 function GTstruct_out = GTaddvalue(GTstruct, opt)
     arguments
         GTstruct (1,:) struct
-        opt.InField (1,1) string {mustBeValidVariableName} = "new_val"
+        opt.Field (1,1) string {mustBeValidVariableName} = "new_val"
         opt.NewValue (1,:) {mustBeNonempty,mustBeShorter(opt.NewValue, GTstruct)}
         opt.Elements (1,:) uint32 {mustBeIndex(opt.Elements, GTstruct)} = 1:length(GTstruct)
     end
-%% GTaddvalue(GTstruct, 'InField', 'value', 'NewValue', [values], 'Elements', [values])
-%
-% This function takes as input a GTstruct and create a new field with a
-% the specified values.
-% There are two options: either specify one single value (it will be
-% applied to all the elements of the GTstruct) or a vector of values that will replace
-% the GTstruct elements specified in 'Elements'.
-%
-% Parameters:
-%   GTstruct (struct): the GTstruct struct with the results
-%
-% Other Parameters:
-%   InField (str): A string indicating the name of the new field. Default: 'new_val'
-%   NewValue ([any]): The value to initialize the new field.
-%   Elements ([int]): The index of the elements of the GTstruct with the
-%   new value. Default: 1:length(GTstruct)
-
-% Author: Giorgio Arcara
-%
-% version: 09/06/2020
-%
 
 %% Parsing arguments
-InField = opt.InField;
+Field = opt.Field;
 NewValue =  opt.NewValue;
 Elements =  opt.Elements;
 
@@ -47,7 +56,7 @@ if length(NewValue)==1
         curr_Value =  NewValue(1);
     end;
         
-    [GTstruct_out(Elements).(InField)] = deal(curr_Value);
+    [GTstruct_out(Elements).(Field)] = deal(curr_Value);
     
 end;
 
@@ -62,7 +71,7 @@ if length(NewValue)>1;
         else
             curr_Value =  NewValue(iE);
         end;
-        GTstruct_out(curr_E).(InField) = curr_Value;
+        GTstruct_out(curr_E).(Field) = curr_Value;
     end
     
 end

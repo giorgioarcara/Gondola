@@ -1,45 +1,55 @@
-%% GTNodeSel(GTstruct, 'Nodes', {value}, 'SelNodes', value, 'DataField', value, 'OtherFields', value, 'Indices', value);
-%
-% This function start from a GT struct. It selects the rows and columns of the adjacency matrix data
-% given some names, supplied as a cell and associated to nodes (i.e., rows
-% and columns).
-%
-%
-% INPUT:
-%
-% - GTstruct: a struct for analysis Gondola
-% - Nodes: the cell containing the names of the Node. The length should be
-%            the same of the Rows and columns of the adjacency matrix,
-%            supplied as DataField.
-% - SelNodes: a cell with the names of the Nodes to be selected.
-% - DataField: the name of the field containing the adjacency matrices.
-% - othersfields: a cell with name of fields that should be inherited from
-% - indices: a vector indicating which nodes to select (override other
-% values).
-% GTstruct.
-%
-%
-% Author: Giorgio Arcara
-% Data: 20/02/2021
-
-function GTres = GTNodeSel(GTstruct, varargin)
-
-% part to check if, in a given group
-p = inputParser;
-addParameter(p, 'Nodes', [], @iscell);
-addParameter(p, 'SelNodes', [], @iscell);
-addParameter(p, 'DataField', [], @ischar);
-addParameter(p, 'OtherFields', [], @iscell);
-addParameter(p, 'Indices', [], @isnumeric);
+function GTres = GTNodeSel(GTstruct, opt)
+    arguments
+        GTstruct (1, :) struct
+        opt.Nodes (1, :) cell
+        opt.SelNodes (1, :) cell
+        opt.Field (1, 1) string
+        opt.OtherFields (1,:) cell
+        opt.Indices (1, :) uint32
+    end
 
 
-parse(p, varargin{:});
 
- Nodes = p.Results.Nodes;
- SelNodes =  p.Results.SelNodes;
- DataField =  p.Results.DataField;
- OtherFields =  p.Results.OtherFields;
- Indices =  p.Results.Indices;
+
+%% GTNodeSel - extracts a node subset from adjacency matrices in a GTstruct
+%
+% GTres = GTNodeSel(GTstruct, 'Nodes', {value}, 'SelNodes', {value}, 'Field', value, 'OtherFields', {value}, 'Indices', value)
+% 
+% This function extracts a submatrix of the adjacency matrix in each GTstruct
+% element, selecting only the nodes of interest based on their labels or
+% provided indices. The resulting GTstruct contains only the selected nodes.
+%.
+%
+%
+% Inputs:
+%   GTstruct (struct): A GTstruct object
+%
+%   Nodes (cell, optional): A cell array containing the names of the nodes.
+%   The length should match the dimensions of the adjency matrix
+%
+%   SelNodes (cell, optional): A cell array with the names of the nodes to
+%   select
+%
+%   Field (string, optional): The name of the field containing the FC matrix
+%   to be sliced
+%
+%   OtherFields (cell, optional): A cell array with the names of other
+%   fields to be retained in the output struct
+%
+%   Indices (uint32, optional): Vector of indices to select specific nodes
+%   directly, overriding SelNodes if provided
+%
+% Output:
+%   GTres (struct): A GTstruct with matrices and fields restricted to the
+%   selected ones
+%
+% Note:
+%   If both 'SelNodes' and 'Indices' are provided, 'Indices' takes
+%   precedence
+%
+% Authors: Giorgio Arcara, Ettore Napoli, Alessandro Tonin
+%
+% Version: 28/05/2025
 
 
 % initialize empty object
@@ -74,9 +84,9 @@ end;
 
 % loop over all elements in the struct and select
 for k=1:length(GTstruct);
-    curr_data = GTstruct(k).(DataField);
+    curr_data = GTstruct(k).(Field);
     sel_data = curr_data(Node_ind, Node_ind);
-    GTres_temp(k).(DataField) = sel_data;
+    GTres_temp(k).(Field) = sel_data;
 end;
 
 GTres = GTres_temp;

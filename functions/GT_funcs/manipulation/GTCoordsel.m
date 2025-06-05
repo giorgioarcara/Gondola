@@ -1,43 +1,47 @@
-%% GTCoordel(Coord, 'NodeField', value, 'Nodesel', value, 'CoordField', value, 'OtherFiedlds', {value});
+%% GTCoordsel - Select nodes and corresponding coordinates from a GTcoord struct
 %
-% This function start from a GT struct. It selects the rows and columns of the Coordinate matrix data
-% given some names, supplied as a cell and associated to nodes (i.e., rows
-% and columns).
+% [Coord_res, SortInd] = GTCoordsel(Coord, 'NodeField', value, 'Nodesel', value, 'CoordField', value, 'OtherFields', {value})
 %
+% This function selects rows and columns of coordinate data in a GTcoord struct
+% based on specified node names. It can also retain additional fields with
+% information linked to the selected nodes.
+% 
+% Inputs:
+%   Coord (struct): A GTcoord struct (e.g., with node labels and xyz coordinates).
 %
-% INPUT:
+%   NodeField (string, optional): The field containing node names. Default: 'labels'
+%   
+%   Nodesel (cell, optional): A cell array of node names to be selected.
+%   
+%   CoordField (string, optional): The field containing coordinate values. Default: 'xyz'
+%   
+%   OtherFields (cell, optional): A cell array of other fields (same length as nodes) to retain.
 %
-% - GTCoord: a GTCoord struct for analysis in Gondola (contain Coordinate
-% labels, and xyz in mri)
-% - NodeField: the cell containing the names of the Node. The length should be
-%            the same of Coordinates xyz.
-% - Nodesel: a cell with the names of the Nodes to be selected.
-% - CoordField: the name of the field containing the adjacency matrices.
-% - OtherField: the name of the Other fields (same length as NodeCell) to be selected.
+% Outputs:
+%   Coord_res (struct): A struct containing only the selected nodes and fields.
+%   
+%   SortInd (array): Index vector indicating the original positions of the selected nodes.
 %
-% EXAMPLE: Coord_sel = GTCoordsel(Coords, 'NodeField', 'labels', 'Nodesel', my_nodes, 'CoordField', 'xyz');
-%
-%
-%
-%
-% Author: Giorgio Arcara
-% Data: 19/02/2021
+% Authors: Giorgio Arcara, Ettore Napoli, Alessandro Tonin
+% 
+% Version: 20/05/2025
 
-function [Coord_res SortInd]= GTCoordsel(Coord, varargin)
 
-% part to check if, in a given group
-p = inputParser;
-addParameter(p, 'NodeField', [], @ischar);
-addParameter(p, 'Nodesel', [], @iscell);
-addParameter(p, 'CoordField', [], @ischar);
-addParameter(p, 'OtherFields', [], @iscell);
+function [Coord_res, SortInd]= GTCoordsel(Coord, opt)
+    arguments
+        Coord (1, :) struct
+        opt.NodeField (1, :) string = "labels"
+        opt.Nodesel (:, :) cell 
+        opt.CoordField (1, :) string = "xyz"
+        opt.OtherFields (1, :) cell
+    end
 
-parse(p, varargin{:});
 
-NodeField = p.Results.NodeField;
-Nodesel =  p.Results.Nodesel;
-CoordField =  p.Results.CoordField;
-OtherFields = p.Results.OtherFields;
+
+NodeField = opt.NodeField;
+Nodesel =  opt.Nodesel;
+CoordField =  opt.CoordField;
+OtherFields = opt.OtherFields;
 
 % find indices of Node
 All_Nodes = Coord.(NodeField);
