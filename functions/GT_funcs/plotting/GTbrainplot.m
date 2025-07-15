@@ -42,7 +42,7 @@ addParameter(p, 'NodeLabels', [], @(x) iscell(x) && isvector(x));
 addParameter(p, 'Coords', [],@isstruct);
 addParameter(p, 'Ncols', [],@isnumeric);
 addParameter(p, 'BrainPath',[], @ischar);
-addParameter(p, 'Labels', [],@iscell);
+addParameter(p, 'Labels', false, @islogical);
 addParameter(p, 'Cmap',[], @isnumeric);
 addParameter(p, 'CamView',[], @isnumeric);
 addParameter(p, 'Quality',[], @ischar);
@@ -125,35 +125,37 @@ n_rows = round(length(GTstruct) / Ncols);
 
 figure
 
+
 for iSubj=1:length(GTstruct)
-    
+
     subplot(n_rows, Ncols, iSubj)
     %subplot_tight(n_rows, Ncols, iSubj, .05)
-    
+
     if (~isempty(NodeField)&ischar(NodeField))
-        
+
         node_values = (GTstruct(iSubj).(NodeField));
         %node_values(node_values~=0)=node_values(node_values~=0)*node_multi;
     elseif (isempty(NodeField))
-            % create vector of dim 1 if node size is not supplied
-        node_values = repmat(NodeSize, [1, size(GTstruct(iSubj).(EdgeField),1)]); 
+        % create vector of dim 1 if node size is not supplied
+        node_values = repmat(NodeSize, [1, size(GTstruct(iSubj).(EdgeField),1)]);
     end;
-    
+
     % exclude here Co
     if ConnNodes
         edge_matrix = GTstruct(iSubj).(EdgeField);
         node_values(~any(edge_matrix)&~any(edge_matrix'))=0;
     end;
-    
-    
-    
+
+
+
     %Brainplot = plot3(coord(1,:),coord(2,:), coord(3,:), '.', 'MarkerSize', 1e-28, 'color', [0.99 0.99 0.99]);
-    
+
     hold on
-    
+
     %% PLOT BRAIN
     Brainplot = trisurf(tri, Braincoord(1,:),Braincoord(2,:), Braincoord(3,:), 'FaceColor', [0.8, 0.8, 0.8],'EdgeColor','none', 'FaceAlpha', 1 , 'EdgeAlpha', 1);
-    
+
+
     %% LOW QUALITY
     if strcmp(Quality, 'lq')
 
@@ -301,5 +303,4 @@ for iSubj=1:length(GTstruct)
 
 
 
-end
-   
+end   
