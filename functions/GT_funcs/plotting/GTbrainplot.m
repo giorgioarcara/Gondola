@@ -35,6 +35,7 @@
 function GTbrainplot(GTstruct, varargin)
 
 p = inputParser;
+addParameter(p, 'FigureHandle', [], @(x) isgraphics(x, 'figure'));
 addParameter(p,'PlotTitle', '',  @(x) ischar(x) || isstring(x) || iscell(x))
 addParameter(p, 'NodeField',[], @ischar);
 addParameter(p, 'EdgeField', [], @ischar);
@@ -53,6 +54,7 @@ addParameter(p, 'NodeSize',1, @isnumeric);
 
 parse(p,  varargin{:});
 
+FigureHandle = p.Results.FigureHandle;
 PlotTitle = p.Results.PlotTitle;
 NodeField = p.Results.NodeField;
 EdgeField = p.Results.EdgeField;
@@ -123,7 +125,12 @@ tot_n = length(GTstruct);
 % define number of cols
 n_rows = round(length(GTstruct) / Ncols);
 
-figure
+if isempty(FigureHandle)
+    FigureHandle = figure;
+else
+    figure(FigureHandle); clf;  % Clear content if reusing
+end
+
 
 
 for iSubj=1:length(GTstruct)
