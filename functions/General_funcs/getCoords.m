@@ -32,20 +32,31 @@ end
 
 Coord = readtable(RefCoord, 'Delimiter', ' ', 'ReadVariableNames', 0, 'HeaderLines', 1);
 
-% get labels (assuming they are at the end)
+% get labels from Coord table
 Coord_lab = table2cell(Coord(:,end));
 
-% retrieve index to sort
-[~, ind, ~] = intersect(Labels, Coord_lab, 'stable');
+% match input Labels to reference Coord labels
+[found_labels, sort_idx] = ismember(Labels, Coord_lab);
 
-% check if there are problems
-% missing = setdiff(Labels, Coord_lab)
+% optional: warn if some labels were not matched
+if any(~found_labels)
+    warning('Some labels not found in reference coordinate file: %s', strjoin(Labels(~found_labels), ', '));
+end
 
-% add to table to sort
-Coord(:, end+1) = array2table(ind) ;
+% remove unmatched labels
+Labels = Labels(found_labels);
+sort_idx = sort_idx(found_labels);
 
-% actually sort
-Coord = sortrows(Coord, size(Coord,2));
+% reorder Coord table to match input Labels
+Coord = Coord(sort_idx, :);
+
+% re-extract labels and xyz
+Coord_mat = table2array(Coord(:,1:3));
+Coord_lab = table2cell(Coord(:,end));
+
+Coords.xyz = Coord_mat;
+Coords.labels = Coord_lab;
+
 
 % remove the new Column
 Coord = Coord(:,1:(end-1));
