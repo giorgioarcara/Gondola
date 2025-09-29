@@ -35,7 +35,8 @@ InDir = opt.InDir;
 for iFile = 1:length(FileNames)
     
     % get current files
-    curr_file = load([InDir, FileNames{iFile}]);
+    filePath = char(fullfile(InDir, FileNames(iFile)))
+    curr_file = load(filePath);
     
     % allow back compatibility with older version of
     % process_export_conn_mat, which exported in objects named Conn.
