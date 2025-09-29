@@ -1,8 +1,8 @@
 function GTstruct_bin = GTbinarize(GTstruct, opt)
     arguments
         GTstruct (1, :) struct
-        opt.Field (1, 1) char
-        opt.NewField (1, 1) char
+        opt.Field {mustBeTextScalar}
+        opt.NewField {mustBeTextScalar}
     end
     
 
@@ -33,7 +33,9 @@ function GTstruct_bin = GTbinarize(GTstruct, opt)
 %
 % Version: 29/05/2025
 
-
+%% Parsing Arguments
+Field = opt.Field
+NewField = opt.NewField
 
 % initialize results
 GTstruct_bin = GTstruct;
