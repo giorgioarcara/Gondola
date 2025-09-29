@@ -35,13 +35,15 @@
 function GTbrainplot(GTstruct, varargin)
 
 p = inputParser;
+addParameter(p, 'FigureHandle', [], @(x) isgraphics(x, 'figure'));
+addParameter(p,'PlotTitle', '',  @(x) ischar(x) || isstring(x) || iscell(x))
 addParameter(p, 'NodeField',[], @ischar);
 addParameter(p, 'EdgeField', [], @ischar);
-addParameter(p, 'LabelFields',[], @iscell);
+addParameter(p, 'NodeLabels', [], @(x) iscell(x) && isvector(x));
 addParameter(p, 'Coords', [],@isstruct);
 addParameter(p, 'Ncols', [],@isnumeric);
 addParameter(p, 'BrainPath',[], @ischar);
-addParameter(p, 'Labels', [],@iscell);
+addParameter(p, 'Labels', false, @islogical);
 addParameter(p, 'Cmap',[], @isnumeric);
 addParameter(p, 'CamView',[], @isnumeric);
 addParameter(p, 'Quality',[], @ischar);
@@ -52,9 +54,11 @@ addParameter(p, 'NodeSize',1, @isnumeric);
 
 parse(p,  varargin{:});
 
+FigureHandle = p.Results.FigureHandle;
+PlotTitle = p.Results.PlotTitle;
 NodeField = p.Results.NodeField;
 EdgeField = p.Results.EdgeField;
-LabelFields = p.Results.LabelFields;
+NodeLabels = p.Results.NodeLabels;
 Coords = p.Results.Coords;
 Ncols = p.Results.Ncols;
 BrainPath = p.Results.BrainPath;
@@ -121,124 +125,189 @@ tot_n = length(GTstruct);
 % define number of cols
 n_rows = round(length(GTstruct) / Ncols);
 
-figure
+if isempty(FigureHandle)
+    FigureHandle = figure;
+else
+    figure(FigureHandle); clf;  % Clear content if reusing
+end
+
+
 
 for iSubj=1:length(GTstruct)
-    
+
     subplot(n_rows, Ncols, iSubj)
     %subplot_tight(n_rows, Ncols, iSubj, .05)
-    
+
     if (~isempty(NodeField)&ischar(NodeField))
-        
+
         node_values = (GTstruct(iSubj).(NodeField));
         %node_values(node_values~=0)=node_values(node_values~=0)*node_multi;
     elseif (isempty(NodeField))
-            % create vector of dim 1 if node size is not supplied
-        node_values = repmat(NodeSize, [1, size(GTstruct(iSubj).(EdgeField),1)]); 
+        % create vector of dim 1 if node size is not supplied
+        node_values = repmat(NodeSize, [1, size(GTstruct(iSubj).(EdgeField),1)]);
     end;
-    
+
     % exclude here Co
     if ConnNodes
         edge_matrix = GTstruct(iSubj).(EdgeField);
         node_values(~any(edge_matrix)&~any(edge_matrix'))=0;
     end;
-    
-    
-    
+
+
+
     %Brainplot = plot3(coord(1,:),coord(2,:), coord(3,:), '.', 'MarkerSize', 1e-28, 'color', [0.99 0.99 0.99]);
-    
+
     hold on
-    
+
     %% PLOT BRAIN
     Brainplot = trisurf(tri, Braincoord(1,:),Braincoord(2,:), Braincoord(3,:), 'FaceColor', [0.8, 0.8, 0.8],'EdgeColor','none', 'FaceAlpha', 1 , 'EdgeAlpha', 1);
-    
-    
+
+
     %% LOW QUALITY
     if strcmp(Quality, 'lq')
-        
+
         node_values = node_values*20+1; % because cannot use scatter3 with 0 values
-        
+
         alpha(CortexAlpha)
-        
+
         % PLOT EDGES
         if (~isempty(EdgeField))
-            [edgeX, edgeY, edgeZ]= adjacency_plot_und( GTstruct(iSubj).(EdgeField), Coords.xyz);   
-            plot3(edgeX, edgeY, edgeZ, 'LineWidth', 2);
-        end
-        %
-        %note that I use abs to specify the node size (so values like t
-        %values can be used
-        scatter3(Coords.xyz(:,1), Coords.xyz(:,2), Coords.xyz(:,3), (abs(node_values)), node_values, 'filled');
-        
-        %Extract rows and column of the connected nodes to extract the
-        %coordinates
-        
-    end;
-    
-    if strcmp(Quality, 'HQ')
-        alpha(CortexAlpha)
-        camlight left;
-        lighting phong
-        
-        edge_matrix = GTstruct(iSubj).(EdgeField);
-        [row,col] = find(edge_matrix);
-        % Add coordinates and it draws the edge cilinders
-        for i=1:length(col);
-            
-            x=col(i);
-            y=row(i);
-            
-            
-            X1=Coords.xyz(x,:);
-            X2=Coords.xyz(y,:);
-            
-            r=edge_matrix(y,x);
-            n=2000;
-            cyl_color=[0.8588    0.2667    0.2157];
-            Cylinder(X1,X2,r,n,cyl_color,0,0);
-            
-            hold on
-        end
-        
-        hold on
-        
-        % draw the spherical nodes
-        scatter3sph(Coords.xyz(:,1), Coords.xyz(:,2), Coords.xyz(:,3), 'size', node_values, 'trans', 1);
-    end;
-    
-    if Labels
-        text(Coords.xyz(:,1), Coords.xyz(:,2), Coords.xyz(:,3), Coords.Labels);
-    end;
-    
-    % set colormap
-    %colormap(Cmap)
-    
-    % set view
-    view(CamView);
-    %get rid of axis
-    set(gca, 'visible', 'off');
-    % rotation won't change the size
-    axis vis3d
-    
-end;
+            [edgeX, edgeY, edgeZ]= adjacency_plot_und( GTstruct(iSubj).(EdgeField), Coords.xyz);
 
-%% PLOT title
-if ~isempty(LabelFields)
-    % define title in a loop (if several fields are supplied).
-    if (iscell(LabelFields) & length(LabelFields)>1)
-        panel_title =[];
-        for iF=1:length(LabelFields)
-            panel_title = [panel_title, ' ', GTstruct(iSubj).(LabelFields{iF})];
+            [row, col] = find(GTstruct(iSubj).(EdgeField));
+            for i = 1:length(row)
+                x = row(i);
+                y = col(i);
+
+                edge_val = GTstruct(iSubj).(EdgeField)(x,y);
+                if isnan(edge_val)
+                    continue %Skip if is NaN
+                end
+
+                x_coords = [Coords.xyz(x,1), Coords.xyz(y,1)];
+                y_coords = [Coords.xyz(x,2), Coords.xyz(y,2)];
+                z_coords = [Coords.xyz(x,3), Coords.xyz(y,3)];
+
+                edge_val = GTstruct(iSubj).(EdgeField)(x,y);
+
+
+                % Define color of edge on the plot. Red is positive, blue
+                % is negative
+                if edge_val > 0
+                    edge_color = [0.8 0 0]; % red
+                else edge_val < 0
+                    edge_color = [0 0 0.8]; % blue
+                end
+
+                plot3(x_coords, y_coords, z_coords, 'LineWidth', 2, 'Color', edge_color);
+            end
+
+
+
+            % Detect connected nodes based on non-NaN edges
+            edge_matrix = GTstruct(iSubj).(EdgeField);
+
+            connected_nodes = any(~isnan(edge_matrix), 2) | any(~isnan(edge_matrix), 1)';
+
+            scatter3(Coords.xyz(connected_nodes,1), ...
+                Coords.xyz(connected_nodes,2), ...
+                Coords.xyz(connected_nodes,3), ...
+                abs(node_values(connected_nodes)), ...
+                node_values(connected_nodes), ...
+                'filled');
+
+
+
         end;
-    else
-        panel_title =  GTstruct(iSubj).(LabelFields);
+
+        % High Quality
+        if strcmp(Quality, 'HQ')
+            alpha(CortexAlpha)
+            camlight left;
+            lighting phong
+
+            edge_matrix = GTstruct(iSubj).(EdgeField);
+            [row,col] = find(edge_matrix);
+            % Add coordinates and it draws the edge cilinders
+            for i=1:length(col);
+
+                x=col(i);
+                y=row(i);
+
+
+                X1=Coords.xyz(x,:);
+                X2=Coords.xyz(y,:);
+
+                r=edge_matrix(y,x);
+                n=2000;
+                cyl_color=[0.8588    0.2667    0.2157];
+                Cylinder(X1,X2,r,n,cyl_color,0,0);
+
+                hold on
+            end
+
+            hold on
+
+            % draw the spherical nodes
+            scatter3sph(Coords.xyz(:,1), Coords.xyz(:,2), Coords.xyz(:,3), 'size', node_values, 'trans', 1);
+        end;
+
+        if Labels && ~isempty(NodeLabels)
+            text(Coords.xyz(connected_nodes,1), ...
+                Coords.xyz(connected_nodes,2), ...
+                Coords.xyz(connected_nodes,3), ...
+                NodeLabels(connected_nodes), ...
+                'FontSize', 8, 'Color', 'k', 'HorizontalAlignment', 'left');
+        end
+
+
+
+
+        % set colormap
+        colormap(Cmap)
+
+        % set view
+        view(CamView);
+        %get rid of axis
+        axis off;
+        % rotation won't change the size
+        axis vis3d
+
+    end;
+
+    % %% PLOT title
+    % if ~isempty(NodeLabels)
+    %     % define title in a loop (if several fields are supplied).
+    %     if (iscell(NodeLabels) & length(NodeLabels)>1)
+    %         panel_title =[];
+    %         for iF=1:length(NodeLabels)
+    %             panel_title = [panel_title, ' ', GTstruct(iSubj).(NodeLabels{iF})];
+    %         end;
+    %     else
+    %         panel_title =  GTstruct(iSubj).(NodeLabels);
+    %     end
+    %
+    %     title( panel_title );
+    % end;
+
+    hold off
+
+    if ~isempty(PlotTitle)
+        if iscell(PlotTitle)
+            if iSubj <= length(PlotTitle)
+                curr_title = PlotTitle{iSubj}
+
+            else
+                curr_title = ''
+            end
+        else
+            curr_title = PlotTitle
+        end
+        title(curr_title, 'Interpreter', 'none', 'FontSize', 10, 'Color','k')
     end
     
-    title( panel_title );
-end;
-
-hold off
 
 
 
-end
+
+end   
