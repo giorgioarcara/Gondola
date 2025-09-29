@@ -37,8 +37,12 @@ function GTstruct = GTsels(GTstruct, opt)
 % Version: 28/05/2025
 %
 
+%% Parsing arguments
+Field = opt.Field
+Content = opt.Content
+
 if (isempty(Field) |  isempty(Content))
-    error('InFields or Contents are empty: check your code')
+    error('Field or Content are empty: check your code')
 end;
 
   
@@ -46,7 +50,7 @@ fieldnames = fields(GTstruct);
 
 for iField = 1:length(Field)
     
-    GTstruct = GTsel(GTstruct, 'InField', Field{iField}, 'Content', Content{iField});
+    GTstruct = GTsel(GTstruct, 'Field', Field{iField}, 'Content', Content{iField});
 end
 
 
