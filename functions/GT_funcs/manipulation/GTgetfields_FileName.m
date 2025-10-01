@@ -1,6 +1,6 @@
 function GTstruct = GTgetfields_FileName(FileNames, opt)
     arguments
-        opt.FileNames (1,:) cell
+        FileNames (1,:) cell
         opt.Fields (1, 1) string
         opt.Ignore (1, 1) string
     end
@@ -45,9 +45,11 @@ function GTstruct = GTgetfields_FileName(FileNames, opt)
 % Version: 28/05/2026
 %
 
+Fields = opt.Fields
+Ignore = opt.Ignore
 
 split_symbol = '_';
-split_pattern = strsplit(FileNameFields, split_symbol);
+split_pattern = strsplit(Fields, split_symbol);
 % get position of part of the files to exclude
 excl_parts=regexpi(split_pattern, 'XX'); %
 % get indices to include
@@ -59,8 +61,8 @@ for iFile = 1:length(FileNames)
     curr_file = FileNames{iFile};
     
     % get rid of string to ignore, if required
-    if (~isempty(FileNameIgnore))
-        curr_file = regexprep(curr_file, FileNameIgnore, '');
+    if (~isempty(Ignore))
+        curr_file = regexprep(curr_file, Ignore, '');
     end;
     
     curr_filename_split = strsplit(curr_file, split_symbol);
