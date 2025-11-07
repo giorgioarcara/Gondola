@@ -38,7 +38,6 @@ Coord_lab = table2cell(Coord(:,end));
 % match input Labels to reference Coord labels
 [found_labels, sort_idx] = ismember(Labels, Coord_lab);
 
-<<<<<<< HEAD
 % optional: warn if some labels were not matched
 if any(~found_labels)
     warning('Some labels not found in reference coordinate file: %s', strjoin(Labels(~found_labels), ', '));
@@ -59,42 +58,4 @@ Coords.xyz = Coord_mat;
 Coords.labels = Coord_lab;
 
 
-% remove the new Column
-Coord = Coord(:,1:(end-1));
-
-% get separately number and labels in the Coord matrix for export
-Coord_mat = table2array(Coord(:,1:3));
-=======
-% create object with only present Coord nodes
-pCoords = Coord_lab(ind);
-[~, ind, ~] = intersect(Coord_lab, Labels, 'stable');
-
-Coord = Coord(ind, :);
-
-% get labels from Coord table
->>>>>>> Modifiche-funzioni-sulla-base-di-script-di-prova-(MMCI)
-Coord_lab = table2cell(Coord(:,end));
-
-% match input labels to reference coord labels
-[found_labels, sort_idx] = ismember(Labels, Coord_lab);
-
-% Warn if some labels were not matched
-if any(~found_labels)
-    warning('Some labels not found in reference coordinate file: %s', strjoin(Labels(~found_labels), ', '));
 end
-
-% remove unmatched labels
-Labels = Labels(found_labels);
-sort_idx = sort_idx(found_labels);
-
-% reorder Coord table to match input labels
-Coord = Coord(sort_idx, :);
-
-% re-extract labels ad xyz
-Coord_mat = table2array(Coord(:, 1:3));
-Coord_lab = table2array(Coord(:, end));
-
-Coords.xyz = Coord_mat;
-Coords.labels = Coord_lab;
-
-
