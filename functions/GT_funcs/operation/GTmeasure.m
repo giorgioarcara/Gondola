@@ -35,6 +35,10 @@ function GTres = GTmeasure(GTstruct, opt)
 % Version: 29/05/2025
 %
 
+%% Input Parser
+Field = opt.Field
+MeasureFunc = opt.MeasureFunc
+MeasureName = opt.MeasureName
 
 % retrieve function
 myfunc = str2func(MeasureFunc);

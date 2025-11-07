@@ -1,7 +1,7 @@
 function GTstruct_res = GTaverage(GTstruct, opt)
     arguments
         GTstruct (1,:) struct
-        opt.Fields (1,:) string {isfield(GTstruct, opt.InFields)} = requiredvalue
+        opt.Fields (1,:) string {isfield(GTstruct, opt.Fields)} 
         opt.OtherFields (1,:) string {isfield(GTstruct, opt.OtherFields)} = {}
     end
 %% GTaverage - Averages fields across a GTstruct array
@@ -27,6 +27,9 @@ function GTstruct_res = GTaverage(GTstruct, opt)
 % Authors: Giorgio Arcara, Ettore Napoli, Alessandro Tonin
 %
 % Version: 28/05/2025
+
+Fields = opt.Fields
+OtherFields = opt.OtherFields
 
 
 if ~isempty(OtherFields)

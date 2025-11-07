@@ -5,7 +5,7 @@ function GTres = GTNodeSel(GTstruct, opt)
         opt.SelNodes (1, :) cell
         opt.Field (1, 1) string
         opt.OtherFields (1,:) cell
-        opt.Indices (1, :) uint32
+        opt.Indices (1, :) uint32 = [] %Empty by default
     end
 
 
@@ -50,6 +50,13 @@ function GTres = GTNodeSel(GTstruct, opt)
 % Authors: Giorgio Arcara, Ettore Napoli, Alessandro Tonin
 %
 % Version: 28/05/2025
+
+%% Input parser
+Nodes = opt.Nodes
+SelNodes = opt.SelNodes
+Field = opt.Field
+OtherFields = opt.OtherFields
+Indices = opt.Indices
 
 
 % initialize empty object

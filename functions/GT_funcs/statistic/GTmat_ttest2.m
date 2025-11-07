@@ -2,29 +2,35 @@ function [tmat, pmat] = GTmat_ttest2(GTstruct1, GTstruct2, Field);
     arguments
         GTstruct1 (1, :) struct
         GTstruct2 (1, :) struct
-        Field (1, 1) sring
+        Field (1, 1) string
     end
     
 
 
-%% GTmat_ttest(2GTres_diff)
+%% GTmat_ttest2(GTstruct1, GTstruct2, Field)
 %
-% This functions perform a independent sample t-test.
+% This function performs a independent sample t-test over matrices
 %
-% Author: Girogio Arcara
+% Inputs:
+%   GTstruct1 (struct): First GTstruct object 
+%   GTstruct2 (struct): Second GTstruct object
+%   Field (string): Name of the field of the GTstructs containing the
+%   matrices for which you want to calculate t-test
 %
-% Data : 4/02/2018;
+% Authors: Giorgio Arcara, Ettore Napoli, Alessandro Tonin
+%
+% Data : 29/09/2025;
 %
 %
-function [tmat, pmat] = GTmat_ttest2(GTstruct1, GTstruct2, resfield);
 
-data1 = [GTstruct1.(resfield)];
-data2 = [GTstruct2.(resfield)];
+
+data1 = [GTstruct1.(Field)];
+data2 = [GTstruct2.(Field)];
 
 
 % resstore the 3d dimension with subjects
-data1 = reshape(data1, size(GTstruct1(1).(resfield), 1), size(GTstruct1(1).(resfield), 2), length(GTstruct1));
-data2 = reshape(data2, size(GTstruct2(1).(resfield), 1), size(GTstruct2(1).(resfield), 2), length(GTstruct2));
+data1 = reshape(data1, size(GTstruct1(1).(Field), 1), size(GTstruct1(1).(Field), 2), length(GTstruct1));
+data2 = reshape(data2, size(GTstruct2(1).(Field), 1), size(GTstruct2(1).(Field), 2), length(GTstruct2));
 
 % suboptimal (made to work on all cells of a symmetric matrix) could be
 % optmized

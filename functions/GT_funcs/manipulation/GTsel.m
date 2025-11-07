@@ -2,13 +2,9 @@ function GTstruct = GTsel(GTstruct, opt)
     
     arguments
         GTstruct (1,:) struct
-        opt.Field (1, 1) string
-        opt.Content (1, 1) string
+        opt.Field {mustBeTextScalar}
+        opt.Content {mustBeTextScalar}
     end
-
-
-
-
 
 %% GTsel - selects GTstruct elements based on a matching field value
 %
@@ -35,9 +31,12 @@ function GTstruct = GTsel(GTstruct, opt)
 % Version: 28/05/2025
 
 
+%% Parsing Arguments
+Field = opt.Field
+Content = opt.Content
 
 if (isempty(Field) |  isempty(Content))
-    error('InField or Content are empty: check your code')
+    error('Field or Content are empty: check your code')
 end;
 
   

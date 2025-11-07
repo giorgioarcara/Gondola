@@ -39,7 +39,10 @@ function GTres_thresh = GTthreshold(GTstruct, opt);
 %
 % Version: 29/05/2025
 
-
+%% Parsing Arguments
+Field = opt.Field
+Perc = opt.Perc
+NewField = opt.NewField
 
 
 
