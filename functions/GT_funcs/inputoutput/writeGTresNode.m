@@ -36,14 +36,14 @@
 
 
 function ResTable = writeGTresNode(GTstruct, opt)
-    arguments
-        GTstruct (1,:) struct
-        opt.Fields (1,:) string {mustBeValidVariableName}
-        opt.OtherFields (1,:) string {mustBeValidVariableName}
-        opt.NodeLabels (1,:) string
-        opt.OtherNodeLabels (1,:) string
-        opt.FileName (1,1) string = "./GTstructMat"
-    end
+arguments
+    GTstruct (1,:) struct
+    opt.Fields (1,:) string {mustBeValidVariableName}
+    opt.OtherFields (1,:) string {mustBeValidVariableName}
+    opt.NodeLabels (1,:) string
+    opt.OtherNodeLabels (1,:) string = {} %empty by default
+    opt.FileName (1,1) string = "./GTstructMat"
+end
 
 
 Fields = opt.Fields;
@@ -53,98 +53,90 @@ OtherNodeLabels =  opt.OtherNodeLabels;
 FileName =  opt.FileName;
 
 %%
+% Extract info
+nSubjects = numel(GTstruct);
+nFields = numel(Fields);
+nNodes = numel(NodeLabels);
 
-%% ResField (numeric results to be exported, one per node).
+% Pre allocate the results
+res = nan(nSubjects * nNodes, nFields);
+export_lab = cell(nSubjects * nNodes, numel(OtherFields));
 
-res_names = fields(GTstruct);
+row_idx = 1;
 
-res_cell=squeeze(struct2cell(GTstruct));
+for s = 1:nSubjects
+    thisGT = GTstruct(s);
 
-% find indices corresponding to name
-[~, ~, ind] = intersect(Fields, res_names, 'stable');
+    % Extract numeric fields
+    for f = 1:nFields
+        fieldname = Fields(f);
+        if isfield(thisGT, fieldname)
+            values = thisGT.(fieldname);
 
-restemp = res_cell(ind, :);
+            if iscell(values)
+                values = cell2mat(values);
+            end
 
-res = cell2mat(restemp);
-res = res';
+            if numel(values) ~= nNodes
+                error("GTstruct(%d).%s has %d elements, expected %d.", ...
+                    s, fieldname, numel(values), nNodes);
+            end
 
-%% LabField (numeric results to be exported, one per Subject).
-
-% find indices corresponding to name
-[~, ~, ind] = intersect( OtherFields, res_names,'stable');
-
-lab = res_cell(ind, :);
-
-lab = lab';
-
-%% GF START
-% bug solved, export_lab was arranged in conditions x nodes, whereas
-% export_nodes in nodes x conditions
-%export_lab = repmat(lab, length(NodeLabels), 1); % OLD CALL
-export_lab = []; % NEW CALL
-conditions = size(lab); conditions = conditions(1);
-for index = 1 : conditions
-    export_lab = [export_lab; repmat(lab(index,:), length(NodeLabels), 1)];
-end
-%% GF END
-
-export_nodes = repmat(NodeLabels, length(lab), 1);
-
-other_vars = cell(length(lab)*length(NodeLabels), length(OtherNodeLabels));
-for iN=1:length(OtherNodeLabels)
-    if length(OtherNodeLabels{iN})~=length(NodeLabels)
-        error('GT: the number of element in each subcell of OtherNodeLabels must match that of NodeLabels\n');
+            res(row_idx:row_idx+nNodes-1, f) = values(:);
+        else
+            error("Field %s not found in GTstruct.", fieldname)
+        end
     end
-    other_vars(:,iN) = repmat(OtherNodeLabels{iN}, length(lab), 1);
-end;
 
-% create table
-ResTable = table( );
+    % Extract subject-level metadata
+    for o = 1:numel(OtherFields)
+        val = thisGT.(OtherFields(o));
+        export_lab(row_idx:row_idx+nNodes-1, o) = repmat({val}, nNodes, 1);
+    end
+
+    row_idx = row_idx + nNodes;
+end
+
+export_nodes = repmat(NodeLabels(:), nSubjects, 1);
+
+%% Handle optional node-level labels
+
+other_vars = {};
+
+if ~isempty(OtherNodeLabels)
+    other_vars = cell(length(export_nodes), length(OtherNodeLabels));
+    for iN = 1:length(OtherNodeLabels)
+        if length(OtherNodeLabels{iN}) ~= length(NodeLabels)
+            error('GT: the number of elements in each subcell of OtherNodeLabels must match that of NodeLabels.');
+        end
+        other_vars(:,iN) = repmat(OtherNodeLabels{iN}, nSubjects, 1);
+    end
+end
+
+%% Create output table
+ResTable = table();
 ResTable.NodeLabels = export_nodes(:);
+
 for iN = 1:length(OtherNodeLabels)
-    ResTable.(['NodeLab', num2str(iN)]) = other_vars(:,iN);
+    ResTable.(['NodeLab', num2str(iN)]) = other_vars(:, iN);
 end
 
 for iF = 1:length(OtherFields)
-    ResTable.(OtherFields{iF}) = export_lab(:,iF);
-end;
+    ResTable.(OtherFields{iF}) = export_lab(:, iF);
+end
+
 for iRF = 1:length(Fields)
     ResTable.(Fields{iRF}) = res(:, iRF);
-end;
+end
 
-
-
+%% Export csv file
 
 if ~isempty(FileName)
-    %% EXPORT FILE 
-    fid = fopen(FileName, 'w');
-    
-    sep=',';
-    
-    fprintf(fid, ['%s', sep], Fields{:});
-    fprintf(fid, ['%s', sep], OtherFields{:});
-    fprintf(fid, ['%s', sep], 'NodeLabels');
-    
-    for iN = 1:length(OtherNodeLabels)
-            fprintf(fid, ['%s', sep], ['NodeLabels', num2str(iN)]);
-    end
-    
-    fprintf(fid, '\n', '');
-    
-    for i=1:size(res,1);%
-        fprintf(fid, ['%d', sep], res(i,:));
-        OtherFields_exp = cellfun(@num2str, export_lab(i,:), 'UniformOutput', 0); % convert to str numeric fields in OtherFields
-        fprintf(fid, ['%s', sep], OtherFields_exp{:});
-        fprintf(fid, ['%s', sep], export_nodes{i});
-        for iN = 1:length(OtherNodeLabels)
-               fprintf(fid, ['%s', sep], other_vars{i, iN});
-        end;   
-        fprintf(fid, '\n', '');
-    end;
-    fclose(fid);
+    writetable(ResTable, FileName);
+    fprintf('✅ Results successfully exported to: %s\n', FileName);
+end
 end
 
-end
 
 
 
