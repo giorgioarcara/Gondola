@@ -14,9 +14,9 @@
 %
 %
 %
-% Author: Giorgio Arcara
+% Author: Ettore Napoli, Alessandro Tonin, Giorgio Arcara
 %
-% Version: 17/01/2018
+% Version: 07/03/2025
 
 function  Coords = getCoords(Labels, RefCoord);
 
@@ -38,23 +38,35 @@ Coord_lab = table2cell(Coord(:,end));
 % retrieve index to sort
 [~, ind, ~] = intersect(Labels, Coord_lab, 'stable');
 
-% check if there are problems
-% missing = setdiff(Labels, Coord_lab)
+% create object with only present Coord nodes
+pCoords = Coord_lab(ind);
+[~, ind, ~] = intersect(Coord_lab, Labels, 'stable');
 
-% add to table to sort
-Coord(:, end+1) = array2table(ind) ;
+Coord = Coord(ind, :);
 
-% actually sort
-Coord = sortrows(Coord, size(Coord,2));
-
-% remove the new Column
-Coord = Coord(:,1:(end-1));
-
-% get separately number and labels in the Coord matrix for export
-Coord_mat = table2array(Coord(:,1:3));
+% get labels from Coord table
 Coord_lab = table2cell(Coord(:,end));
 
+% match input labels to reference coord labels
+[found_labels, sort_idx] = ismember(Labels, Coord_lab);
+
+% Warn if some labels were not matched
+if any(~found_labels)
+    warning('Some labels not found in reference coordinate file: %s', strjoin(Labels(~found_labels), ', '));
+end
+
+% remove unmatched labels
+Labels = Labels(found_labels);
+sort_idx = sort_idx(found_labels);
+
+% reorder Coord table to match input labels
+Coord = Coord(sort_idx, :);
+
+% re-extract labels ad xyz
+Coord_mat = table2array(Coord(:, 1:3));
+Coord_lab = table2array(Coord(:, end));
 
 Coords.xyz = Coord_mat;
 Coords.labels = Coord_lab;
+
 
