@@ -2,7 +2,7 @@ function GTstruct = GTgetfields_FileName(FileNames, opt)
     arguments
         FileNames (1,:) cell
         opt.Fields (1, 1) string
-        opt.Ignore (1, 1) string
+        opt.Ignore (1, 1) string = ""
     end
 
 
@@ -45,8 +45,8 @@ function GTstruct = GTgetfields_FileName(FileNames, opt)
 % Version: 28/05/2026
 %
 
-Fields = opt.Fields
-Ignore = opt.Ignore
+Fields = opt.Fields;
+Ignore = opt.Ignore;
 
 split_symbol = '_';
 split_pattern = strsplit(Fields, split_symbol);
