@@ -33,14 +33,14 @@
 function ResTable = writeGTresGlobal(GTstruct, opt)
     arguments
         GTstruct (1,:) struct
-        opt.ResFields (1,:) string {mustBeValidVariableName}
-        opt.OtherField (1,:) string {mustBeValidVariableName}
+        opt.Fields (1,:) string {mustBeValidVariableName}
+        opt.OtherFields (1,:) string {mustBeValidVariableName}
         opt.FileName (1,1) string = "GT_Globalresults.txt"
     end
 
 
-ResFields = opt.ResFields;
-LabFields =  opt.LabFields;
+Fields = opt.Fields;
+OtherFields =  opt.OtherFields;
 FileName =  opt.FileName;
 
 
@@ -51,7 +51,7 @@ res_names = fields(GTstruct);
 res_cell=squeeze(struct2cell(GTstruct));
 
 % find indices corresponding to name
-[~,  ~, ind] = intersect(ResFields, res_names, 'stable');
+[~,  ~, ind] = intersect(Fields, res_names, 'stable');
 
 restemp = res_cell(ind, :);
 
@@ -60,7 +60,7 @@ res = res';
 
 %% LabFields (numeric results to be exported, one per Subject).
 % find indices corresponding to name
-[~,  ~, ind] = intersect(LabFields, res_names, 'stable');
+[~,  ~, ind] = intersect(OtherFields, res_names, 'stable');
 
 lab = res_cell(ind, :);
 
@@ -70,11 +70,11 @@ export_lab = lab;
 
 % create table
 ResTable = table( );
-for iF = 1:length(LabFields)
-    ResTable.(LabFields{iF}) = export_lab(:,iF);
+for iF = 1:length(OtherFields)
+    ResTable.(OtherFields{iF}) = export_lab(:,iF);
 end;
-for iRF = 1:length(ResFields)
-    ResTable.(ResFields{iRF}) = res(:, iRF);
+for iRF = 1:length(Fields)
+    ResTable.(Fields{iRF}) = res(:, iRF);
 end;
 
 
@@ -85,8 +85,8 @@ fid = fopen(export_file, 'w');
 
 sep=',';
 
-fprintf(fid, ['%s', sep], ResFields{:});
-fprintf(fid, ['%s', sep], LabFields{:});
+fprintf(fid, ['%s', sep], Fields{:});
+fprintf(fid, ['%s', sep], OtherFields{:});
 fprintf(fid, '\n', '');
 
 for i=1:size(res,1);%
