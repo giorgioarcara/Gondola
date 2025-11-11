@@ -4,6 +4,7 @@ function GTres = GTmeasure(GTstruct, opt)
         opt.Field (1, 1) string
         opt.MeasureFunc (1, 1) string
         opt.MeasureName (1, 1) string
+        opt.OutputIndex (1, 1) double = 1
     end
     
 
@@ -39,6 +40,7 @@ function GTres = GTmeasure(GTstruct, opt)
 Field = opt.Field
 MeasureFunc = opt.MeasureFunc
 MeasureName = opt.MeasureName
+OutputIndex = opt.OutputIndex
 
 % retrieve function
 myfunc = str2func(MeasureFunc);
@@ -48,7 +50,9 @@ GTres = GTstruct;
 
 % loop over all objects in GTstruct and compute the measure.
 for iK = 1:length(GTstruct)
-    GTres(iK).(MeasureName) = myfunc(GTstruct(iK).(Field));
+    [varargout{1:nargout(myfunc)}] = myfunc(GTstruct(iK).(Field));
+
+    GTres(iK).(MeasureName) = varargout{OutputIndex};
 end;
 
 
